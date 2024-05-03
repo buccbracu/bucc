@@ -1,10 +1,28 @@
 import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
 import Footer from "./components/Footer";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar/Navbar";
+import { ThemeProvider } from "./components/themeProvider";
 import "./globals.css";
 
+const font = Outfit({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
-  title: "BUCC - BRAC University Computer Club",
+  title: "BRAC University Computer Club | Upgrade Yourself",
+  icons: [
+    {
+      rel: "icon",
+      type: "image/x-icon",
+      url: "/assets/bucc-favicon.ico",
+      media: "(prefers-color-scheme: light)",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      url: "/assets/bucc-favicon-light.ico",
+      media: "(prefers-color-scheme: dark)",
+    },
+  ],
   description:
     "BRAC University Computer Club (BUCC) is the oldest club of BRAC university founded in 2001.",
 };
@@ -16,11 +34,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head></head>
-      <body>
-        <Navbar />
-        <main className="relative overflow-hidden">{children}</main>
-        <Footer />
+      <body className={font.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
