@@ -5,6 +5,7 @@ type ConnectionObject = {
 };
 
 const connection: ConnectionObject = {};
+const { MONGODB_URI, MONGODB_DB } = process.env;
 
 async function dbConnect(): Promise<void> {
   if (connection.isConnected) {
@@ -13,7 +14,10 @@ async function dbConnect(): Promise<void> {
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGODB_URI || "", {});
+    const db = await mongoose.connect(MONGODB_URI!, {
+      dbName: MONGODB_DB,
+      bufferCommands: false,
+    });
 
     connection.isConnected = db.connections[0].readyState;
 

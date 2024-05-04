@@ -99,7 +99,7 @@ export default function ActionButtons() {
         <Button className="text-md" variant="outline">
           <Link href={"/login"}>Login</Link>
         </Button>
-        <Button className="text-md bg-blue-500 text-white dark:hover:bg-blue-600">
+        <Button className="text-md bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
           <Link href={"/registration"}>Register</Link>
         </Button>
       </div>
