@@ -44,9 +44,10 @@ export default function ActionButtons() {
   };
 
   const { username, profilePhoto } = {
-    username: "Osama",
+    username: "Sabbir Bin Abdul Latif",
     profilePhoto: "https://avatars.githubusercontent.com/u/65303669?v=4",
   };
+
   const usernameFallback = username[0];
 
   return (
