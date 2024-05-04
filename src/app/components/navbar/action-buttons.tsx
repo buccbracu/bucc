@@ -136,8 +136,8 @@ export default function ActionButtons() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-fit mr-3">
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <span className="font-bold">{username}</span>
+                <DropdownMenuItem className="border-b-[1px] mb-1">
+                  <span className="font-bold my-1">{username}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
