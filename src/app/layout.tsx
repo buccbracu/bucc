@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/app/components/themeProvider";
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
+import { Toaster } from "sonner";
 
 const font = Outfit({ subsets: ["latin"] });
 
@@ -37,12 +38,13 @@ export default function RootLayout({
       <body className={font.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <Navbar />
           <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
+            <Toaster closeButton richColors />
             {children}
           </main>
           <Footer />

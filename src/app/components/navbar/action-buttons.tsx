@@ -26,6 +26,7 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
@@ -34,6 +35,11 @@ export default function ActionButtons() {
   const [userSingedIn, setUserSingedIn] = useState(false);
 
   const handleUserSingedIn = () => {
+    if (userSingedIn) {
+      toast.success("Logout successful");
+    } else {
+      toast.success("Login successful");
+    }
     setUserSingedIn(!userSingedIn);
   };
 
