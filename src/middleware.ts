@@ -6,17 +6,9 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/about",
-    "/oca",
-    "/executive-body",
-    "/departments",
-    "/advisors",
-    "/former-ebs",
+    "/about/:path*",
     "/events",
-    "/press-releases",
-    "/newsletters",
-    "/blogs",
-    "/magazine",
+    "/publications/:path*",
     "/gallery",
     "/contact",
     "/login",

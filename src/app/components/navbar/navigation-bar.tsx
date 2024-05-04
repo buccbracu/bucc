@@ -30,7 +30,7 @@ export default function NavigationBar() {
                     <ListItem
                       key={child.title}
                       title={child.title}
-                      href={child.path}
+                      href={`${menu.path}${child.path}`}
                     ></ListItem>
                   ))}
                 </ul>

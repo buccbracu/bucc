@@ -1,9 +1,9 @@
+import Footer from "@/app/components/Footer";
+import Navbar from "@/app/components/navbar/Navbar";
+import { ThemeProvider } from "@/app/components/themeProvider";
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import Footer from "./components/Footer";
-import Navbar from "./components/navbar/Navbar";
-import { ThemeProvider } from "./components/themeProvider";
-import "./globals.css";
 
 const font = Outfit({ subsets: ["latin"] });
 

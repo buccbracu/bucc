@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AlignJustify, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -19,14 +20,32 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+import {
+  DropdownMenuGroup,
+  DropdownMenuSeparator,
+} from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
+import { useState } from "react";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
   const { setTheme } = useTheme();
+
+  const [userSingedIn, setUserSingedIn] = useState(false);
+
+  const handleUserSingedIn = () => {
+    setUserSingedIn(!userSingedIn);
+  };
+
+  const { username, profilePhoto } = {
+    username: "Osama",
+    profilePhoto: "https://avatars.githubusercontent.com/u/65303669?v=4",
+  };
+  const usernameFallback = username[0];
+
   return (
-    <div className="flex items-center">
-      <div className="mr-2">
+    <div className="flex items-center gap-2">
+      <div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">
@@ -68,7 +87,7 @@ export default function ActionButtons() {
                         <DropdownMenuContent align="start">
                           {menu.childrens.map((child, index) => (
                             <DropdownMenuItem key={index}>
-                              <Link href={child.path}>
+                              <Link href={`${menu.path}${child.path}`}>
                                 <p>{child.title}</p>
                               </Link>
                             </DropdownMenuItem>
@@ -81,28 +100,67 @@ export default function ActionButtons() {
                       </Link>
                     )
                   )}
-                  <div className="md:hidden flex flex-col space-y-4 items-start w-full text-lg mt-10 font-semibold">
-                    <Link href={"/login"}>
-                      <p>Login</p>
-                    </Link>
-                    <Link href={"/registration"}>
-                      <p>Register</p>
-                    </Link>
-                  </div>
+                  {userSingedIn ? null : (
+                    <div className="md:hidden flex flex-col space-y-4 items-start w-full text-lg mt-10 font-semibold">
+                      {/* <Link href={"/login"}>
+                        <p>Login</p>
+                      </Link> */}
+                      <p onClick={handleUserSingedIn}>Login</p>
+                      <Link href={"/registration"}>
+                        <p>Register</p>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </SheetDescription>
             </SheetHeader>
           </SheetContent>
         </Sheet>
       </div>
-      <div className="hidden md:flex md:space-x-2 ml-2">
-        <Button className="text-md" variant="outline">
-          <Link href={"/login"}>Login</Link>
-        </Button>
-        <Button className="text-md bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
-          <Link href={"/registration"}>Register</Link>
-        </Button>
-      </div>
+      {userSingedIn ? (
+        <div className="flex items-center space-x-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="h-[36px] w-[36px] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border shadow-sm">
+                <AvatarImage alt={username} src={profilePhoto} />
+                <AvatarFallback>{usernameFallback}</AvatarFallback>
+                <span className="sr-only">Toggle user menu</span>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-fit mr-3">
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <span className="font-bold">{username}</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={handleUserSingedIn}
+                  >
+                    Logout
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ) : (
+        <div className="hidden md:flex md:space-x-2 ml-2">
+          <Button className="text-md" variant="secondary">
+            {/* <Link href={"/login"}>Login</Link> */}
+            <p onClick={handleUserSingedIn}>Login</p>
+          </Button>
+          <Button className="text-md bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
+            <Link href={"/registration"}>Register</Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

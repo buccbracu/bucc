@@ -2,11 +2,11 @@ const menus = [
   { title: "Home", path: "/" },
   {
     title: "About",
-    path: "#",
+    path: "/about",
     childrens: [
       {
         title: "About Us",
-        path: "/about",
+        path: "/",
       },
       { title: "Departments", path: "/departments" },
       { title: "OCA", path: "/oca" },
@@ -18,7 +18,7 @@ const menus = [
   { title: "Events", path: "/events" },
   {
     title: "Publications",
-    path: "#",
+    path: "/publications",
     childrens: [
       { title: "Press Releases", path: "/press-releases" },
       { title: "Blogs", path: "/blogs" },
