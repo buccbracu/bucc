@@ -43,8 +43,9 @@ export default function ActionButtons() {
     setUserSingedIn(!userSingedIn);
   };
 
-  const { username, profilePhoto } = {
+  const { username, userEmail, profilePhoto } = {
     username: "Sabbir Bin Abdul Latif",
+    userEmail: "sabbir.bin.abdullatif@g.bracu.c.bd",
     profilePhoto: "https://avatars.githubusercontent.com/u/65303669?v=4",
   };
 

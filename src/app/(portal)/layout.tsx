@@ -1,6 +1,6 @@
-import Footer from "@/app/components/Footer";
-import { ThemeProvider } from "@/app/components/themeProvider";
 import "@/app/globals.css";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { ThemeProvider } from "@/components/themeProvider";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
@@ -34,18 +34,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={font.className}>
+      <body className={`flex items-start justify-between ${font.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <main className="container relative min-h-[calc(100vh-55px)] overflow-auto">
-            <Toaster closeButton richColors />
+          <Toaster closeButton richColors />
+          <Sidebar />
+          <main className="w-full min-h-screen flex justify-center items-center">
             {children}
           </main>
-          <Footer />
         </ThemeProvider>
       </body>
     </html>

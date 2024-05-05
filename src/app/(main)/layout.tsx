@@ -1,7 +1,7 @@
-import Footer from "@/app/components/Footer";
-import Navbar from "@/app/components/navbar/Navbar";
-import { ThemeProvider } from "@/app/components/themeProvider";
 import "@/app/globals.css";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/navbar/Navbar";
+import { ThemeProvider } from "@/components/themeProvider";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
@@ -42,9 +42,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster closeButton richColors />
           <Navbar />
           <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
-            <Toaster closeButton richColors />
             {children}
           </main>
           <Footer />
