@@ -27,7 +27,7 @@ export default function SideNavbar({}: Props) {
       <UserInfo isCollapsed={mobileWidth ? true : isCollapsed} />
 
       {!mobileWidth && (
-        <div className="absolute right-[-20px] top-28">
+        <div className="absolute right-[-20px] top-[48%]">
           <Button
             onClick={toggleSidebar}
             variant="secondary"

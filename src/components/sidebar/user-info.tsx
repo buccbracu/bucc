@@ -2,8 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-import { useEffect, useState } from "react";
-
 const userInfoData = {
   username: "Sabbir Bin Abdul Latif",
   userEmail: "sabbir.bin.abdullatif@g.bracu.c.bd",
@@ -11,12 +9,6 @@ const userInfoData = {
 };
 
 const UserInfo = ({ isCollapsed }: { isCollapsed: boolean }) => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const { username, userEmail, profilePhoto } = userInfoData;
   const usernameFallback = username[0];
 

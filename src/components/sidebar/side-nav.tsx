@@ -45,8 +45,7 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
                         size: "icon",
                       }),
                       "h-9 w-9",
-                      menu.variant === "default" &&
-                        "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+                      menu.variant === "default"
                     )}
                   >
                     <menu.icon className="h-4 w-4" />
@@ -74,21 +73,14 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
                     variant: menu.path === pathName ? "default" : "ghost",
                     size: "sm",
                   }),
-                  menu.variant === "default" &&
-                    "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                  menu.variant === "default",
                   "justify-start"
                 )}
               >
                 <menu.icon className="mr-2 h-4 w-4" />
                 {menu.title}
                 {menu.label && (
-                  <span
-                    className={cn(
-                      "ml-auto",
-                      menu.variant === "default" &&
-                        "text-background dark:text-white"
-                    )}
-                  >
+                  <span className={cn("ml-auto", menu.variant === "default")}>
                     {menu.label}
                   </span>
                 )}

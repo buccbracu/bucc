@@ -8,7 +8,7 @@ import {
 const menus = [
   {
     title: "Dashboard",
-    path: "/dashboard/",
+    path: "/dashboard",
     icon: LayoutDashboard,
     variant: "default",
   },
