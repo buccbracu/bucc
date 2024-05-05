@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  if (process.env.NODE_ENV !== "development") {
+  const pathname = new URL(request.url).pathname;
+  if (!(process.env.NODE_ENV === "development")) {
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.rewrite(
+        new URL("/dashboard/under-construction", request.url)
+      );
+    }
     return NextResponse.rewrite(new URL("/under-construction", request.url));
   }
 }
