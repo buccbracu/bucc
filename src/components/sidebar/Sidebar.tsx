@@ -23,7 +23,7 @@ export default function SideNavbar({}: Props) {
   }
 
   return (
-    <div className="sidebar flex flex-col items-center relative min-w-fit border-r p-3 min-h-screen">
+    <div className="flex flex-col items-center min-w-fit border-r p-3 h-screen sticky top-0">
       <UserInfo isCollapsed={mobileWidth ? true : isCollapsed} />
 
       {!mobileWidth && (

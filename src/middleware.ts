@@ -4,6 +4,9 @@ export function middleware(request: NextRequest) {
   const pathname = new URL(request.url).pathname;
   if (!(process.env.NODE_ENV === "development")) {
     if (pathname.startsWith("/dashboard")) {
+      if (pathname === "/dashboard") {
+        return NextResponse.rewrite(new URL("/dashboard", request.url));
+      }
       return NextResponse.rewrite(
         new URL("/dashboard/under-construction", request.url)
       );

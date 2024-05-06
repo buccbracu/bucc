@@ -1,14 +1,15 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AlignJustify, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { AlignJustify } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -20,24 +21,22 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import {
-  DropdownMenuGroup,
-  DropdownMenuSeparator,
-} from "@radix-ui/react-dropdown-menu";
+import ThemeToggler from "@/components/theme-toggler";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
-  const { setTheme } = useTheme();
-
   const [userSingedIn, setUserSingedIn] = useState(false);
-
+  const router = useRouter();
   const handleUserSingedIn = () => {
     if (userSingedIn) {
+      router.push("/");
       toast.success("Logout successful");
     } else {
+      router.push("/dashboard");
       toast.success("Login successful");
     }
     setUserSingedIn(!userSingedIn);
@@ -53,28 +52,7 @@ export default function ActionButtons() {
 
   return (
     <div className="flex items-center gap-2">
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              System
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <ThemeToggler />
       <div className="lg:hidden flex items-center justify-center w-[36px] h-[36px] border rounded-md shadow-sm ">
         <Sheet>
           <SheetTrigger>
@@ -137,12 +115,12 @@ export default function ActionButtons() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-fit mr-3">
               <DropdownMenuGroup>
-                <DropdownMenuItem className="border-b-[1px] mb-1">
+                <DropdownMenuItem>
                   <span className="font-bold my-1">{username}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Link href="/profile">Profile</Link>
+                  <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
