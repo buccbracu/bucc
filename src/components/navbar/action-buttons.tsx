@@ -61,7 +61,7 @@ export default function ActionButtons() {
           <SheetContent>
             <SheetHeader>
               <SheetDescription>
-                <div className="flex flex-col justify-between h-screen">
+                <div className="flex flex-col justify-between h-svh">
                   <div className="flex flex-col space-y-4 items-start w-full text-lg mt-10 grow">
                     {menus.map((menu, index) =>
                       menu.childrens ? (
