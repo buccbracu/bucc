@@ -61,40 +61,42 @@ export default function ActionButtons() {
           <SheetContent>
             <SheetHeader>
               <SheetDescription>
-                <div className="flex flex-col space-y-4 items-start w-full text-lg mt-10">
-                  {menus.map((menu, index) =>
-                    menu.childrens ? (
-                      <DropdownMenu key={index}>
-                        <DropdownMenuTrigger asChild>
-                          <p className="font-semibold cursor-pointer">
-                            {menu.title}
-                          </p>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                          {menu.childrens.map((child, index) => (
-                            <DropdownMenuItem key={index}>
-                              <Link href={`${menu.path}${child.path}`}>
-                                <p>{child.title}</p>
-                              </Link>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <Link key={index} href={menu.path}>
-                        <p className="font-semibold">{menu.title}</p>
-                      </Link>
-                    )
-                  )}
+                <div className="flex flex-col justify-between h-screen">
+                  <div className="flex flex-col space-y-4 items-start w-full text-lg mt-10 grow">
+                    {menus.map((menu, index) =>
+                      menu.childrens ? (
+                        <DropdownMenu key={index}>
+                          <DropdownMenuTrigger asChild>
+                            <p className="font-semibold cursor-pointer">
+                              {menu.title}
+                            </p>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            {menu.childrens.map((child, index) => (
+                              <DropdownMenuItem key={index}>
+                                <Link href={`${menu.path}${child.path}`}>
+                                  <p>{child.title}</p>
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Link key={index} href={menu.path}>
+                          <p className="font-semibold">{menu.title}</p>
+                        </Link>
+                      )
+                    )}
+                  </div>
                   {userSingedIn ? null : (
-                    <div className="md:hidden flex flex-col space-y-4 items-start w-full text-lg mt-10 font-semibold">
-                      {/* <Link href={"/login"}>
-                        <p>Login</p>
-                      </Link> */}
-                      <p onClick={handleUserSingedIn}>Login</p>
-                      <Link href={"/registration"}>
-                        <p>Register</p>
-                      </Link>
+                    <div className="md:hidden flex flex-row gap-2 items-center justify-center w-full text-lg mb-12 font-semibold">
+                      <Button className="text-md w-full" variant="secondary">
+                        {/* <Link href={"/login"}>Login</Link> */}
+                        <p onClick={handleUserSingedIn}>Login</p>
+                      </Button>
+                      <Button className="text-md w-full bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
+                        <Link href={"/registration"}>Register</Link>
+                      </Button>
                     </div>
                   )}
                 </div>

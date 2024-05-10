@@ -1,5 +1,4 @@
-import Heading from "@/components/dashboard/heading";
-
+import Heading from "@/components/portal/heading";
 export default function Dashboard() {
   return (
     <div className="m-10">

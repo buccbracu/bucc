@@ -21,11 +21,29 @@ interface NavProps {
     icon: LucideIcon;
     variant?: string;
     path: string;
+    access_department: string[];
+    access_designation: string[];
   }[];
 }
 
 export function SideNav({ menus, isCollapsed }: NavProps) {
   const pathName = usePathname();
+  const { userDepartment, userDesignation } = {
+    userDepartment: "Research and Development",
+    userDesignation: "General Member",
+  };
+
+  const filteredMenus = menus.filter((menu) => {
+    const isDepartmentMatch =
+      !menu.access_department ||
+      menu.access_department.includes(userDepartment);
+    const isDesignationMatch =
+      !menu.access_designation ||
+      menu.access_designation.includes(userDesignation);
+
+    return isDepartmentMatch && isDesignationMatch;
+  });
+
   return (
     <TooltipProvider>
       <div
@@ -33,7 +51,7 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
         className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
       >
         <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-          {menus.map((menu, index) =>
+          {filteredMenus.map((menu, index) =>
             isCollapsed ? (
               <Tooltip key={index} delayDuration={0}>
                 <TooltipTrigger asChild>
