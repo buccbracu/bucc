@@ -9,6 +9,10 @@ const MemberSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a name']
     },
+    student_id: {
+        type: String,
+        required: false,
+    },
     gsuite_email: {
         type: String,
         required: [true, 'Please provide an email'],
