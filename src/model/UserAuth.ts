@@ -2,7 +2,7 @@ import { verify } from "crypto";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-//TODO
+const userRoles = ['X_GB', 'CNM_EB', 'CR_EB', 'EM_EB', 'FN_EB', 'HR_EB', 'PR_EB', 'RND_EB', 'MEMBER'];
 
 const UserAuthSchema = new mongoose.Schema({
     
@@ -10,7 +10,8 @@ const UserAuthSchema = new mongoose.Schema({
     userRoles:{
         type: [String],
         required: [true, 'Please provide a role'],
-        default: ['GM'] //enum validation needed here, UserRole ENUM(X_GB, CNM_EB, CR_EB, EM_EB, FN_EB, HR_EB, PR_EB, RND_EB, MEMBER)
+        enum: userRoles, //Only Predefined Values from the above memberRoles array.
+        default: ['MEMBER']
     },
     passwordHash: { 
         type: String, 
