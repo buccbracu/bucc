@@ -1,6 +1,8 @@
 import { error } from "console";
 import mongoose from "mongoose";
 
+const allowedSocials = ['github', 'linkedin', 'facebook'];
+
 const MemberSchema = new mongoose.Schema({
 
     name: {
@@ -75,6 +77,13 @@ const MemberSchema = new mongoose.Schema({
     member_socials:{ // NEEDS SERVER SIDE VALIDATION TO PREVENT ARBITRARY DATA INJECTION
         type: Map,
         of: String,
+        validate: {
+            validator: function(v: any) {
+                return Object.keys(v).every(key => allowedSocials.includes(key));
+            },
+            message: (props: { value: any; }) => `${props.value} is not a valid social media platform`
+
+        }
 
     }
 
