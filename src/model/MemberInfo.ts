@@ -51,11 +51,6 @@ const MemberSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    bucc_designation:{
-        type: String,
-        required: false,
-        default: 'GM'
-    },
     emergency_contact_number:{
         type: String,
         required: false

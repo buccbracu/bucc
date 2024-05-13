@@ -11,7 +11,7 @@ const UserAuthSchema = new mongoose.Schema({
         type: [String],
         required: [true, 'Please provide a role'],
         enum: userRoles, //Only Predefined Values from the above memberRoles array.
-        default: ['MEMBER']
+        default: ['MEMBER'] // Roles from here will be fetched in a particular order, so the first role will be the primary role. This eliminates the need for a sperate field for designations
     },
     passwordHash: { 
         type: String, 
