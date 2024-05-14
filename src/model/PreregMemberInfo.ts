@@ -35,6 +35,10 @@ const PreregMemberInfoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    eb_assesment_details: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MemberEBAssesment'
+    }
 })
 
 const PreregMemberInfo = mongoose.models.PreregMemberInfo || mongoose.model('PreregMemberInfo', PreregMemberInfoSchema);
