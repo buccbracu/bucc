@@ -10,19 +10,13 @@ const PreregMemberInfoSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+        validate: {
+            validator: function (v: string) {
+                return /^[0-9]{8}$/.test(v);
+            },
+            message: (props: { value: any; }) => `${props.value} is not a valid student ID!`
+        }
 
-    },
-    contact_number: {
-        type: String,
-        required: true,
-
-    },
-    personal_email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true, // Converts email to lowercase
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{+\w+})+$/, 'Please fill a valid email address'] // Email validation
     },
     gsuite_email: {
         type: String,
@@ -36,5 +30,13 @@ const PreregMemberInfoSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
-    }
+    },
+    joined_bracu: {
+        type: String,
+        required: true
+    },
 })
+
+const PreregMemberInfo = mongoose.models.PreregMemberInfo || mongoose.model('PreregMemberInfo', PreregMemberInfoSchema);
+
+export default PreregMemberInfo;
