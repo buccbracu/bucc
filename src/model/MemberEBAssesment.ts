@@ -33,4 +33,6 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
         required: true
     }
 
+    //TODO: RESPONSE OBJECT FROM SURVEYJS
+
 })

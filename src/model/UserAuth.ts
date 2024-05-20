@@ -4,6 +4,8 @@ const { Schema } = mongoose;
 
 const userRoles = ['X_GB', 'CNM_EB', 'CR_EB', 'EM_EB', 'FN_EB', 'HR_EB', 'PR_EB', 'RND_EB', 'MEMBER'];
 
+//TODO Designation And Department Join
+
 const UserAuthSchema = new mongoose.Schema({
     
     userId: { type: Schema.Types.ObjectId, ref: 'UserInfo', required: true, index: true },

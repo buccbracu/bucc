@@ -26,7 +26,7 @@ const PreregMemberInfoSchema = new mongoose.Schema({
         trim: true,
         match: [/^[a-zA-Z0-9._%+-]+@(g\.)?bracu\.ac\.bd$/, 'Please use a valid BRACU G-Suite email address'] // BRACU G-Suite email validation
     },
-    department_bracu: { //ENUM Needed here for predefined departments
+    department_bracu: { //TODO: ENUM Needed here for predefined departments
         type: String,
         required: true,
         trim: true
@@ -35,7 +35,7 @@ const PreregMemberInfoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    eb_assesment_details: {
+    eb_assesment_details: { //TODO: REMOVE THIS
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MemberEBAssesment'
     }

@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 
 const intakes = ["Spring", "Summer", "Fall"];
 
+// TODO: SINGLE INTAKE, START END DATE NOT NEEDED, TOGGLE with isActive Boolean
+
 const IntakeShema = new mongoose.Schema({
 
     intake: {
