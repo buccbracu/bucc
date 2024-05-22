@@ -39,8 +39,11 @@ function EvaluationComponent() {
       gSuiteEmail: sender.data.question3,
       responseObject: sender.data,
     };
+
+    console.log(evaluationData);
+
     try {
-      const response = await fetch("/api/postEvaluation", {
+      const response = await fetch("/api/evaluation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +54,7 @@ function EvaluationComponent() {
         throw new Error("Failed to submit evaluation data");
       }
       const data = await response.json();
-      console.log(data.message);
+      console.log(data);
     } catch (error) {
       console.error("Failed to submit evaluation data:", error);
     }

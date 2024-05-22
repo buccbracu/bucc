@@ -7,7 +7,7 @@ export const json = {
       elements: [
         {
           type: "text",
-          name: "Full Name",
+          name: "question1",
           title: "Full Name",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -16,7 +16,7 @@ export const json = {
         },
         {
           type: "text",
-          name: "Student ID",
+          name: "question2",
           title: "Student ID",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -31,7 +31,7 @@ export const json = {
         },
         {
           type: "text",
-          name: "G-Suite Email",
+          name: "question3",
           title: "G-Suite Email",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -52,7 +52,7 @@ export const json = {
       elements: [
         {
           type: "text",
-          name: "Describe Yourself",
+          name: "question4",
           title: "Tell us a little about yourself",
           description:
             "E.g. personality, positive and negative sides, achievements, etc.\n\n",
@@ -61,7 +61,7 @@ export const json = {
         },
         {
           type: "checkbox",
-          name: "Why BUCC",
+          name: "question5",
           title: "Why BUCC?",
           description:
             "Why you want to join BUCC. You can select multiple options.",
@@ -79,7 +79,7 @@ export const json = {
         },
         {
           type: "text",
-          name: "Expectation From BUCC",
+          name: "question6",
           title: "What is your expectation from BUCC?",
           description: "Only write the most interesting one in a line.",
           isRequired: true,
@@ -87,7 +87,7 @@ export const json = {
         },
         {
           type: "checkbox",
-          name: "Your Passion",
+          name: "question7",
           title: "Which side do you feel most passionate about?",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -111,49 +111,48 @@ export const json = {
         {
           type: "html",
           name: "Communications & Marketing Details First",
-          visibleIf: "{Preferred Department 1} = 'Communications & Marketing'",
+          visibleIf: "{question8} = 'Communications & Marketing'",
           html: "<strong>Communications & Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
         },
         {
           type: "html",
           name: "Creative Details First",
-          visibleIf: "{Preferred Department 1} = 'Creative'",
+          visibleIf: "{question8} = 'Creative'",
           html: "<strong>Creative: </strong>This department primarily oversees the creative and design aspects of BUCC. Individuals possessing design skills, graphic work expertise, or unique creative ideas have a strong potential to thrive in this department. Crafting posters, banners, backdrops, brochures, producing videos and motion graphics, and decor events are the focal responsibilities of this department.",
         },
         {
           type: "html",
           name: "Event Management Details First",
-          visibleIf: "{Preferred Department 1} = 'Event Management'",
+          visibleIf: "{question8} = 'Event Management'",
           html: "<strong>Event Management: </strong>This department is responsible for organizing events, handling various tasks such as booking venues like the auditorium and GDLN rooms, arranging food distribution, obtaining guest entry permissions from the Registrar, and managing necessary equipment for events. Additionally, they oversee photography management and storage. Living near the university is preferred for those interested in joining this department.",
         },
         {
           type: "html",
           name: "Finance Details First",
-          visibleIf: "{Preferred Department 1} = 'Finance'",
+          visibleIf: "{question8} = 'Finance'",
           html: "<strong>Finance: </strong>This department oversees the financial aspects of BUCC, beginning with budget allocation, distribution, and bill submission. Their main responsibilities include tracking bills and writing proposal letters to seek permission from authorities for organizing events or workshops. They play a crucial role in ensuring the smooth financial operation of BUCC's activities.",
         },
         {
           type: "html",
           name: "Human Resources Details First",
-          visibleIf: "{Preferred Department 1} = 'Human Resources'",
+          visibleIf: "{question8} = 'Human Resources'",
           html: "<strong>Human Resources: </strong>This department at BUCC is tasked with managing and maintaining member data, allocating volunteers, and ensuring their presence at every event. They handle registration and maintain etiquette among executive bodies, ensuring smooth operation of club activities. Additionally, they notify members about club events or other relevant information through email. If you're organized, communicative, and enjoy working with people, you might have what it takes to excel in HR.",
         },
         {
           type: "html",
           name: "Press Release & Publications Details First",
-          visibleIf:
-            "{Preferred Department 1} = 'Press Release & Publications'",
+          visibleIf: "{question8} = 'Press Release & Publications'",
           html: "<strong>Press Release & Publications: </strong>This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
         },
         {
           type: "html",
           name: "Research & Development Details First",
-          visibleIf: "{Preferred Department 1} = 'Research & Development'",
+          visibleIf: "{question8} = 'Research & Development'",
           html: "<strong>Research & Development: </strong>The Research & Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
         },
         {
           type: "radiogroup",
-          name: "Preferred Department 1",
+          name: "question8",
           title: "Preferred Department (1st)",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -169,7 +168,7 @@ export const json = {
         },
         {
           type: "checkbox",
-          name: "question15",
+          name: "question9",
           title: "Why do you feel this department is interesting?",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -193,7 +192,7 @@ export const json = {
       elements: [
         {
           type: "comment",
-          name: "Communications & Marketing Question 1",
+          name: "question10",
           title:
             "Write a captivating short caption for the BUCC Fresher's Orientation program.",
           isRequired: true,
@@ -201,14 +200,14 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Communications & Marketing Question 2",
+          name: "question11",
           title:
             "How do you get in touch with other businesses on behalf of a club?",
           isRequired: true,
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Communications & Marketing'",
+      visibleIf: "{question8} = 'Communications & Marketing'",
       title: "Communications & Marketing",
       description:
         "This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
@@ -218,7 +217,7 @@ export const json = {
       elements: [
         {
           type: "checkbox",
-          name: "Creative Question 1",
+          name: "question12",
           title: "Which creative software can you use or are used to?",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -234,7 +233,7 @@ export const json = {
         },
         {
           type: "text",
-          name: "Creative Question 2",
+          name: "question13",
           title:
             "Have you done any artwork, design, or edited videos before? If yes, can you show us some of your work?",
           description:
@@ -245,7 +244,7 @@ export const json = {
         },
         {
           type: "radiogroup",
-          name: "Creative Question 3",
+          name: "question14",
           title:
             "Suppose, you are in the creative department & have basic knowledge of designing. Suddenly you are assigned to create a poster for an event. As it is going to be published in all the social media its design has to be attractive and sophisticated but you don't have any previous experience of creating anything like this. At the same time, you are given a deadline of 2 days. So what would you do?",
           isRequired: true,
@@ -271,14 +270,14 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Creative Question 4",
+          name: "question15",
           title:
             "Imagine, the club is planning an event with a unique theme that totally differs from what you had in mind. How would you boldly take on the challenge of modifying your creative ideas and skill level to fit this unexpected topic, all the while ensuring a smooth and eye-catching result?",
           isRequired: true,
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Creative'",
+      visibleIf: "{question8} = 'Creative'",
       title: "Creative",
       description:
         "This department primarily oversees the creative and design aspects of BUCC. Individuals possessing design skills, graphic work expertise, or unique creative ideas have a strong potential to thrive in this department. Crafting posters, banners, backdrops, brochures, producing videos and motion graphics, and decor events are the focal responsibilities of this department.",
@@ -288,7 +287,7 @@ export const json = {
       elements: [
         {
           type: "radiogroup",
-          name: "Event Management Question 1",
+          name: "question16",
           title: "Do you have an interest in photography?",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -301,7 +300,7 @@ export const json = {
         },
         {
           type: "text",
-          name: "Event Management Question 2",
+          name: "question17",
           title:
             "If you have an interest in photography, can you show us some of your works?",
           description:
@@ -312,7 +311,7 @@ export const json = {
         },
         {
           type: "boolean",
-          name: "Event Management Question 3",
+          name: "question18",
           title: "Have you organized any event before?",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -321,7 +320,7 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Event Management Question 4",
+          name: "question19",
           title:
             "What makes an event successful and how do you measure that success?",
           isRequired: true,
@@ -329,7 +328,7 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Event Management Question 5",
+          name: "question20",
           title:
             "In the club, you will get to know students from various semesters. You are assigned to manage an event with other fellow club members. How would you manage to cope with juniors and seniors?",
           isRequired: true,
@@ -337,14 +336,14 @@ export const json = {
         },
         {
           type: "rating",
-          name: "Event Management Question 6",
+          name: "question21",
           title:
             "How do you rate your negotiation skills with third parties such as stationery shops, Hardware shops, Restaurants, etc?",
           isRequired: true,
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Event Management'",
+      visibleIf: "{question8} = 'Event Management'",
       title: "Event Management",
       description:
         "This department is responsible for organizing events, handling various tasks such as booking venues like the auditorium and GDLN rooms, arranging food distribution, obtaining guest entry permissions from the Registrar, and managing necessary equipment for events. Additionally, they oversee photography management and storage. Living near the university is preferred for those interested in joining this department.",
@@ -354,7 +353,7 @@ export const json = {
       elements: [
         {
           type: "boolean",
-          name: "Finance Question 1",
+          name: "question22",
           title:
             "Have you ever worked related to finance or made a budget before?",
           isRequired: true,
@@ -362,13 +361,13 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Finance Question 2",
+          name: "question23",
           title: "What makes a successful budget?",
           isRequired: true,
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Finance'",
+      visibleIf: "{question8} = 'Finance'",
       title: "Finance",
       description:
         "to organizeThis department oversees the financial aspects of BUCC, beginning with budget allocation, distribution, and bill submission. Their main responsibilities include tracking bills and writing proposal letters to seek permission from authorities for organizing events or workshops. They play a crucial role in ensuring the smooth financial operation of BUCC's activities.",
@@ -378,7 +377,7 @@ export const json = {
       elements: [
         {
           type: "checkbox",
-          name: "Human Resources Question 1",
+          name: "question24",
           title:
             "Sabrina is a member of the X department. She has to write an email to all the members of the whole club. But she is struggling to write an email that is appropriate for this whole crowd. So what would be the most logical solution to this problem?",
           isRequired: true,
@@ -393,13 +392,13 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Human Resources Question 2",
+          name: "question25",
           title: "What is the greatest secret you have kept till now?",
           isRequired: true,
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Human Resources'",
+      visibleIf: "{question8} = 'Human Resources'",
       title: "Human Resources",
       description:
         "This department at BUCC is tasked with managing and maintaining member data, allocating volunteers, and ensuring their presence at every event. They handle registration and maintain etiquette among executive bodies, ensuring smooth operation of club activities. Additionally, they notify members about club events or other relevant information through email. If you're organized, communicative, and enjoy working with people, you might have what it takes to excel in HR.",
@@ -409,7 +408,7 @@ export const json = {
       elements: [
         {
           type: "text",
-          name: "Press Release & Publications Question 1",
+          name: "question26",
           title:
             "If you have written any articles, short stories, or novels before, can you show us some of your works?",
           description:
@@ -420,7 +419,7 @@ export const json = {
         },
         {
           type: "radiogroup",
-          name: "Press Release & Publications Question 2",
+          name: "question27",
           title:
             "What qualities do you think a published news portal article should have among these?",
           isRequired: true,
@@ -436,14 +435,14 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Press Release & Publications Question 3",
+          name: "question28",
           title:
             "What do you think about ChatGPT? Is it good to use ChatGPT in institutional/organizational writings?",
           isRequired: true,
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Press Release & Publications'",
+      visibleIf: "{question8} = 'Press Release & Publications'",
       title: "Press Release & Publications",
       description:
         "This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
@@ -453,7 +452,7 @@ export const json = {
       elements: [
         {
           type: "checkbox",
-          name: "Research & Development Question 1",
+          name: "question29",
           title:
             "Are you developing any skills right now? If yes specify what kind of skills you are developing.",
           isRequired: true,
@@ -470,7 +469,7 @@ export const json = {
         },
         {
           type: "comment",
-          name: "Research & Development Question 2",
+          name: "question30",
           title:
             "Do you have any projects regarding your selected skills? If yes give us a description about your project. If it's regarding problem solving describe that as well.",
           isRequired: true,
@@ -478,7 +477,7 @@ export const json = {
         },
         {
           type: "text",
-          name: "Research & Development Question 3",
+          name: "question31",
           title: "Give us the GitHub, Google, or Live Link of your project.",
           description:
             "Provide a github, drive link, or live link (if deployed) of your project, and don't forget to turn the share option on if providing a drive link. If it's any online portfolio (Leetcode, Codeforces, Portfolio Website, etc) you can attach that as well.",
@@ -487,7 +486,7 @@ export const json = {
           inputType: "url",
         },
       ],
-      visibleIf: "{Preferred Department 1} = 'Research & Development'",
+      visibleIf: "{question8} = 'Research & Development'",
       title: "Research & Development",
       description:
         "The Research & Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
@@ -498,49 +497,48 @@ export const json = {
         {
           type: "html",
           name: "Communications & Marketing Details Second",
-          visibleIf: "{Preferred Department 2} = 'Communications & Marketing'",
+          visibleIf: "{question32} = 'Communications & Marketing'",
           html: "<strong>Communications & Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
         },
         {
           type: "html",
           name: "Creative Details Second",
-          visibleIf: "{Preferred Department 2} = 'Creative'",
+          visibleIf: "{question32} = 'Creative'",
           html: "<strong>Creative: </strong>This department primarily oversees the creative and design aspects of BUCC. Individuals possessing design skills, graphic work expertise, or unique creative ideas have a strong potential to thrive in this department. Crafting posters, banners, backdrops, brochures, producing videos and motion graphics, and decor events are the focal responsibilities of this department.",
         },
         {
           type: "html",
           name: "Event Management Details Second",
-          visibleIf: "{Preferred Department 2} = 'Event Management'",
+          visibleIf: "{question32} = 'Event Management'",
           html: "<strong>Event Management: </strong>This department is responsible for organizing events, handling various tasks such as booking venues like the auditorium and GDLN rooms, arranging food distribution, obtaining guest entry permissions from the Registrar, and managing necessary equipment for events. Additionally, they oversee photography management and storage. Living near the university is preferred for those interested in joining this department.",
         },
         {
           type: "html",
           name: "Finance Details Second",
-          visibleIf: "{Preferred Department 2} = 'Finance'",
+          visibleIf: "{question32} = 'Finance'",
           html: "<strong>Finance: </strong>This department oversees the financial aspects of BUCC, beginning with budget allocation, distribution, and bill submission. Their main responsibilities include tracking bills and writing proposal letters to seek permission from authorities for organizing events or workshops. They play a crucial role in ensuring the smooth financial operation of BUCC's activities.",
         },
         {
           type: "html",
           name: "Human Resources Details Second",
-          visibleIf: "{Preferred Department 2} = 'Human Resources'",
+          visibleIf: "{question32} = 'Human Resources'",
           html: "<strong>Human Resources: </strong>This department at BUCC is tasked with managing and maintaining member data, allocating volunteers, and ensuring their presence at every event. They handle registration and maintain etiquette among executive bodies, ensuring smooth operation of club activities. Additionally, they notify members about club events or other relevant information through email. If you're organized, communicative, and enjoy working with people, you might have what it takes to excel in HR.",
         },
         {
           type: "html",
           name: "Press Release & Publications Details Second",
-          visibleIf:
-            "{Preferred Department 2} = 'Press Release & Publications'",
+          visibleIf: "{question32} = 'Press Release & Publications'",
           html: "<strong>Press Release & Publications: </strong>This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
         },
         {
           type: "html",
           name: "Research & Development Details Second",
-          visibleIf: "{Preferred Department 2} = 'Research & Development'",
+          visibleIf: "{question32} = 'Research & Development'",
           html: "<strong>Research & Development: </strong>The Research & Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
         },
         {
           type: "radiogroup",
-          name: "Preferred Department 2",
+          name: "question32",
           title: "Preferred Department (2nd)",
           isRequired: true,
           requiredErrorText: "This field is required",
@@ -565,7 +563,7 @@ export const json = {
       elements: [
         {
           type: "text",
-          name: "Brain Teaser Question 1",
+          name: "question33",
           title:
             "Rearrange/Anagram this line in such a way that it produces the same output: ELEVEN PLUS ONE",
         },
@@ -580,7 +578,7 @@ export const json = {
         },
         {
           type: "radiogroup",
-          name: "Brain Teaser Question 2",
+          name: "question34",
           title: " What is the output of the code given above?\n",
           description:
             "Just to check how sincere you are with your studies. This should be a piece of cake if you are done with the lectures of week 3 of the CSE110 course. \nP:S Don't use any IDE to solve this, try to solve it without anyone's help",
@@ -595,25 +593,25 @@ export const json = {
         },
         {
           type: "text",
-          name: "Brain Teaser Question 3",
+          name: "question35",
           title: "Where is the ‘Any Key’ on your keyboard?",
           description: "Prompt: Press any key to continue.",
         },
         {
           type: "text",
-          name: "question60",
+          name: "question36",
           title: "What did the computer do at lunchtime?",
           description: "Hint: Bit, Byte, Burger",
         },
         {
           type: "text",
-          name: "Brain Teaser Question 4",
+          name: "question37",
           title: "How do you go from 98 to 720 using just one letter?",
           description: "Use Mathematical symbol like +, -, x, ÷",
         },
         {
           type: "text",
-          name: "Brain Teaser Question 5",
+          name: "question38",
           title:
             "Alan Turing was trying to crack enigma. He saw that it encrypts “HEIL HITLER” into “MJNQ MNYQFW”. Now decode the messages given below if you can.",
           description:
@@ -630,12 +628,12 @@ export const json = {
         },
         {
           type: "text",
-          name: "Brain Teaser Question 6",
+          name: "question39",
           title: "GZHH NX NS TZW MJFWY",
         },
         {
           type: "text",
-          name: "Brain Teaser Question 7",
+          name: "question40",
           title: "MJNQ GZHH",
         },
       ],
