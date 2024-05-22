@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const { studentId, gSuiteEmail, name, responseObject } = body;
     await dbConnect();
     const memberEB = await MemberEBAssesment.findOne({
-      gSuiteEmail: gSuiteEmail,
+      studentId: studentId,
     });
     if (memberEB) {
       console.log("Form already submitted");
