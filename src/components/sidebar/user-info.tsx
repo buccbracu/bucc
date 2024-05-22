@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
 const userInfoData = {
+  // TODO: Replace with actual user data from the session
   username: "Sabbir Bin Abdul Latif",
   userEmail: "sabbir.bin.abdullatif@g.bracu.c.bd",
   profilePhoto: "",

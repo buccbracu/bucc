@@ -29,6 +29,7 @@ interface NavProps {
 export function SideNav({ menus, isCollapsed }: NavProps) {
   const pathName = usePathname();
   const { userDepartment, userDesignation } = {
+    // TODO: Replace with actual user data from the session
     userDepartment: "Research and Development",
     userDesignation: "General Member",
   };

@@ -43,6 +43,7 @@ export default function ActionButtons() {
   };
 
   const { username, userEmail, profilePhoto } = {
+    // TODO: Replace with actual user data from the session
     username: "Sabbir Bin Abdul Latif",
     userEmail: "sabbir.bin.abdullatif@g.bracu.c.bd",
     profilePhoto: "https://avatars.githubusercontent.com/u/65303669?v=4",
