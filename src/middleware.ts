@@ -22,7 +22,6 @@ export const config = {
     "/publications/:path*",
     "/gallery",
     "/contact",
-    "/login",
     "/registration",
   ],
 };
