@@ -9,13 +9,7 @@ import { Survey } from "survey-react-ui";
 import { darkTheme } from "./darkTheme";
 import { lightTheme } from "./lightTheme";
 
-interface Props {
-  params: {
-    studentId: number;
-  };
-}
-
-function EvaluationComponent() {
+export default function EvaluationComponent() {
   const { theme } = useTheme();
 
   const survey = new Model(json);
@@ -32,7 +26,7 @@ function EvaluationComponent() {
     survey.applyTheme(isDarkMode ? darkTheme : lightTheme);
   });
 
-  survey.onComplete.add(async (sender, options) => {
+  survey.onComplete.add(async (sender) => {
     const evaluationData = {
       studentId: sender.data.question2,
       name: sender.data.question1,
@@ -62,5 +56,3 @@ function EvaluationComponent() {
 
   return <Survey model={survey} />;
 }
-
-export default EvaluationComponent;

@@ -1,6 +1,6 @@
 import { signIn } from "@/auth";
 
-export default function SignIn() {
+export default function Login() {
   return (
     <form
       action={async (formData) => {
@@ -16,7 +16,7 @@ export default function SignIn() {
         Password
         <input name="password" type="password" />
       </label>
-      <button>Sign In</button>
+      <button>Login</button>
     </form>
   );
 }
