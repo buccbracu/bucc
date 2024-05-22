@@ -4,10 +4,9 @@ const allowedStatuses = ["Pending", "Accepted", "Rejected"];
 
 const MemberEBAssesmentSchema = new mongoose.Schema({
   studentId: {
-    type: String,
+    type: Number,
     required: true,
     unique: true,
-    ref: "PreregMemberInfo",
   },
   gSuiteEmail: {
     type: String,
