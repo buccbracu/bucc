@@ -41,7 +41,6 @@ function EvaluationComponent() {
     };
 
     try {
-      console.log(JSON.stringify(evaluationData.responseObject));
       const response = await fetch("/api/evaluation", {
         method: "POST",
         headers: {
