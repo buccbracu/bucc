@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-
 export function middleware(request: NextRequest) {
   const pathname = new URL(request.url).pathname;
   if (!(process.env.NODE_ENV === "development")) {
