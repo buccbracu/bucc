@@ -40,15 +40,19 @@ function EvaluationComponent() {
       responseObject: sender.data,
     };
 
-    console.log(evaluationData);
-
     try {
+      console.log(JSON.stringify(evaluationData.responseObject));
       const response = await fetch("/api/evaluation", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json; charset=UTF-8",
         },
-        body: JSON.stringify(evaluationData),
+        body: JSON.stringify({
+          studentId: evaluationData.studentId,
+          name: evaluationData.name,
+          gSuiteEmail: evaluationData.gSuiteEmail,
+          responseObject: JSON.stringify(evaluationData.responseObject),
+        }),
       });
       if (!response.ok) {
         throw new Error("Failed to submit evaluation data");

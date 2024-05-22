@@ -28,8 +28,6 @@ export async function POST(request: NextRequest) {
 
     await newMember.save();
 
-    console.log(body);
-
     return NextResponse.json(
       { message: "Register Successful" },
       { status: 200 }
