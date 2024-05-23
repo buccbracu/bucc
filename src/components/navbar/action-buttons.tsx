@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
+  // TODO: Change the login logout based on the user session
   const [userSingedIn, setUserSingedIn] = useState(false);
   const router = useRouter();
   const handleUserSingedIn = () => {
