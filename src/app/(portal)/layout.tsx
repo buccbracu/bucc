@@ -3,6 +3,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import ThemeToggler from "@/components/theme-toggler";
 import { ThemeProvider } from "@/components/themeProvider";
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
 
@@ -42,15 +43,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster closeButton richColors />
-          <Sidebar />
+          <SessionProvider>
+            <Toaster closeButton richColors />
+            <Sidebar />
 
-          <main className="w-full min-h-screen flex justify-center items-center">
-            <div className="absolute top-3 right-3">
-              <ThemeToggler />
-            </div>
-            {children}
-          </main>
+            <main className="w-full min-h-screen flex justify-center items-center">
+              <div className="absolute top-3 right-3">
+                <ThemeToggler />
+              </div>
+              {children}
+            </main>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
+  // TODO: Change the login logout based on the user session
   const [userSingedIn, setUserSingedIn] = useState(false);
   const router = useRouter();
   const handleUserSingedIn = () => {
@@ -43,6 +44,7 @@ export default function ActionButtons() {
   };
 
   const { username, userEmail, profilePhoto } = {
+    // TODO: Replace with actual user data from the session
     username: "Sabbir Bin Abdul Latif",
     userEmail: "sabbir.bin.abdullatif@g.bracu.c.bd",
     profilePhoto: "https://avatars.githubusercontent.com/u/65303669?v=4",

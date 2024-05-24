@@ -89,7 +89,11 @@ const MemberSchema = new mongoose.Schema({
 
         }
 
-    }
+    },
+    eb_assesment_details: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MemberEBAssesment'
+    },
 
 
 });
