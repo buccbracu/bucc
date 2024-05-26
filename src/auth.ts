@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/dbConnect";
 import UserAuth from "./model/UserAuth";
-import { saltAndHashPassword } from "./lib/password";
+import { compare } from "bcrypt";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -28,10 +28,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return null;
           }
 
-          const isPasswordCorrect =
-            credentials.password === user.password ? true : false;
-          console.log(credentials.password);
-          console.log(user.password);
+          const isPasswordCorrect = await compare(
+            credentials.password,
+            user.password
+          );
 
           if (!isPasswordCorrect) {
             console.error("Invalid password");
