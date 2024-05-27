@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const PreregMemberInfoSchema = new mongoose.Schema({
-  name: {
+  fullName: {
     type: String,
     required: true,
   },
-  student_id: {
+  studentId: {
     type: String,
     required: true,
     unique: true,
@@ -17,7 +17,7 @@ const PreregMemberInfoSchema = new mongoose.Schema({
         `${props.value} is not a valid student ID!`,
     },
   },
-  gsuite_email: {
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -28,17 +28,17 @@ const PreregMemberInfoSchema = new mongoose.Schema({
       "Please use a valid BRACU G-Suite email address",
     ], // BRACU G-Suite email validation
   },
-  department_bracu: {
+  departmentBracu: {
     //TODO: ENUM Needed here for predefined departments
     type: String,
     required: true,
     trim: true,
   },
-  joined_bracu: {
+  joinedBracu: {
     type: String,
     required: true,
   },
-  eb_assesment_details: {
+  ebAssesmentDetails: {
     //TODO: REMOVE THIS
     type: mongoose.Schema.Types.ObjectId,
     ref: "MemberEBAssesment",

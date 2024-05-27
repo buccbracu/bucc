@@ -1,102 +1,134 @@
-import { error } from "console";
-import mongoose from "mongoose";
-
-const allowedSocials = ['github', 'linkedin', 'facebook'];
+import mongoose, { Schema } from "mongoose";
 
 const MemberSchema = new mongoose.Schema({
+  _id: Schema.Types.ObjectId,
+  name: {
+    type: String,
+    required: [true, "Please provide a name"],
+  },
+  studentId: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [
+      /^[a-zA-Z0-9._%+-]+@(g\.)?bracu\.ac\.bd$/,
+      "Please use a valid BRACU G-Suite email address",
+    ],
+  },
+  buccDepartment: {
+    type: String,
+    enum: [
+      "ADVISORS BODY",
+      "GOVERNING BODY",
+      "COMMUNICATION AND MARKETING",
+      "CREATIVE",
+      "EVENT MANAGEMENT",
+      "FINANCE",
+      "HUMAN RESOURCES",
+      "PRESS RELEASE AND PUBLICATIONS",
+      "RESEARCH AND DEVELOPMENT",
+    ],
+    required: true,
+  },
+  designation: {
+    type: String,
+    enum: [
+      "ADVISOR",
+      "ALUMNI",
+      "PRESIDENT",
+      "VICE PRESIDENT",
+      "GENERAL SECRETARY",
+      "TREASURER",
+      "DIRECTOR",
+      "ASSISTANT DIRECTOR",
+      "SENIOR EXECUTIVE",
+      "EXECUTIVE",
+      "GENERAL MEMBER",
+    ],
+    required: true,
+    default: "GENERAL MEMBER",
+  },
+  personalEmail: {
+    type: String,
+    required: false,
+    unique: true,
+  },
 
-    name: {
-        type: String,
-        required: [true, 'Please provide a name']
-    },
-    student_id: {
-        type: String,
-        required: false,
-    },
-    gsuite_email: {
-        type: String,
-        required: [true, 'Please provide an email'],
-        unique: [true, 'Email already exists']
-    },
-    personal_email: {
-        type: String,
-        required: false,
-        unique: true
-    },
-    contact_number: {
-        type: String,
-        required: false,
-        unique: true
-    },
-    joined_bracu: {
-        type: String,
-        required: false
-    },
-    department_bracu: {
-        type: String,
-        required: false
-    },
-    profile_image_url:{
-        type: String,
-        required: false
-    },
-    rfid:{
-        type: String,
-        required: false,
-        unique: true
-    },
-    date_of_birth:{
-        type: Date,
-        required: false
-    },
-    blood_group:{
-        type: String,
-        required: false
-    },
-    assigned_bucc_department:{
-        type: String,
-        required: false
-    },
-    emergency_contact_number:{
-        type: String,
-        required: false
-    },
-    joined_bucc:{
-        type: String,
-        required: false
-    },
-    last_promotion:{
-        type: String,
-        required: false
-    },
-    member_status:{
-        type: String,
-        required: false,
-        default: 'Pending'
-    },
-    member_skills:{
-        type: [String],
-        required: false
-    },
-    member_socials:{ // NEEDS SERVER SIDE VALIDATION TO PREVENT ARBITRARY DATA INJECTION
-        type: Map,
-        of: String,
-        validate: {
-            validator: function(v: any) {
-                return Object.keys(v).every(key => allowedSocials.includes(key));
-            },
-            message: (props: { value: any; }) => `${props.value} is not a valid social media platform`
+  contactNumber: {
+    type: String,
+    required: false,
+    unique: true,
+  },
+  joinedBracu: {
+    type: String,
+    required: false,
+  },
+  departmentBracu: {
+    type: String,
+    required: false,
+  },
+  profileImage: {
+    type: String,
+    required: false,
+  },
+  rfid: {
+    type: String,
+    required: false,
+    unique: true,
+  },
+  birthDate: {
+    type: Date,
+    required: false,
+  },
+  bloodGroup: {
+    type: String,
+    required: false,
+  },
 
-        }
-
-    },
-    eb_assesment_details: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MemberEBAssesment'
-    },
-
-
+  emergencyContact: {
+    type: String,
+    required: false,
+  },
+  joinedBucc: {
+    type: String,
+    required: false,
+  },
+  lastPromotion: {
+    type: String,
+    required: false,
+  },
+  memberStatus: {
+    type: String,
+    required: false,
+    default: "Pending",
+  },
+  memberSkills: {
+    type: String,
+    required: false,
+  },
+  //   memberSocials: {
+  //     required: false,
+  //     facebook: {
+  //       type: String,
+  //       required: false,
+  //     },
+  //     linkedIn: {
+  //       type: String,
+  //       required: false,
+  //     },
+  //     GitHub: {
+  //       type: String,
+  //       required: false,
+  //     },
+  //   },
 });
 
-const MemberInfo = mongoose.models.MemberInfo || mongoose.model('MemberInfo', MemberSchema);
+const MemberInfo =
+  mongoose.models.MemberInfo || mongoose.model("MemberInfo", MemberSchema);
 export default MemberInfo;
