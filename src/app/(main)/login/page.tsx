@@ -27,7 +27,7 @@ export default function Login() {
             toast.error(data.error);
             return;
           }
-          toast.success("Login successful");
+          toast.success("Login successful!");
         } catch (error) {
           toast.error("An error occurred");
         }

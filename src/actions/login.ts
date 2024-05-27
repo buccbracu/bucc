@@ -1,7 +1,7 @@
 "use server";
 
-import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
 
 export const login = async (values: any) => {
   if (!values) {
