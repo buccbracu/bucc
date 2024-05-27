@@ -57,13 +57,11 @@ const MemberSchema = new mongoose.Schema({
   personalEmail: {
     type: String,
     required: false,
-    unique: true,
   },
 
   contactNumber: {
     type: String,
     required: false,
-    unique: true,
   },
   joinedBracu: {
     type: String,
@@ -80,7 +78,6 @@ const MemberSchema = new mongoose.Schema({
   rfid: {
     type: String,
     required: false,
-    unique: true,
   },
   birthDate: {
     type: Date,
