@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import heroBanner from "/public/images/hero-banner-image.png";
 
 export default function Component() {
   return (
@@ -14,7 +15,7 @@ export default function Component() {
             explore the latest advancements in computer science and technology.
           </p>
         </div>
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="flex flex-row gap-4">
           <Link
             className="inline-flex h-12 items-center justify-center rounded-md bg-blue-600 text-white px-8 text-sm font-medium shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             href="#"
@@ -30,15 +31,12 @@ export default function Component() {
         </div>
         <div className="w-full max-w-5xl rounded-xl overflow-hidden">
           <Image
-            alt="BRAC University Computer Club Group Photo"
             className="w-full h-auto object-cover"
+            src={heroBanner}
+            placeholder="blur"
             height={675}
-            src="/images/hero-image.png"
-            style={{
-              aspectRatio: "1200/675",
-              objectFit: "cover",
-            }}
             width={1200}
+            alt="BRAC University Computer Club Executive Board 2024 Group Photo"
           />
         </div>
       </div>
