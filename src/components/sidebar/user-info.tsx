@@ -12,6 +12,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { logout } from "@/actions/logout";
 
 const userInfoData = {
   // TODO: Replace with actual user data from the session
@@ -23,7 +24,8 @@ const userInfoData = {
 const UserInfo = ({ isCollapsed }: { isCollapsed: boolean }) => {
   const [userSingedIn, setUserSingedIn] = useState(false);
   const router = useRouter();
-  const handleUserSingedIn = () => {
+  const handleUserLogOut = async () => {
+    await logout();
     router.push("/");
     toast.success("Logout successful");
   };
@@ -53,7 +55,7 @@ const UserInfo = ({ isCollapsed }: { isCollapsed: boolean }) => {
                   <Button
                     className="w-full"
                     variant="outline"
-                    onClick={handleUserSingedIn}
+                    onClick={handleUserLogOut}
                   >
                     Logout
                   </Button>
@@ -85,7 +87,7 @@ const UserInfo = ({ isCollapsed }: { isCollapsed: boolean }) => {
                   <Button
                     className="w-full"
                     variant="outline"
-                    onClick={handleUserSingedIn}
+                    onClick={handleUserLogOut}
                   >
                     Logout
                   </Button>

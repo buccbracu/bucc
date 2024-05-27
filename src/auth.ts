@@ -3,6 +3,8 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/dbConnect";
 import UserAuth from "./model/UserAuth";
+import { authConfig } from "./auth.config";
+import MemberInfo from "./model/MemberInfo";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -54,16 +56,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
-      // if (token.userRole && session.user) {
-      //   session.user.userRole = token.userRole as string;
-      // }
+      if (session.user) {
+        session.user.designation = token.designation as string;
+        session.user.buccDepartment = token.buccDepartment as string;
+      }
       return session;
     },
     async jwt({ token }) {
       if (!token.sub) return token;
-      const user = await UserAuth.findById(token.sub);
+      const user = await MemberInfo.findById(token.sub);
       if (!user) return token;
-      // token.userRole = user.userRoles[0];
+      token.designation = user.designation;
+      token.buccDepartment = user.buccDepartment;
       return token;
     },
   },
