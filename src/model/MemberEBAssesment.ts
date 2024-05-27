@@ -3,26 +3,27 @@ import mongoose from "mongoose";
 const allowedStatuses = ["Pending", "Accepted", "Rejected"];
 
 const MemberEBAssesmentSchema = new mongoose.Schema({
+  fullName: {
+    type: String,
+    required: true,
+  },
   studentId: {
     type: Number,
     required: true,
     unique: true,
   },
-  gSuiteEmail: {
+  email: {
     type: String,
     required: true,
   },
-  name: {
-    type: String,
-    required: true,
-  },
+
   inteviewTakenBy: {
     type: mongoose.Schema.Types.ObjectId,
     required: false,
     ref: "UserAuth", // Fix: List of EBs name
   },
 
-  assignedDepartment: {
+  buccDepartment: {
     type: String,
     required: true,
     default: "Not Assigned",
