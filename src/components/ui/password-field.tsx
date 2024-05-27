@@ -18,7 +18,7 @@ export default function PasswordField() {
       <LockIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4" />
       <Button
         type="button"
-        className="absolute bottom-1 right-1 h-7 w-7"
+        className="absolute bottom-1.5 right-1 h-7 w-7"
         size="icon"
         variant="ghost"
         onClick={() => setShowPassword(!showPassword)}
