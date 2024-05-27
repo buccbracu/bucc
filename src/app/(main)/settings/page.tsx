@@ -1,7 +1,6 @@
-"use server";
 import { auth } from "@/auth";
-
-export default async function UserAvatar() {
+export const maxDuration = 60;
+export default async function Settings() {
   const session = await auth();
 
   if (!session?.user) return null;
