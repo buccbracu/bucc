@@ -1,7 +1,7 @@
 "use server";
 
-import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
 
 export const login = async (values: any) => {
   if (!values) {
@@ -13,7 +13,7 @@ export const login = async (values: any) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/deashboard",
+      redirectTo: "/dashboard",
     });
   } catch (error) {
     if (error instanceof AuthError) {

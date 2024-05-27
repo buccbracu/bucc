@@ -21,36 +21,29 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+import { logout } from "@/actions/logout";
 import ThemeToggler from "@/components/theme-toggler";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
-  // TODO: Change the login logout based on the user session
-  const [userSingedIn, setUserSingedIn] = useState(false);
+  const session = useSession();
   const router = useRouter();
-  const handleUserSingedIn = () => {
-    if (userSingedIn) {
-      router.push("/");
-      toast.success("Logout successful");
-    } else {
-      router.push("/dashboard");
-      toast.success("Login successful");
-    }
-    setUserSingedIn(!userSingedIn);
-  };
 
-  const { username, userEmail, profilePhoto } = {
-    // TODO: Replace with actual user data from the session
-    username: "Sabbir Bin Abdul Latif",
-    userEmail: "sabbir.bin.abdullatif@g.bracu.c.bd",
-    profilePhoto: "https://avatars.githubusercontent.com/u/65303669?v=4",
-  };
+  const userSingedIn = session.data?.user;
+  const { name, email, image, designation, buccDepartment } =
+    session.data?.user || {};
 
-  const usernameFallback = username[0];
+  const usernameFallback = name ? name[0].toUpperCase() : "U";
+
+  const handleUserLogOut = async () => {
+    await logout();
+    router.push("/");
+    toast.success("Logout successful");
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -93,8 +86,7 @@ export default function ActionButtons() {
                   {userSingedIn ? null : (
                     <div className="md:hidden flex flex-row gap-2 items-center justify-center w-full text-lg mb-12 font-semibold">
                       <Button className="text-md w-full" variant="secondary">
-                        {/* <Link href={"/login"}>Login</Link> */}
-                        <p onClick={handleUserSingedIn}>Login</p>
+                        <Link href={"/login"}>Login</Link>
                       </Button>
                       <Button className="text-md w-full bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
                         <Link href={"/registration"}>Register</Link>
@@ -112,7 +104,7 @@ export default function ActionButtons() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="h-[36px] w-[36px] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border shadow-sm">
-                <AvatarImage alt={username} src={profilePhoto} />
+                <AvatarImage alt={name} src={image} />
                 <AvatarFallback>{usernameFallback}</AvatarFallback>
                 <span className="sr-only">Toggle user menu</span>
               </Avatar>
@@ -120,7 +112,7 @@ export default function ActionButtons() {
             <DropdownMenuContent className="w-fit mr-3">
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <span className="font-bold my-1">{username}</span>
+                  <span className="font-bold my-1">{name}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
@@ -131,7 +123,7 @@ export default function ActionButtons() {
                   <Button
                     className="w-full"
                     variant="outline"
-                    onClick={handleUserSingedIn}
+                    onClick={handleUserLogOut}
                   >
                     Logout
                   </Button>
@@ -143,8 +135,7 @@ export default function ActionButtons() {
       ) : (
         <div className="hidden md:flex md:space-x-2 ml-2">
           <Button className="text-md" variant="secondary">
-            {/* <Link href={"/login"}>Login</Link> */}
-            <p onClick={handleUserSingedIn}>Login</p>
+            <Link href={"/login"}>Login</Link>
           </Button>
           <Button className="text-md bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
             <Link href={"/registration"}>Register</Link>

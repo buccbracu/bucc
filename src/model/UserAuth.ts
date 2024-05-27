@@ -6,8 +6,7 @@ const UserAuthSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true,
-    default: "https://cdn-icons-png.flaticon.com/512/21/21294.png",
+    default: null,
   },
   email: {
     type: String,

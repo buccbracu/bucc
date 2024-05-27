@@ -53,6 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async session({ token, session }) {
+      await dbConnect();
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -63,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async jwt({ token }) {
+      await dbConnect();
       if (!token.sub) return token;
       const user = await MemberInfo.findById(token.sub);
       if (!user) return token;

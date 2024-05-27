@@ -4,11 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordField from "@/components/ui/password-field";
 import { MailIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useTransition } from "react";
 import { toast } from "sonner";
 
 export default function Login() {
+  const router = useRouter();
+  const session = useSession();
+  if (session.status === "authenticated") {
+    router.push("/dashboard");
+  }
   const [isPending, startTransition] = useTransition();
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -20,7 +27,7 @@ export default function Login() {
             toast.error(data.error);
             return;
           }
-          toast.success("Login successful");
+          toast.success("Login successful!");
         } catch (error) {
           toast.error("An error occurred");
         }
