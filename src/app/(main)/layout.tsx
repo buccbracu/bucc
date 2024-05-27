@@ -2,7 +2,6 @@ import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { ThemeProvider } from "@/components/themeProvider";
-import AuthProvider from "@/lib/AuthProvider";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
@@ -37,21 +36,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster closeButton richColors />
-            <Navbar />
-            <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
-              {children}
-            </main>
-            <Footer />
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster closeButton richColors />
+          <Navbar />
+          <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
