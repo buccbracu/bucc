@@ -17,9 +17,9 @@ export default auth((req) => {
     return Response.redirect(new URL(ROOT, nextUrl));
 });
 
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};
+// export const config = {
+//  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+// };
 // import { NextResponse, type NextRequest } from "next/server";
 // export function middleware(request: NextRequest) {
 //   const pathname = new URL(request.url).pathname;
@@ -36,14 +36,14 @@ export const config = {
 //   }
 // }
 
-// export const config = {
-//   matcher: [
-//     "/dashboard/:path*",
-//     "/about/:path*",
-//     "/events",
-//     "/publications/:path*",
-//     "/gallery",
-//     "/contact",
-//     "/registration",
-//   ],
-// };
+export const config = {
+  matcher: [
+    "/dashboard/:path*",
+    "/about/:path*",
+    "/events",
+    "/publications/:path*",
+    "/gallery",
+    "/contact",
+    "/registration",
+  ],
+};
