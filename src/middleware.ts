@@ -1,13 +1,11 @@
 import { authConfig } from "@/auth.config";
 import { DEFAULT_REDIRECT, PUBLIC_ROUTES, ROOT } from "@/lib/routes";
 import NextAuth from "next-auth";
-// import dbConnect from "./lib/dbConnect";
 
 const { auth } = NextAuth(authConfig);
 
 export default auth(async (req) => {
   const { nextUrl } = req;
-  // await dbConnect();
   const isAuthenticated = !!req.auth;
   const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
 
@@ -38,12 +36,5 @@ export default auth(async (req) => {
 // }
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/about/:path*",
-    "/events",
-    "/publications/:path*",
-    "/gallery",
-    "/contact",
-  ],
+  matcher: [],
 };

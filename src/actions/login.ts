@@ -13,7 +13,7 @@ export const login = async (values: any) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/deashboard",
+      redirectTo: "/dashboard",
     });
   } catch (error) {
     if (error instanceof AuthError) {
