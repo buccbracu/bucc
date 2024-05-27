@@ -2,6 +2,7 @@
 
 import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
+import router from "next/router";
 
 export const login = async (values: any) => {
   if (!values) {
@@ -13,8 +14,8 @@ export const login = async (values: any) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
     });
+    router.push("/dashboard");
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
