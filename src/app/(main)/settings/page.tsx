@@ -6,8 +6,8 @@ export default async function Settings() {
 
   return (
     <div>
-      <p>{JSON.stringify(session)}</p>
-      <p>{session?.user.userRole}</p>
+      <p>Session: {JSON.stringify(session)}</p>
+      <p>Name: {session?.user.email}</p>
     </div>
   );
 }
