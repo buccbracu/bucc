@@ -21,6 +21,10 @@ const MemberSchema = new mongoose.Schema({
       "Please use a valid BRACU G-Suite email address",
     ],
   },
+  password: {
+    type: String,
+    required: true,
+  },
   buccDepartment: {
     type: String,
     enum: [
