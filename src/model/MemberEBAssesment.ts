@@ -47,7 +47,7 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
   },
 
   responseObject: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     required: true,
   },
 });
