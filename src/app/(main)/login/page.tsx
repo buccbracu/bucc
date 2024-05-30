@@ -40,7 +40,7 @@ export default function Login() {
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Enter your email and password to sign in.
+            Enter your g-suite email and password to sign in.
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>

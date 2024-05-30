@@ -50,7 +50,8 @@ export default function EvaluationComponent() {
       });
       if (!response.ok) {
         toast.error("Failed to submit evaluation data");
-        // throw new Error("Failed to submit evaluation data");
+      } else {
+        toast.success("Evaluation data submitted successfully");
       }
       const data = await response.json();
       console.log(data);

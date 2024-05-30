@@ -10,6 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { intakeInfo } from "@/constants/buccInfo";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -17,6 +19,7 @@ import { toast } from "sonner";
 export default function Registration() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isRegistered, setIsRegistered] = useState(true);
   const [formData, setFormData] = useState({
     studentId: "",
     name: "",
@@ -62,11 +65,9 @@ export default function Registration() {
           body: JSON.stringify(data),
         });
 
-        const result = await response.json();
-
         if (response.ok) {
           toast.success("Registration successful!");
-          router.push("/login");
+          setIsRegistered(true);
         } else {
           toast.error("Registration failed!");
         }
@@ -76,15 +77,47 @@ export default function Registration() {
     });
   };
 
-  return (
+  return isRegistered ? (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <div className="w-full max-w-md space-y-6 p-8">
+      <div className="w-full max-w-lg space-y-6 p-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Registration Successful!
+          </h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            You have successfully registered for {intakeInfo.intakeName}. Please
+            make sure to fill up the
+            <strong className="text-blue-500">
+              <Link href={"/evaluation"}> Written Evaluation Form</Link>
+            </strong>{" "}
+            before attending for interview. Keep an eye on your email and our
+            <strong className="text-blue-500">
+              {" "}
+              <Link href={"https://www.facebook.com/BRACUCC"}>
+                Facebook page
+              </Link>
+            </strong>{" "}
+            for further updates.
+          </p>
+        </div>
+        <Button
+          className="w-full rounded-md bg-gray-900 py-2 px-4 font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-950 focus:ring-offset-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200 dark:focus:ring-gray-300 dark:focus:ring-offset-gray-950"
+          onClick={() => router.push("/")}
+        >
+          Go to Home
+        </Button>
+      </div>
+    </div>
+  ) : (
+    <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
+      <div className="w-full max-w-lg space-y-6 p-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Registration
           </h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Fill out the form to create your account.
+            Fill out the form to complete the pre registration for{" "}
+            {intakeInfo.intakeName}.
           </p>
         </div>
         <form className="space-y-6" onSubmit={handleSubmit}>

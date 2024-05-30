@@ -7,11 +7,13 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   studentId: {
     type: Number,
     required: true,
     unique: true,
   },
+
   gSuiteEmail: {
     type: String,
     required: true,

@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import MemberEBAssesment from "@/model/MemberEBAssesment";
+import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -30,5 +31,34 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    await dbConnect();
+    const url = new URL(request.url);
+    const studentID = url.searchParams.get("studentID");
+    if (!studentID) {
+      return NextResponse.json(
+        { error: "Student ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const preregMemberInfo = await PreregMemberInfo.findOne({
+      studentId: studentID,
+    });
+
+    if (preregMemberInfo) {
+      return NextResponse.json(preregMemberInfo, { status: 200 });
+    } else {
+      return NextResponse.json(
+        { error: "Student ID not found" },
+        { status: 404 }
+      );
+    }
+  } catch (error) {
+    return NextResponse.json({ status: 500 });
   }
 }
