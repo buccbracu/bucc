@@ -3,6 +3,7 @@
 import { json } from "@/components/evaluation/questionJSON";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
 import { Survey } from "survey-react-ui";
@@ -48,7 +49,8 @@ export default function EvaluationComponent() {
         }),
       });
       if (!response.ok) {
-        throw new Error("Failed to submit evaluation data");
+        toast.error("Failed to submit evaluation data");
+        // throw new Error("Failed to submit evaluation data");
       }
       const data = await response.json();
       console.log(data);

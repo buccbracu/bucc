@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const PreregMemberInfoSchema = new mongoose.Schema({
-  fullName: {
+  name: {
     type: String,
     required: true,
   },

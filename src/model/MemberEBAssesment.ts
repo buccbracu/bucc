@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const allowedStatuses = ["Pending", "Accepted", "Rejected"];
 
 const MemberEBAssesmentSchema = new mongoose.Schema({
-  fullName: {
+  name: {
     type: String,
     required: true,
   },
@@ -12,7 +12,7 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  email: {
+  gSuiteEmail: {
     type: String,
     required: true,
   },
