@@ -18,9 +18,14 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
   },
 
   inteviewTakenBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: [String],
+    required: true,
+  },
+
+  modifiedBy: {
+    type: String,
     required: false,
-    ref: "UserAuth", // Fix: List of EBs name
+    default: "Not Modified",
   },
 
   buccDepartment: {
@@ -42,7 +47,7 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
   },
 
   responseObject: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     required: true,
   },
 });

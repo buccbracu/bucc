@@ -1,7 +1,7 @@
 const saltRounds = 10;
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import UserAuth from "@/model/UserAuth";
+// import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
 import MemberInfo from "@/model/MemberInfo";
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    const user = await UserAuth.findOne({ email: email }).exec();
+    const user = await MemberInfo.findOne({ email: email }).exec();
     if (user) {
       return NextResponse.json(
         { message: "User already exists" },
@@ -19,21 +19,23 @@ export async function POST(request: NextRequest) {
       );
     }
     const hashPass = await hash(password, saltRounds);
-    const newUser = new UserAuth({
+    const newUser = new MemberInfo({
       name,
       email,
       password: hashPass,
+      studentId,
+      buccDepartment
     });
     await newUser.save();
-    const userID = await UserAuth.findOne({ email: email }).exec();
-    const newMember = new MemberInfo({
-      _id: userID.id.toString(),
-      name,
-      email,
-      studentId,
-      buccDepartment,
-    });
-    await newMember.save();
+    // const userID = await UserAuth.findOne({ email: email }).exec();
+    // const newMember = new MemberInfo({
+    //   _id: userID.id.toString(),
+    //   name,
+    //   email,
+    //   studentId,
+    //   buccDepartment,
+    // });
+    // await newMember.save();
     return NextResponse.json(
       { message: "Register Successful" },
       { status: 200 }
