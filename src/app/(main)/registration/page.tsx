@@ -19,7 +19,7 @@ import { toast } from "sonner";
 export default function Registration() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isRegistered, setIsRegistered] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(false);
   const [formData, setFormData] = useState({
     studentId: "",
     name: "",
@@ -124,6 +124,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
+              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
               id="name"
               placeholder="Enter your name"
               type="text"
@@ -134,6 +135,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="studentId">Student ID</Label>
             <Input
+              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
               id="studentId"
               placeholder="Enter your student ID"
               type="text"
@@ -144,6 +146,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="email">G-Suite Email Address</Label>
             <Input
+              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
               id="email"
               placeholder="Enter your G-Suite email"
               type="email"
@@ -158,7 +161,10 @@ export default function Registration() {
                 value={formData.semester}
                 onValueChange={(value) => handleSelectChange(value, "semester")}
               >
-                <SelectTrigger id="semester-name">
+                <SelectTrigger
+                  id="semester-name"
+                  className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+                >
                   <SelectValue placeholder="Select semester" />
                 </SelectTrigger>
                 <SelectContent>
@@ -168,9 +174,13 @@ export default function Registration() {
                 </SelectContent>
               </Select>
               <Input
+                className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
                 id="year"
                 placeholder="Year"
                 type="number"
+                min={2000}
+                max={2099}
+                step="1"
                 value={formData.year}
                 onChange={handleChange}
               />
@@ -179,6 +189,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="departmentBracu">BRACU Department</Label>
             <Input
+              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
               id="departmentBracu"
               placeholder="Enter Your BRACU Department"
               type="text"

@@ -10,7 +10,7 @@ export default function PasswordField() {
   return (
     <div className="relative">
       <Input
-        className="pl-10"
+        className="pl-10 shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
         name="password"
         placeholder="Password"
         type={showPassword ? "text" : "password"}
