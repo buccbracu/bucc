@@ -26,11 +26,6 @@ const MemberSchema = new mongoose.Schema({
     ],
   },
 
-  password: {
-    type: String,
-    required: true,
-  },
-
   buccDepartment: {
     type: String,
     enum: [

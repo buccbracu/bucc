@@ -44,13 +44,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SessionProvider>
-            <Toaster closeButton richColors />
             <Sidebar />
 
             <main className="w-full min-h-screen flex justify-center items-center">
               <div className="absolute top-3 right-3">
                 <ThemeToggler />
               </div>
+              <Toaster closeButton richColors />
               {children}
             </main>
           </SessionProvider>

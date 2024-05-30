@@ -44,9 +44,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SessionProvider>
-            <Toaster closeButton richColors />
             <Navbar />
             <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
+              <Toaster closeButton richColors />
               {children}
             </main>
             <Footer />

@@ -1,9 +1,9 @@
 const saltRounds = 10;
-import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-// import UserAuth from "@/model/UserAuth";
-import { hash } from "bcrypt";
 import MemberInfo from "@/model/MemberInfo";
+import UserAuth from "@/model/UserAuth";
+import { hash } from "bcrypt";
+import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -19,23 +19,31 @@ export async function POST(request: NextRequest) {
       );
     }
     const hashPass = await hash(password, saltRounds);
-    const newUser = new MemberInfo({
+    const newUser = new UserAuth({
       name,
       email,
       password: hashPass,
-      studentId,
-      buccDepartment
     });
+
     await newUser.save();
-    // const userID = await UserAuth.findOne({ email: email }).exec();
-    // const newMember = new MemberInfo({
-    //   _id: userID.id.toString(),
+
+    // const newUser = new MemberInfo({
     //   name,
     //   email,
+    //   password: hashPass,
     //   studentId,
-    //   buccDepartment,
+    //   buccDepartment
     // });
-    // await newMember.save();
+    // await newUser.save();
+    const userID = await UserAuth.findOne({ email: email }).exec();
+    const newMember = new MemberInfo({
+      _id: userID.id.toString(),
+      name,
+      email,
+      studentId,
+      buccDepartment,
+    });
+    await newMember.save();
     return NextResponse.json(
       { message: "Register Successful" },
       { status: 200 }
