@@ -53,8 +53,6 @@ export default function EvaluationComponent() {
       } else {
         toast.success("Evaluation data submitted successfully");
       }
-      const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error("Failed to submit evaluation data:", error);
     }

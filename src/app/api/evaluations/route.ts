@@ -4,7 +4,6 @@ import MemberEBAssesment from "@/model/MemberEBAssesment";
 import { NextRequest, NextResponse } from "next/server";
 
 const accessDesignation = [
-  "GENERAL MEMBER", // NEED TO BE REMOVED LATER
   "PRESIDENT",
   "VICE PRESIDENT",
   "GENERAL SECRETARY",

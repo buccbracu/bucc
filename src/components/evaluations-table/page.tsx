@@ -8,6 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 
@@ -23,6 +25,9 @@ const getEvaluations = async () => {
 };
 
 export default function EvaluationsTable() {
+  const router = useRouter();
+  const session = useSession();
+
   const [evaluations, setEvaluations] = useState([]);
 
   useEffect(() => {
@@ -32,6 +37,12 @@ export default function EvaluationsTable() {
     };
     fetchEvaluations();
   }, []);
+
+  if (!session.data) return null;
+
+  const handleRowClick = (id: string) => {
+    router.push(`recruitment/${id}`);
+  };
 
   return (
     <div className="overflow-x-auto">
@@ -45,24 +56,28 @@ export default function EvaluationsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {evaluations.map((user: any) => (
-            <TableRow key={user.studentId}>
-              <TableCell>{user.studentId}</TableCell>
-              <TableCell>{user.name}</TableCell>
+          {evaluations.map((evaluation: any) => (
+            <TableRow
+              key={evaluation._id}
+              onClick={() => handleRowClick(evaluation._id)}
+              className="cursor-pointer"
+            >
+              <TableCell>{evaluation.studentId}</TableCell>
+              <TableCell>{evaluation.name}</TableCell>
               <TableCell>
                 <Badge
                   variant={
-                    user.status === "Pending"
+                    evaluation.status === "Pending"
                       ? "pending"
-                      : user.status === "Accepted"
+                      : evaluation.status === "Accepted"
                       ? "accepted"
                       : "rejected"
                   }
                 >
-                  {user.status}
+                  {evaluation.status}
                 </Badge>
               </TableCell>
-              <TableCell>{user.assignedDepartment}</TableCell>
+              <TableCell>{evaluation.assignedDepartment}</TableCell>
             </TableRow>
           ))}
         </TableBody>

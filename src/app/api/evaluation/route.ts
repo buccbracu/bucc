@@ -39,23 +39,42 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     const url = new URL(request.url);
     const studentID = url.searchParams.get("studentID");
-    if (!studentID) {
+    const evaluationID = url.searchParams.get("evaluationID");
+
+    if (evaluationID) {
+      const evaluationData = await MemberEBAssesment.findOne({
+        _id: evaluationID,
+      });
+
+      if (evaluationData) {
+        return NextResponse.json(evaluationData, { status: 200 });
+      } else {
+        return NextResponse.json(
+          { error: "Evaluation Data not found" },
+          { status: 404 }
+        );
+      }
+    }
+
+    // Till here
+
+    if (studentID) {
+      const preregMemberInfo = await PreregMemberInfo.findOne({
+        studentId: studentID,
+      });
+
+      if (preregMemberInfo) {
+        return NextResponse.json(preregMemberInfo, { status: 200 });
+      } else {
+        return NextResponse.json(
+          { error: "Student ID not found" },
+          { status: 404 }
+        );
+      }
+    } else {
       return NextResponse.json(
         { error: "Student ID is required" },
         { status: 400 }
-      );
-    }
-
-    const preregMemberInfo = await PreregMemberInfo.findOne({
-      studentId: studentID,
-    });
-
-    if (preregMemberInfo) {
-      return NextResponse.json(preregMemberInfo, { status: 200 });
-    } else {
-      return NextResponse.json(
-        { error: "Student ID not found" },
-        { status: 404 }
       );
     }
   } catch (error) {
