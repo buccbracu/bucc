@@ -5,7 +5,6 @@ import Heading from "@/components/portal/heading";
 import { useEffect, useState } from "react";
 import EvaluationAssesment from "./evaluation-assesment";
 
-// Define the type for the evaluation data based on the MemberEBAssesment model
 type EvaluationData = {
   name: string;
   studentId: number;
@@ -15,7 +14,13 @@ type EvaluationData = {
   buccDepartment: string;
   status: string;
   comment?: string;
-  responseObject: string; // Adjusted this type for better handling
+  responseObject: string;
+};
+
+type PageProps = {
+  params: {
+    evaluationID: string;
+  };
 };
 
 const getEvaluation = async (
@@ -39,9 +44,7 @@ const getEvaluation = async (
   }
 };
 
-export default function Evaluation(
-  { params } = { params: { evaluationID: "" } }
-) {
+export default function Evaluation({ params }: PageProps) {
   const [evaluationData, setEvaluationData] = useState<EvaluationData | null>(
     null
   );
@@ -103,7 +106,7 @@ export default function Evaluation(
         headingText="Evaluation Data"
         subHeadingText={`Evaluation of ${evaluationData.name}`}
       />
-      <div className="grid grid-cols-4 grid-flow-col gap-2">
+      <div className="grid grid-cols-4 grid-flow-col">
         <div className="p-4 col-span-3">
           <h3 className="text-xl font-bold mb-6">Evaluation Responses</h3>
           {responseObject &&
@@ -131,7 +134,7 @@ export default function Evaluation(
             })}
         </div>
         <div className="p-4 col-span-3">
-          <h3 className="text-xl font-bold mb-6">Evaluation Responses</h3>
+          <h3 className="text-xl font-bold mb-6">EB Assesment</h3>
           <EvaluationAssesment evaluationData={evaluationData} />
         </div>
       </div>
