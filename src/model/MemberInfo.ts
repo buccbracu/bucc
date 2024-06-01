@@ -1,3 +1,4 @@
+import { intakeInfo } from "@/constants/buccInfo";
 import mongoose, { Schema } from "mongoose";
 
 const MemberSchema = new mongoose.Schema({
@@ -115,6 +116,7 @@ const MemberSchema = new mongoose.Schema({
   joinedBucc: {
     type: String,
     required: false,
+    default: intakeInfo.intakeName,
   },
 
   lastPromotion: {
@@ -125,11 +127,12 @@ const MemberSchema = new mongoose.Schema({
   memberStatus: {
     type: String,
     required: false,
-    default: "Pending",
+    default: "Active",
+    enum: ["Active", "Inactive", "Graduated", "Terminated"],
   },
 
   memberSkills: {
-    type: String,
+    type: [String],
     required: false,
   },
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import heroBanner from "/public/images/hero-banner-image.png";
 
-export default function Component() {
+export default function Hero() {
   return (
     <section className="w-full py-4 md:py-8 lg:py-12">
       <div className="container px-4 md:px-6 flex flex-col items-center justify-center text-center space-y-8">

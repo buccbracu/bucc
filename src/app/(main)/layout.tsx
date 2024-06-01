@@ -45,7 +45,7 @@ export default function RootLayout({
         >
           <SessionProvider>
             <Navbar />
-            <main className="container relative min-h-[calc(100vh-140px)] overflow-auto">
+            <main className="relative min-h-[calc(100vh-140px)] overflow-auto">
               <Toaster closeButton richColors />
               {children}
             </main>

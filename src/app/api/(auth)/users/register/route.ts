@@ -27,14 +27,6 @@ export async function POST(request: NextRequest) {
 
     await newUser.save();
 
-    // const newUser = new MemberInfo({
-    //   name,
-    //   email,
-    //   password: hashPass,
-    //   studentId,
-    //   buccDepartment
-    // });
-    // await newUser.save();
     const userID = await UserAuth.findOne({ email: email }).exec();
     const newMember = new MemberInfo({
       _id: userID.id.toString(),
