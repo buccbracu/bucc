@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
 interface NavProps {
@@ -28,18 +29,25 @@ interface NavProps {
 
 export function SideNav({ menus, isCollapsed }: NavProps) {
   const pathName = usePathname();
-  const { userDepartment, userDesignation } = {
-    userDepartment: "Research and Development",
-    userDesignation: "General Member",
-  };
+  const session = useSession();
+
+  const { designation, buccDepartment } = session.data?.user || {};
 
   const filteredMenus = menus.filter((menu) => {
+    const userDepartment = buccDepartment?.toLowerCase();
+    const userDesignation = designation?.toLowerCase();
+
     const isDepartmentMatch =
       !menu.access_department ||
-      menu.access_department.includes(userDepartment);
+      menu.access_department
+        .map((dept) => dept.toLowerCase())
+        .includes(userDepartment || "");
+
     const isDesignationMatch =
       !menu.access_designation ||
-      menu.access_designation.includes(userDesignation);
+      menu.access_designation
+        .map((desig) => desig.toLowerCase())
+        .includes(userDesignation || "");
 
     return isDepartmentMatch && isDesignationMatch;
   });

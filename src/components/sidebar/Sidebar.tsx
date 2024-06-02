@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SideNav } from "./side-nav";
 
 type Props = {};
@@ -20,6 +20,16 @@ export default function SideNavbar({}: Props) {
 
   function toggleSidebar() {
     setIsCollapsed(!isCollapsed);
+  }
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  if (!isLoaded) {
+    return null;
   }
 
   return (
