@@ -610,7 +610,7 @@ export const json = {
           description: "Use Mathematical symbol like +, -, x, ÷",
         },
         {
-          type: "text",
+          type: "expression",
           name: "question38",
           title:
             "Alan Turing was trying to crack enigma. He saw that it encrypts “HEIL HITLER” into “MJNQ MNYQFW”. Now decode the messages given below if you can.",

@@ -1,9 +1,9 @@
 const saltRounds = 10;
-import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
+import MemberInfo from "@/model/MemberInfo";
 import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
-import MemberInfo from "@/model/MemberInfo";
+import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    const user = await UserAuth.findOne({ email: email }).exec();
+    const user = await MemberInfo.findOne({ email: email }).exec();
     if (user) {
       return NextResponse.json(
         { message: "User already exists" },
@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
       email,
       password: hashPass,
     });
+
     await newUser.save();
+
     const userID = await UserAuth.findOne({ email: email }).exec();
     const newMember = new MemberInfo({
       _id: userID.id.toString(),

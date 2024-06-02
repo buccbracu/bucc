@@ -1,16 +1,21 @@
+import { intakeInfo } from "@/constants/buccInfo";
 import mongoose, { Schema } from "mongoose";
 
 const MemberSchema = new mongoose.Schema({
   _id: Schema.Types.ObjectId,
+
   name: {
     type: String,
     required: [true, "Please provide a name"],
   },
+
   studentId: {
     type: String,
     required: true,
   },
+
   email: {
+    //G-Suite Email
     type: String,
     required: true,
     unique: true,
@@ -21,6 +26,7 @@ const MemberSchema = new mongoose.Schema({
       "Please use a valid BRACU G-Suite email address",
     ],
   },
+
   buccDepartment: {
     type: String,
     enum: [
@@ -36,6 +42,7 @@ const MemberSchema = new mongoose.Schema({
     ],
     required: true,
   },
+
   designation: {
     type: String,
     enum: [
@@ -54,6 +61,7 @@ const MemberSchema = new mongoose.Schema({
     required: true,
     default: "GENERAL MEMBER",
   },
+
   personalEmail: {
     type: String,
     required: false,
@@ -63,52 +71,71 @@ const MemberSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+
   joinedBracu: {
     type: String,
     required: false,
   },
+
   departmentBracu: {
     type: String,
     required: false,
   },
+
   profileImage: {
     type: String,
     required: false,
   },
+
   rfid: {
     type: String,
     required: false,
   },
+
   birthDate: {
     type: Date,
     required: false,
   },
+
   bloodGroup: {
     type: String,
     required: false,
+  },
+
+  gender: {
+    type: String,
+    required: false,
+    enum: ["MALE", "FEMALE", "OTHER"],
   },
 
   emergencyContact: {
     type: String,
     required: false,
   },
+
   joinedBucc: {
     type: String,
     required: false,
+    default: intakeInfo.intakeName,
   },
+
   lastPromotion: {
     type: String,
     required: false,
   },
+
   memberStatus: {
     type: String,
     required: false,
-    default: "Pending",
+    default: "Active",
+    enum: ["Active", "Inactive", "Graduated", "Terminated"],
   },
+
   memberSkills: {
-    type: String,
+    type: [String],
     required: false,
   },
+
   //   memberSocials: {
   //     required: false,
   //     facebook: {
