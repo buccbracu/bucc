@@ -6,7 +6,7 @@ import hrImage from "/public/images/departments/hr.jpeg";
 import prImage from "/public/images/departments/pr.jpeg";
 import rndImage from "/public/images/departments/rnd.jpeg";
 
-export const departments = [
+export default const departments = [
   { title: "Advisors Body" },
   { title: "Governing Body" },
   { title: "Communication and Marketing" },
