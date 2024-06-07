@@ -1,11 +1,9 @@
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/navbar/Navbar";
-import { ThemeProvider } from "@/components/themeProvider";
+import Providers from "@/util/Providers";
 import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
 import { Outfit } from "next/font/google";
-import { Toaster } from "sonner";
 
 const font = Outfit({ subsets: ["latin"] });
 
@@ -37,21 +35,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SessionProvider>
-            <Navbar />
-            <main className="relative min-h-[calc(100vh-140px)] overflow-auto">
-              <Toaster closeButton richColors />
-              {children}
-            </main>
-            <Footer />
-          </SessionProvider>
-        </ThemeProvider>
+        <Providers>
+          <Navbar />
+          <main className="relative min-h-[calc(100vh-140px)] overflow-auto">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

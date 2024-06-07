@@ -65,17 +65,7 @@ export default function EvaluationsTable() {
               <TableCell>{evaluation.studentId}</TableCell>
               <TableCell>{evaluation.name}</TableCell>
               <TableCell>
-                <Badge
-                  variant={
-                    evaluation.status === "Pending"
-                      ? "pending"
-                      : evaluation.status === "Accepted"
-                      ? "accepted"
-                      : "rejected"
-                  }
-                >
-                  {evaluation.status}
-                </Badge>
+                <Badge variant={evaluation.status}>{evaluation.status}</Badge>
               </TableCell>
               <TableCell>{evaluation.assignedDepartment}</TableCell>
             </TableRow>
