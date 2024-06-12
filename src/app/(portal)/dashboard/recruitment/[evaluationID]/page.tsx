@@ -9,7 +9,7 @@ type EvaluationData = {
   name: string;
   studentId: number;
   gSuiteEmail: string;
-  inteviewTakenBy: string[];
+  interviewTakenBy: string[];
   modifiedBy: string;
   buccDepartment: string;
   status: string;

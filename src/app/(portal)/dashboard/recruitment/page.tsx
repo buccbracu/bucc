@@ -1,4 +1,4 @@
-import EvaluationsTable from "@/components/evaluations-table/page";
+import EvaluationsTable from "@/components/evaluations-table";
 import Heading from "@/components/portal/heading";
 import Filter from "./filter";
 

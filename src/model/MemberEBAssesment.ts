@@ -19,7 +19,7 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
     required: true,
   },
 
-  inteviewTakenBy: {
+  interviewTakenBy: {
     type: [String],
     required: true,
   },

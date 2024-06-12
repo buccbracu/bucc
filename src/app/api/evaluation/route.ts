@@ -57,8 +57,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Till here
-
     if (studentID) {
       const preregMemberInfo = await PreregMemberInfo.findOne({
         studentId: studentID,

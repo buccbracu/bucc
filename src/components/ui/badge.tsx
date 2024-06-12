@@ -8,11 +8,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        Accepted:
+        accepted:
           "border-transparent bg-green-400 text-green-900 hover:bg-green-500",
-        Pending:
+        pending:
           "border-transparent bg-yellow-400 text-yellow-900 hover:bg-yellow-500",
-        Rejected: "border-transparent bg-red-400 text-red-900 hover:bg-red-500",
+        rejected: "border-transparent bg-red-400 text-red-900 hover:bg-red-500",
         default:
           "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
         secondary:

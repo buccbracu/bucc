@@ -33,6 +33,7 @@
     "radix-ui": "^1.0.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-scrollama": "^2.3.3",
     "sonner": "^1.4.41",
     "survey-react-ui": "^1.10.5",
     "tailwind-merge": "^2.3.0",
