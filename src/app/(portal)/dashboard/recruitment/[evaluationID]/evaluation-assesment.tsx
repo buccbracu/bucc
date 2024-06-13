@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import MultiSelectInput from "@/components/ui/multi-select-input";
+import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import {
   Select,
   SelectContent,
@@ -11,11 +11,15 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import departments from "@/constants/departments";
+import EBs from "@/constants/ebs";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-const EBsName = ["Sabbir", "Amir", "Niloy"];
+const OPTIONS: Option[] = EBs.map((eb) => ({
+  label: eb.nickName,
+  value: eb.nickName,
+}));
 
 export default function EvaluationAssessment({ evaluationData }: any) {
   const { data: session } = useSession();
@@ -28,8 +32,11 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   );
   const [status, setStatus] = useState(evaluationData.status || "");
   const [comment, setComment] = useState(evaluationData.comment || "");
-  const [selectedEBs, setSelectedEBs] = useState<string[]>(
-    evaluationData.interviewTakenBy || []
+  const [selectedEBs, setSelectedEBs] = useState<Option[]>(
+    evaluationData.interviewTakenBy.map((eb: string) => ({
+      label: eb,
+      value: eb,
+    })) || []
   );
 
   const handleDepartmentChange = (value: string) => {
@@ -48,7 +55,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
     try {
       const assessmentData = {
         _id: evaluationID,
-        interviewTakenBy: selectedEBs,
+        interviewTakenBy: selectedEBs.map((eb) => eb.value),
         modifiedBy: session?.user?.name,
         assignedDepartment: department,
         status,
@@ -101,16 +108,27 @@ export default function EvaluationAssessment({ evaluationData }: any) {
           className="px-3 py-2 w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2"
         />
       </div>
+
       <div className="mb-4">
         <Label htmlFor="interviewTakenBy" className="block font-bold mb-2">
           Interview Taken By
         </Label>
-        <MultiSelectInput
-          data={EBsName}
-          selectedItems={selectedEBs}
-          setSelectedItems={setSelectedEBs}
+        <MultipleSelector
+          value={selectedEBs}
+          onChange={setSelectedEBs}
+          defaultOptions={OPTIONS}
+          commandProps={{
+            className:
+              "w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-0",
+          }}
+          emptyIndicator={
+            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+              no results found.
+            </p>
+          }
         />
       </div>
+
       <div className="mb-4">
         <Label htmlFor="assignedDepartment" className="block font-bold mb-2">
           Assigned Department
