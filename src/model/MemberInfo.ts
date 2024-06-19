@@ -136,21 +136,11 @@ const MemberSchema = new mongoose.Schema({
     required: false,
   },
 
-  //   memberSocials: {
-  //     required: false,
-  //     facebook: {
-  //       type: String,
-  //       required: false,
-  //     },
-  //     linkedIn: {
-  //       type: String,
-  //       required: false,
-  //     },
-  //     GitHub: {
-  //       type: String,
-  //       required: false,
-  //     },
-  //   },
+  //membersociocials will contain objects of social media links
+    memberSocials: {
+    type: Object,
+    required: false
+    }
 });
 
 const MemberInfo =
