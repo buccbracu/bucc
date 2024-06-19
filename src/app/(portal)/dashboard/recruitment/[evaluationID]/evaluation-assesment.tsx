@@ -15,6 +15,7 @@ import EBs from "@/constants/ebs";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const OPTIONS: Option[] = EBs.map((eb) => ({
   label: eb.nickName,
@@ -72,13 +73,12 @@ export default function EvaluationAssessment({ evaluationData }: any) {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Assessment added successfully.");
+        toast.success("Assessment added successfully.");
       } else {
-        alert(`Error: ${data.error}`);
+        toast.error("Error submitting assessment:");
       }
     } catch (error) {
-      console.error("Error submitting assessment:", error);
-      alert("An error occurred while submitting the assessment.");
+      toast.error("An error occurred while submitting the assessment.");
     }
   }
 
