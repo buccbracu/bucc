@@ -127,13 +127,13 @@ export default function TableComponent({
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
-          First page
+          ⟪ First page
         </Button>
         <Button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous page
+          ⟨ Previous page
         </Button>
         <span>
           Page {table.getState().pagination.pageIndex + 1} of{" "}
@@ -143,13 +143,13 @@ export default function TableComponent({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next page
+          Next page ⟩
         </Button>
         <Button
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
-          Last page
+          Last page ⟫
         </Button>
       </div>
     </div>

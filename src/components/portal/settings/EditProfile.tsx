@@ -31,29 +31,31 @@ import {
 import { getMember } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function EditProfile() {
   const session = useSession();
   const memberID = session?.data?.user.id;
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["member", memberID],
     queryFn: ({ queryKey }) => getMember(queryKey[1]),
   });
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [skills, setSkills] = useState(data?.user?.memberSkills || []);
+
   const [profileData, setProfileData] = useState({
     personalEmail: data?.user?.personalEmail || "",
     contactNumber: data?.user?.contactNumber || "",
     profileImage: data?.user?.profileImage || "",
-    rfid: data?.user?.rfid || "",
     birthday: data?.user?.birthday || "",
     bloodGroup: data?.user?.bloodGroup || "",
     gender: data?.user?.gender || "",
     emergencyContact: data?.user?.emergencyContact || "",
-    memberSkills: data?.user?.memberSkills || [],
+    memberSkills: skills,
     socialLinks: {
       facebook: data?.user?.socialLinks?.facebook || "",
       linkedIn: data?.user?.socialLinks?.linkedIn || "",
@@ -61,14 +63,16 @@ export default function EditProfile() {
     },
   });
 
+  useEffect(() => {
+    setProfileData((prevData) => ({
+      ...prevData,
+      memberSkills: skills,
+    }));
+  }, [skills]);
+
   const handleChange = (e: any) => {
     const { id, value, files } = e.target;
-    if (id === "profileImage") {
-      setProfileData((prevData) => ({
-        ...prevData,
-        profileImage: files[0],
-      }));
-    } else if (id.startsWith("socialLinks")) {
+    if (id.startsWith("socialLinks")) {
       const key = id.split(".")[1];
       setProfileData((prevData) => ({
         ...prevData,
@@ -85,14 +89,25 @@ export default function EditProfile() {
     }
   };
 
+  const handleConfirmation = () => {
+    if (showEditModal) {
+      setShowConfirmationModal(true);
+      setShowEditModal(false);
+    } else {
+      setShowEditModal(true);
+      setShowConfirmationModal(false);
+    }
+  };
+
   const handleSaveChanges = async () => {
+    setShowConfirmationModal(false);
     console.log(profileData);
   };
 
   return (
     <div>
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <Card>
+        <Card className="sm:w-full">
           <CardHeader>
             <CardTitle>Edit Profile</CardTitle>
             <CardDescription>Update your personal details.</CardDescription>
@@ -105,7 +120,7 @@ export default function EditProfile() {
             </DialogTrigger>
           </CardFooter>
         </Card>
-        <DialogContent className="my-3 sm:max-w-[425px] overflow-y-scroll max-h-screen">
+        <DialogContent className="my-4 sm:max-w-[425px] overflow-y-scroll max-h-screen">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -113,8 +128,29 @@ export default function EditProfile() {
               done.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="">
+          <div className="grid grid-cols-1 gap-4 py-4">
+            <div className="flex justify-center items-center flex-col">
+              <div className="relative w-24 h-24 mb-4">
+                {profileData.profileImage ? (
+                  <Image
+                    src={profileData.profileImage}
+                    height={100}
+                    width={100}
+                    alt={`Profile Image of ${data?.user?.name}`}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center">
+                    <span className="text-gray-700">No Image</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex space-x-4">
+                <Button variant="outline">Upload Image</Button>
+                <Button variant="outline">Remove Image</Button>
+              </div>
+            </div>
+            <div className="col-span-1">
               <Label htmlFor="personalEmail" className="text-right">
                 Personal Email
               </Label>
@@ -123,10 +159,9 @@ export default function EditProfile() {
                 type="email"
                 value={profileData.personalEmail}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="contactNumber" className="text-right">
                 Contact Number
               </Label>
@@ -134,76 +169,50 @@ export default function EditProfile() {
                 id="contactNumber"
                 value={profileData.contactNumber}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
-              <Label htmlFor="profileImage" className="text-right">
-                Profile Image
+            <div className="col-span-1">
+              <Label htmlFor="birthday" className="text-right">
+                Birthday
               </Label>
               <Input
-                id="profileImage"
-                type="file"
+                id="birthday"
+                type="date"
+                value={profileData.birthday}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
-              <Label htmlFor="rfid" className="text-right">
-                RFID
+            <div className="col-span-1">
+              <Label htmlFor="bloodGroup" className="text-right">
+                Blood Group
               </Label>
-              <Input
-                id="rfid"
-                value={profileData.rfid}
-                onChange={handleChange}
-                className="col-span-3"
-              />
+              <Select
+                value={profileData.bloodGroup}
+                onValueChange={(value) =>
+                  setProfileData((prevData) => ({
+                    ...prevData,
+                    bloodGroup: value,
+                  }))
+                }
+              >
+                <SelectTrigger className="">
+                  <SelectValue placeholder="Select blood group" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="A+">A+ (ve)</SelectItem>
+                    <SelectItem value="A-">A- (ve)</SelectItem>
+                    <SelectItem value="B+">B+ (ve)</SelectItem>
+                    <SelectItem value="B-">B- (ve)</SelectItem>
+                    <SelectItem value="AB+">AB+ (ve)</SelectItem>
+                    <SelectItem value="AB-">AB- (ve)</SelectItem>
+                    <SelectItem value="O+">O+ (ve)</SelectItem>
+                    <SelectItem value="O-">O- (ve)</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="">
-              <div className="">
-                <Label htmlFor="birthday" className="text-right">
-                  Birthday
-                </Label>
-                <Input
-                  id="birthday"
-                  type="date"
-                  value={profileData.birthday}
-                  onChange={handleChange}
-                  className=""
-                />
-              </div>
-              <div className="flex flex-col">
-                <Label htmlFor="bloodGroup" className="text-right">
-                  Blood Group
-                </Label>
-                <Select
-                  value={profileData.bloodGroup}
-                  onValueChange={(value) =>
-                    setProfileData((prevData) => ({
-                      ...prevData,
-                      bloodGroup: value,
-                    }))
-                  }
-                >
-                  <SelectTrigger className="">
-                    <SelectValue placeholder="Select blood group" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="A+">A+ (ve)</SelectItem>
-                      <SelectItem value="A-">A- (ve)</SelectItem>
-                      <SelectItem value="B+">B+ (ve)</SelectItem>
-                      <SelectItem value="B-">B- (ve)</SelectItem>
-                      <SelectItem value="AB+">AB+ (ve)</SelectItem>
-                      <SelectItem value="AB-">AB- (ve)</SelectItem>
-                      <SelectItem value="O+">O+ (ve)</SelectItem>
-                      <SelectItem value="O-">O- (ve)</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="gender" className="text-right">
                 Gender
               </Label>
@@ -211,10 +220,9 @@ export default function EditProfile() {
                 id="gender"
                 value={profileData.gender}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="emergencyContact" className="text-right">
                 Emergency Contact
               </Label>
@@ -222,16 +230,16 @@ export default function EditProfile() {
                 id="emergencyContact"
                 value={profileData.emergencyContact}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="memberSkills" className="text-right">
                 Skills
               </Label>
               <MultipleSelector
                 defaultOptions={profileData.memberSkills}
                 placeholder="Add your skills..."
+                onChange={setSkills}
                 creatable
                 emptyIndicator={
                   <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
@@ -240,7 +248,7 @@ export default function EditProfile() {
                 }
               />
             </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="socialLinks.facebook" className="text-right">
                 Facebook
               </Label>
@@ -248,10 +256,9 @@ export default function EditProfile() {
                 id="socialLinks.facebook"
                 value={profileData.socialLinks.facebook}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="socialLinks.linkedIn" className="text-right">
                 LinkedIn
               </Label>
@@ -259,10 +266,9 @@ export default function EditProfile() {
                 id="socialLinks.linkedIn"
                 value={profileData.socialLinks.linkedIn}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
-            <div className="">
+            <div className="col-span-1">
               <Label htmlFor="socialLinks.GitHub" className="text-right">
                 GitHub
               </Label>
@@ -270,7 +276,6 @@ export default function EditProfile() {
                 id="socialLinks.GitHub"
                 value={profileData.socialLinks.GitHub}
                 onChange={handleChange}
-                className="col-span-3"
               />
             </div>
           </div>
@@ -278,7 +283,7 @@ export default function EditProfile() {
             <Button variant="outline" onClick={() => setShowEditModal(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button onClick={handleConfirmation}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -289,17 +294,21 @@ export default function EditProfile() {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Profile Updated</DialogTitle>
+            <DialogTitle>Confirm Changes</DialogTitle>
             <DialogDescription>
-              Your profile has been updated successfully.
+              Are you sure you want to save the changes?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
+            <Button onClick={handleSaveChanges} className="w-full">
+              Save
+            </Button>
             <Button
-              onClick={() => setShowConfirmationModal(false)}
+              variant="outline"
+              onClick={handleConfirmation}
               className="w-full"
             >
-              Close
+              Cancel
             </Button>
           </DialogFooter>
         </DialogContent>
