@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
 import { auth } from "@/auth";
+import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   await dbConnect();
@@ -11,7 +11,7 @@ export async function GET() {
       message: "You are not authorized to view this page",
     });
   }
-  if (user?.user.buccDepartment !== "Human Resources") {
+  if (user?.user.buccDepartment !== "HUMAN RESOURCES") {
     return NextResponse.json({
       message: "Only HR Department has access to all-members",
     });

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 export default function Dashboard() {
   const session = useSession();
   return (
-    <div className="m-10">
+    <div className="">
       <Heading
         headingText="Dashboard"
         subHeadingText="This is a scrollable dashboard. Scroll down to see more content..."

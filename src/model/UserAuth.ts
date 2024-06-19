@@ -23,6 +23,10 @@ const UserAuthSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // otp: {
+  //   type: String,
+  //   default: null,
+  // }
 });
 
 const UserAuth =

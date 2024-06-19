@@ -2,7 +2,6 @@ const getEvaluations = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/evaluations`);
   return res.json();
 };
-export default getEvaluations;
 
 const getEvaluation = async ({ evaluationID }: { evaluationID: string }) => {
   const res = await fetch(
@@ -11,4 +10,27 @@ const getEvaluation = async ({ evaluationID }: { evaluationID: string }) => {
   return res.json();
 };
 
-export { getEvaluation };
+const getDepartmentMembers = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/members`);
+  return res.json();
+};
+
+const getAllMembers = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/all-members`);
+  return res.json();
+};
+
+const getMember = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member?id=${id}`);
+  return res.json();
+};
+
+export {
+  getAllMembers,
+  getDepartmentMembers,
+  getEvaluation,
+  getEvaluations,
+  getMember,
+};
+
+export default getEvaluations;

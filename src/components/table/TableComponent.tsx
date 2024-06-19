@@ -39,6 +39,11 @@ export default function TableComponent({
   const [filtering, setFiltering] = useState("");
   const router = useRouter();
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
+
   const table = useReactTable({
     data,
     columns,
@@ -49,9 +54,11 @@ export default function TableComponent({
     state: {
       sorting: sorting,
       globalFilter: filtering,
+      pagination,
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
+    onPaginationChange: setPagination,
   });
 
   const handleRowClick = (row: any) => {
@@ -70,7 +77,7 @@ export default function TableComponent({
                 <TableHead
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
-                  className="cursor-pointer"
+                  className="cursor-pointer bg-gray-200 dark:bg-gray-700 "
                 >
                   {header.isPlaceholder ? null : (
                     <div>
@@ -91,6 +98,15 @@ export default function TableComponent({
           ))}
         </TableHeader>
         <TableBody>
+          {table.getRowModel().rows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={columns.length}>
+                <div className="text-center align-middle text-gray-500 my-2">
+                  No data found
+                </div>
+              </TableCell>
+            </TableRow>
+          )}
           {table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}

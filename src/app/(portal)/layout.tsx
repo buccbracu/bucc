@@ -37,7 +37,7 @@ export default function RootLayout({
       <body className={`flex items-start justify-between ${font.className}`}>
         <Providers>
           <Sidebar />
-          <main className="w-full min-h-screen flex justify-center items-center">
+          <main className="w-full min-h-screen m-10 overflow-clip">
             <div className="absolute top-3 right-3">
               <ThemeToggler />
             </div>

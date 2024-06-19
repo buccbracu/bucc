@@ -3,17 +3,18 @@
 import Heading from "@/components/portal/heading";
 import FilterComponent from "@/components/table/FilterComponent";
 import TableComponent from "@/components/table/TableComponent";
+import departments from "@/constants/departments";
 import designations from "@/constants/designations";
-import { getDepartmentMembers } from "@/server/actions";
+import { getAllMembers } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 const columns = [
   { header: "Name", accessorKey: "name" },
+  { header: "Student ID", accessorKey: "studentId" },
+  { header: "Email", accessorKey: "email" },
   { header: "Designation", accessorKey: "designation" },
-  { header: "Joined BRACU", accessorKey: "joinedBracu" },
-  { header: "Joined BUCC", accessorKey: "joinedBucc" },
-  { header: "Last Promotion", accessorKey: "lastPromotion" },
+  { header: "Department", accessorKey: "buccDepartment" },
 ];
 
 const filterOptions = [
@@ -21,6 +22,12 @@ const filterOptions = [
     type: "search",
     name: "search",
     placeholder: "Search by student ID or name",
+  },
+  {
+    type: "select",
+    name: "department",
+    placeholder: "Filter by department",
+    options: departments.slice(2).map((department) => department.title),
   },
   {
     type: "select",
@@ -34,17 +41,18 @@ export default function Members() {
   const [filteredData, setFilteredData] = useState([]);
   const [filters, setFilters] = useState({
     search: "",
+    department: "",
     designation: "",
   });
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["members"],
-    queryFn: getDepartmentMembers,
+    queryKey: ["allMembers"],
+    queryFn: getAllMembers,
   });
 
   useEffect(() => {
-    if (data && data.users) {
-      const updatedData = data.users.map((item: any) => ({
+    if (data && data.user) {
+      const updatedData = data.user.map((item: any) => ({
         ...item,
       }));
 
@@ -56,6 +64,9 @@ export default function Members() {
           (!filters.search ||
             item.name.toLowerCase().includes(search) ||
             studentId.includes(search)) &&
+          (!filters.department ||
+            item.buccDepartment.toLowerCase() ===
+              filters.department.toLowerCase()) &&
           (!filters.designation ||
             item.designation.toLowerCase() ===
               filters.designation.toLowerCase())
@@ -71,7 +82,7 @@ export default function Members() {
   };
 
   const handleResetFilters = () => {
-    setFilters({ search: "", designation: "" });
+    setFilters({ search: "", department: "", designation: "" });
   };
 
   if (isLoading) {
@@ -98,7 +109,7 @@ export default function Members() {
           filteredData.length > 0 ||
           Object.values(filters).some((value) => value)
             ? filteredData
-            : data.users
+            : data.user
         }
         columns={columns}
       />

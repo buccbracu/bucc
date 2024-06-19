@@ -9,6 +9,42 @@ import getEvaluations from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
+const columns = [
+  { header: "Student ID", accessorKey: "studentId" },
+  { header: "Name", accessorKey: "name" },
+  {
+    header: "Status",
+    accessorKey: "status",
+    cell: ({ cell }: { cell: any }) => (
+      <Badge variant={cell.getValue().toLowerCase()}>{cell.getValue()}</Badge>
+    ),
+  },
+  { header: "Assigned Department", accessorKey: "buccDepartment" },
+];
+
+const filterOptions = [
+  {
+    type: "search",
+    name: "search",
+    placeholder: "Search by student ID or name",
+  },
+  {
+    type: "select",
+    name: "status",
+    placeholder: "Filter by status",
+    options: ["Pending", "Accepted", "Rejected"],
+  },
+  {
+    type: "select",
+    name: "department",
+    placeholder: "Filter by department",
+    options: [
+      "Not Assigned",
+      ...departments.slice(2).map((department) => department.title),
+    ],
+  },
+];
+
 export default function Evaluations() {
   const [filters, setFilters] = useState({
     search: "",
@@ -16,24 +52,10 @@ export default function Evaluations() {
     department: "",
   });
   const [filteredData, setFilteredData] = useState([]);
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["evaluations"],
     queryFn: getEvaluations,
   });
-
-  const columns = [
-    { header: "Student ID", accessorKey: "studentId" },
-    { header: "Name", accessorKey: "name" },
-    {
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ cell }: { cell: any }) => (
-        <Badge variant={cell.getValue().toLowerCase()}>{cell.getValue()}</Badge>
-      ),
-    },
-    { header: "Assigned Department", accessorKey: "buccDepartment" },
-  ];
 
   useEffect(() => {
     if (data) {
@@ -43,7 +65,7 @@ export default function Evaluations() {
       }));
 
       const filtered = updatedData.filter((item: any) => {
-        const studentId = item.studentId.toString();
+        const studentId = item.studentId.toString().toLowerCase();
         const search = filters.search.toLowerCase();
 
         return (
@@ -67,29 +89,6 @@ export default function Evaluations() {
     setFilters({ search: "", status: "", department: "" });
   };
 
-  const filterOptions = [
-    {
-      type: "search",
-      name: "search",
-      placeholder: "Search by student ID or name",
-    },
-    {
-      type: "select",
-      name: "status",
-      placeholder: "Filter by status",
-      options: ["Pending", "Accepted", "Rejected"],
-    },
-    {
-      type: "select",
-      name: "department",
-      placeholder: "Filter by department",
-      options: [
-        "Not Assigned",
-        ...departments.slice(2).map((department) => department.title),
-      ],
-    },
-  ];
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -99,28 +98,22 @@ export default function Evaluations() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full">
       <Heading headingText="Evaluations" subHeadingText="All evaluations" />
       <FilterComponent
         filters={filterOptions}
         onFilterChange={handleFilterChange}
-        onResetFilters={() =>
-          setFilters({ search: "", status: "", department: "" })
-        }
+        onResetFilters={handleResetFilters}
       />
-
       <TableComponent
         data={
-          filteredData.length || Object.values(filters).some((value) => value)
+          filteredData.length > 0 ||
+          Object.values(filters).some((value) => value)
             ? filteredData
             : data
         }
         columns={columns}
       />
-      {filteredData.length === 0 &&
-        Object.values(filters).some((value) => value) && (
-          <div className="text-center text-gray-500 mt-4">No data found</div>
-        )}
     </div>
   );
 }

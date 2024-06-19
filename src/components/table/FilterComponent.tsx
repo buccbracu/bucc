@@ -1,81 +1,98 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SearchIcon } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../ui/button";
 
 export default function FilterComponent({
   filters,
   onFilterChange,
   onResetFilters,
 }: {
-  filters: any;
-  onFilterChange: any;
+  filters: {
+    name: string;
+    type: string;
+    placeholder: string;
+    options?: string[];
+  }[];
+  onFilterChange: (filter: any) => void;
   onResetFilters: () => void;
 }) {
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("");
-  const [department, setDepartment] = useState("");
+  const [filterValues, setFilterValues] = useState(() =>
+    Object.fromEntries(filters.map((filter) => [filter.name, ""]))
+  );
 
-  const handleSearchChange = (e: any) => {
-    const value = e.target.value;
-    setSearch(value);
-    onFilterChange({ search: value });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilterValues((prevFilters) => ({ ...prevFilters, [name]: value }));
+    onFilterChange({ [name]: value });
   };
 
-  const handleStatusChange = (value: any) => {
-    setStatus(value);
-    onFilterChange({ status: value });
+  const handleSelectChange = (name: string, value: string) => {
+    setFilterValues((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+    onFilterChange({ [name]: value });
   };
 
-  const handleDepartmentChange = (value: any) => {
-    setDepartment(value);
-    onFilterChange({ department: value });
-  };
-
-  const handleResetFilters = () => {
-    setSearch("");
-    setStatus("");
-    setDepartment("");
+  const handleReset = () => {
+    const initialFilterValues = Object.fromEntries(
+      filters.map((filter) => [filter.name, ""])
+    );
+    setFilterValues(initialFilterValues);
     onResetFilters();
   };
 
   return (
-    <div className="flex items-center justify-between mb-6 w-full">
+    <div className="flex items-center justify-stretch mb-6 w-full">
       <div className="flex items-center space-x-4 w-full">
-        {filters.map((filter: any) => (
-          <div className="relative w-1/4" key={filter.name}>
+        {filters.map((filter) => (
+          <div className="relative w-full" key={filter.name}>
             {filter.type === "search" && (
               <div className="relative">
-                <input
+                <Input
                   type="text"
+                  name={filter.name}
                   placeholder={filter.placeholder}
                   className="w-full p-2 pl-8 border border-gray-300 rounded-md"
-                  value={search}
-                  onChange={handleSearchChange}
+                  value={filterValues[filter.name]}
+                  onChange={handleInputChange}
                 />
-                <SearchIcon className="absolute top-1/2 left-2 transform -translate-y-1/2" />
+                <SearchIcon className="absolute top-1/2 left-2 transform -translate-y-1/2 px-1" />
               </div>
             )}
             {filter.type === "select" && (
-              <select
-                className="w-full p-2 border border-gray-300 rounded-md"
-                value={filter.name === "status" ? status : department}
-                onChange={(e) =>
-                  filter.name === "status"
-                    ? handleStatusChange(e.target.value)
-                    : handleDepartmentChange(e.target.value)
+              <Select
+                value={filterValues[filter.name]}
+                onValueChange={(value) =>
+                  handleSelectChange(filter.name, value)
                 }
               >
-                <option value="">{filter.placeholder}</option>
-                {filter.options.map((option: any) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full p-2 border border-gray-300 rounded-md">
+                  <SelectValue placeholder={filter.placeholder}></SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {filter.options?.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             )}
           </div>
         ))}
-        <Button onClick={handleResetFilters}>Reset Filters</Button>
+        <Button onClick={handleReset}>Reset Filters</Button>
       </div>
     </div>
   );
