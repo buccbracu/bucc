@@ -64,4 +64,27 @@ try {
 
 }
 
-export {singleWelcomeMail,singleVerifyMail}
+const singleResetMail = async (name:string,email:string,resetToken:string) => {
+  
+    try {
+      const mailOptions = {
+        from: process.env.GMAIL_USERNAME,
+        to: email,
+        subject: "Reset your BUCC Portal Password",
+        text: resetMail(name,resetToken),
+      };
+      
+      await transporter.sendMail(mailOptions);
+    
+      return "Mail sent successfully"
+    
+    
+    } catch (error:any) {
+      return error.message
+      
+    }
+    
+    
+}
+
+export {singleWelcomeMail,singleVerifyMail,singleResetMail}
