@@ -26,4 +26,11 @@ function resetMail(name:String,resetToken:String){
     ${process.env.DOMAIN_URL}/api/users/reset?${resetToken}`
 }
 
-export {welcomeMail,verifyMail,resetMail}
+function sendVerifyToken(name:String,verifyToken:String){
+    return `
+    Dear ${name},
+    Please Copy the Token Below and Paste it in the Verification Page:
+    ${verifyToken}`
+}
+
+export {welcomeMail,verifyMail,resetMail,sendVerifyToken}
