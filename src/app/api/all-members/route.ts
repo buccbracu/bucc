@@ -3,6 +3,16 @@ import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextResponse } from "next/server";
 
+const permittedDepartments = ["GOVERNING BODY", "HUMAN RESOURCES"];
+const permittedDesignations = [
+  "PRESIDENT",
+  "VICE PRESIDENT",
+  "GENERAL SECRETARY",
+  "TREASURER",
+  "DIRECTOR",
+  "ASSISTANT DIRECTOR",
+];
+
 export async function GET() {
   await dbConnect();
   const user = await auth();
@@ -11,19 +21,15 @@ export async function GET() {
       message: "You are not authorized to view this page",
     });
   }
-  if (user?.user.buccDepartment !== "HUMAN RESOURCES") {
-    return NextResponse.json({
-      message: "Only HR Department has access to all-members",
-    });
-  }
   if (
-    user?.user.designation !== "DIRECTOR" &&
-    user?.user.designation !== "ASSISTANT DIRECTOR"
+    !permittedDepartments.includes(user?.user.buccDepartment) ||
+    !permittedDesignations.includes(user?.user.designation)
   ) {
     return NextResponse.json({
-      message: `Designation: ${user?.user.designation} don't have the permission to view this page.`,
+      message: `${user?.user.designation}S of ${user?.user.buccDepartment} don't have the permission to view this page.`,
     });
   }
+
   try {
     const users = await MemberInfo.find({});
     return NextResponse.json({ user: users });

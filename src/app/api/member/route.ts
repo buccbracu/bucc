@@ -4,7 +4,7 @@ import MemberInfo from "@/model/MemberInfo";
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDepartments = ["GOVERNING BODY", "HUMAN RESOURCES"];
-const permittedRoles = [
+const permittedDesignations = [
   "PRESIDENT",
   "VICE PRESIDENT",
   "GENERAL SECRETARY",
@@ -81,8 +81,8 @@ export async function PATCH(request: NextRequest) {
   }
 
   if (
-    !permittedRoles.includes(session.user.designation) &&
-    permittedDepartments.includes(session.user.buccDepartment)
+    !permittedDesignations.includes(session.user.designation) ||
+    !permittedDepartments.includes(session.user.buccDepartment)
   ) {
     return NextResponse.json({
       message: "You are not authorized to update this user",
