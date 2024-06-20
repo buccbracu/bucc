@@ -1,10 +1,8 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config'
 import { NextRequest } from 'next/server';
+import {welcomeMail,verifyMail,resetMail} from '@/helpers/mailTemplates'
 
-const resetMail = `Sample Reset Mail Content`; //TODO
-const verifyMail = `Sample Verify Mail Content`; //TODO
-const welcomeMail = `Sample Welcome Mail Content`; //TODO
 
 
   export const sendMailSingle = async (emailType:String,userId:String) => {
