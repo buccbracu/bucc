@@ -15,10 +15,24 @@ export async function GET(request: NextRequest,response: NextResponse) {
 
         const token = request.nextUrl.searchParams.get('token');
 
-        console.log(token);
+        if (!token) {
+            return NextResponse.json({
+                message: "Invalid or expired token. Please try again",
+            });
+        }
+
+        const user = await UserAuth.findOne({ verifyToken: token });
+
+        console.log(user);
+
+        if (!user) {
+            return NextResponse.json({
+                message: "Invalid or expired token. Please try again",
+            });
+        }
 
         return NextResponse.json({
-            message: "If this email is registered, a password reset link will be sent to your email",
+            message: "Valid Token. You can now reset your password",
         });
         
     } catch (error:any) {
@@ -80,3 +94,54 @@ try {
 }
 }
 
+export async function PATCH(request: NextRequest) {
+    try {
+
+        const body = await request.json();
+        const { newPassword, token } = body;
+
+        await dbConnect();
+
+        const user = await UserAuth.findOne({ verifyToken: token });    
+
+        if (!user) {
+            return NextResponse.json({
+                message: "Invalid or expired token. Please try again",
+            });
+        }
+
+        const isTokenExpired = new Date() > new Date(user.expiresIn);
+
+        if (isTokenExpired) {
+            return NextResponse.json({
+                message: "Token has expired. Please try again",
+            });
+        }
+
+        const isSameCurrentPassword = await compare(newPassword, user.password);
+
+        if (isSameCurrentPassword) {
+            return NextResponse.json({
+                message: "New password cannot be the same as the old password",
+            });
+        }
+
+        const hashPass = await hash(newPassword, 10);
+
+        const updatedUser = await UserAuth.findByIdAndUpdate(user.id, { password: hashPass, verifyToken: null, expiresIn: null });
+
+        if (!updatedUser) {
+            return NextResponse.json({
+                message: "Password reset failed. Please try again",
+            });
+        }
+        return NextResponse.json({
+            message: "Password reset successful",
+        });
+
+
+
+    } catch (error:any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
