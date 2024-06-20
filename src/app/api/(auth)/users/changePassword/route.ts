@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { singleVerifyMail } from "@/helpers/mailer";
 import dbConnect from "@/lib/dbConnect";
 import UserAuth from "@/model/UserAuth";
@@ -7,17 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function GET(request: NextRequest) {
   await dbConnect();
-  const user = {
-    user: {
-      name: "Tashfeen Azmaine",
-      email: "tashfeen.azmaine@g.bracu.ac.bd",
-      image: null,
-      id: "667323824c238b4f56027c0b",
-      designation: "GENERAL MEMBER",
-      buccDepartment: "RESEARCH AND DEVELOPMENT",
-    },
-    expires: "2024-07-20T03:49:57.402Z",
-  };
+  const user = await auth();
+
   if (!user) {
     return NextResponse.json({
       message: "You are not authorized to initiate Password Change",
@@ -64,17 +56,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await dbConnect();
-    const user = {
-      user: {
-        name: "Tashfeen Azmaine",
-        email: "tashfeen.azmaine@g.bracu.ac.bd",
-        image: null,
-        id: "667323824c238b4f56027c0b",
-        designation: "GENERAL MEMBER",
-        buccDepartment: "RESEARCH AND DEVELOPMENT",
-      },
-      expires: "2024-07-20T03:49:57.402Z",
-    };
+    const user = await auth();
 
     if (!user) {
       return NextResponse.json({

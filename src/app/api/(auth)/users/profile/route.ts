@@ -9,6 +9,8 @@ export async function GET() {
     await dbConnect();
     const user = await auth();
 
+    console.log(user)
+
     if (!user) {
         return NextResponse.json({
           message: "You are not authorized to view this page",
