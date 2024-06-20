@@ -17,7 +17,9 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { currentPassword, newPassword, verifyToken } = await request.json();
+    const { currentPassword, newPassword } = await request.json();
+
+    console.log(currentPassword, newPassword);
 
     const member = await UserAuth.findById(userID);
 
@@ -32,7 +34,7 @@ export async function PATCH(request: NextRequest) {
 
     if (!isSameCurrentPassword) {
       return NextResponse.json(
-        { message: "Old Password is incorrect" },
+        { message: "Current Password is incorrect" },
         { status: 400 }
       );
     }
@@ -41,7 +43,7 @@ export async function PATCH(request: NextRequest) {
 
     if (isSameNewPassword) {
       return NextResponse.json(
-        { message: "New Password cannot be the same as the old password" },
+        { message: "New Password cannot be the same as the current password" },
         { status: 400 }
       );
     }

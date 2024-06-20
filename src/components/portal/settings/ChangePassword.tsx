@@ -39,13 +39,28 @@ export default function ChangePassword() {
     }
   }, [newPassword, confirmPassword]);
 
-  const handleSubmit = () => {
-    if (currentPassword === newPassword) {
-      toast.error("New password cannot be the same as the current password.");
-      return;
-    }
-    if (newPassword === confirmPassword) {
-      toast.success("Passwords match. Save changes.");
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("/api/users/changePassword", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(data.message);
+      } else {
+        const data = await response.json();
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
     }
   };
 
