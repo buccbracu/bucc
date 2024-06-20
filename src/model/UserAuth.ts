@@ -26,8 +26,14 @@ const UserAuthSchema = new mongoose.Schema({
   verifyToken: {
     type: String,
     default: null,
+  },
+  expiresIn: {
+    type: Date,
+    default: null,
   }
 });
+
+
 
 const UserAuth =
   mongoose.models.UserAuth || mongoose.model("UserAuth", UserAuthSchema);
