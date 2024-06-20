@@ -21,6 +21,13 @@ try {
             });
         }
 
+        if(user.verifyToken){
+            await singleResetMail(user.name, user.email, user.verifyToken);
+            return NextResponse.json({
+                message: "If this email is registered, a password reset link will be sent to your email",
+            });
+        }
+
         const verifyToken = uuidv4();
 
         const expiresIn = new Date();
