@@ -25,6 +25,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: cnmImage,
     url: "/communication-and-marketing",
+    color: "bg-blue-500",
   },
   {
     name: "Creative",
@@ -32,6 +33,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: creativeImage,
     url: "/creative",
+    color: "bg-yellow-500",
   },
   {
     name: "Event Management",
@@ -39,6 +41,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: emImage,
     url: "/event-management",
+    color: "bg-red-500",
   },
   {
     name: "Finance",
@@ -46,6 +49,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: financeImage,
     url: "/finance",
+    color: "bg-green-500",
   },
   {
     name: "Human Resources",
@@ -53,6 +57,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: hrImage,
     url: "/human-resources",
+    color: "bg-purple-500",
   },
   {
     name: "Press Release and Publications",
@@ -60,6 +65,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: prImage,
     url: "/press-release-and-publications",
+    color: "bg-pink-500",
   },
 
   {
@@ -68,6 +74,7 @@ export const departmentsInfo = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: rndImage,
     url: "/research-and-development",
+    color: "bg-indigo-500",
   },
 ];
 

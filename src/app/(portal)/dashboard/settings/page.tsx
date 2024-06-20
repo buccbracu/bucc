@@ -10,7 +10,7 @@ export default function Settings() {
         headingText="Settings"
         subHeadingText="This is a scrollable dashboard. Scroll down to see more content..."
       />
-      <section className="container mx-auto p-6">
+      <section className="mx-auto ">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 h-full">
           <UpdateProfilePhoto />
           <EditProfile />

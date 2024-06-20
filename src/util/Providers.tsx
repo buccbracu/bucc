@@ -1,6 +1,7 @@
 "use client";
 
 import { ThemeProvider } from "@/components/themeProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
@@ -16,13 +17,15 @@ export default function Providers({ children }: { children: ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <SessionProvider>
-        <Toaster closeButton richColors />
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          {children}
-        </QueryClientProvider>
-      </SessionProvider>
+      <TooltipProvider>
+        <SessionProvider>
+          <Toaster closeButton richColors />
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            {children}
+          </QueryClientProvider>
+        </SessionProvider>
+      </TooltipProvider>
     </ThemeProvider>
   );
 }

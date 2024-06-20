@@ -121,7 +121,7 @@ export default function EditProfile() {
             </DialogTrigger>
           </CardFooter>
         </Card>
-        <DialogContent className="my-4 sm:max-w-[425px] overflow-y-scroll max-h-screen">
+        <DialogContent className="sm:max-w-md max-w-sm overflow-y-scroll max-h-screen">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -147,9 +147,9 @@ export default function EditProfile() {
                 )}
               </div>
               <div className="flex space-x-4">
-                <CldUploadButton uploadPreset="bucc_members_profile_photo" />
-                <Button variant="outline">Upload Image</Button>
-                <Button variant="outline">Remove Image</Button>
+                <CldUploadButton uploadPreset="bucc_members_profile_photo">
+                  Remove Photo
+                </CldUploadButton>
               </div>
             </div>
             <div className="col-span-1">
@@ -281,11 +281,13 @@ export default function EditProfile() {
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditModal(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmation}>Save Changes</Button>
+          <DialogFooter className="flex items-end">
+            <div className="flex flex-row gap-2">
+              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleConfirmation}>Save Changes</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -294,24 +296,26 @@ export default function EditProfile() {
         open={showConfirmationModal}
         onOpenChange={setShowConfirmationModal}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-w-sm rounded-md">
           <DialogHeader>
             <DialogTitle>Confirm Changes</DialogTitle>
             <DialogDescription>
               Are you sure you want to save the changes?
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button onClick={handleSaveChanges} className="w-full">
-              Save
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleConfirmation}
-              className="w-full"
-            >
-              Cancel
-            </Button>
+          <DialogFooter className="flex items-end">
+            <div className="flex flex-row gap-2">
+              <Button onClick={handleSaveChanges} className="w-full">
+                Save
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleConfirmation}
+                className="w-full"
+              >
+                Cancel
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
