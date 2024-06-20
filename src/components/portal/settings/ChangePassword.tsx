@@ -21,7 +21,7 @@ import { Label } from "@/components/ui/label";
 export default function ChangePassword() {
   return (
     <Dialog>
-      <Card>
+      <Card className="sm:w-full h-full flex flex-col justify-between">
         <CardHeader>
           <CardTitle>Change Passaword</CardTitle>
           <CardDescription>

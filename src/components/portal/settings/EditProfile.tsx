@@ -31,6 +31,7 @@ import {
 import { getMember } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { CldUploadButton } from "next-cloudinary";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -107,7 +108,7 @@ export default function EditProfile() {
   return (
     <div>
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <Card className="sm:w-full">
+        <Card className="sm:w-full h-full flex flex-col justify-between">
           <CardHeader>
             <CardTitle>Edit Profile</CardTitle>
             <CardDescription>Update your personal details.</CardDescription>
@@ -146,6 +147,7 @@ export default function EditProfile() {
                 )}
               </div>
               <div className="flex space-x-4">
+                <CldUploadButton uploadPreset="bucc_members_profile_photo" />
                 <Button variant="outline">Upload Image</Button>
                 <Button variant="outline">Remove Image</Button>
               </div>
