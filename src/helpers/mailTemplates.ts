@@ -23,7 +23,7 @@ function resetMail(name:String,resetToken:String){
     return `
     Dear ${name},
     Please reset your password by clicking the link below:
-    ${process.env.DOMAIN_URL}/api/users/resetPassword?${resetToken}`
+    ${process.env.DOMAIN_URL}/api/users/resetPassword?token=${resetToken}`
 }
 
 function sendVerifyToken(name:String,verifyToken:String){

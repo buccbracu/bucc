@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest){
   //TODO: Update Profile for Individual User and HR
 
     await dbConnect();
-    const session = {user: {id: "615f7b3b1f3b3b001f3b3b3b", designation: "HUMAN RESOURCES"}}; //WARNING< MUST FIX THIS
+    const session = await auth();
 
     
 
