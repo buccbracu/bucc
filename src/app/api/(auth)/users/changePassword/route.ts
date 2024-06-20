@@ -18,12 +18,29 @@ export async function GET(request: NextRequest) {
         });
     }
 
+    const member = await UserAuth.findOne({ _id: user.user.id }) 
+
+    if (!member) {
+        return NextResponse.json({
+            message: "User not found",
+        });
+    }
+
+    if(member.verifyToken){
+
+        await singleVerifyMail(user.user.name,user.user.email,member.verifyToken)
+
+        return NextResponse.json({
+            message: "Verification Token already sent",
+        });
+    }
+
     const verifyToken = uuidv4();
     const expiresIn = new Date()
     expiresIn.setHours(expiresIn.getHours() + 1);
 
 
-    const member = await UserAuth.findOneAndUpdate(
+    const membera = await UserAuth.findOneAndUpdate(
         { _id: user.user.id }, 
         { verifyToken: verifyToken, expiresIn: expiresIn}, 
         { new: true }
