@@ -155,8 +155,6 @@ export default function EditProfile() {
         ),
       };
 
-      console.log(memberData);
-
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
         {
