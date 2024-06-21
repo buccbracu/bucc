@@ -16,7 +16,9 @@ export default function EvaluationForm() {
 
   const checkPreregistered = async (studentID: string) => {
     try {
-      const response = await fetch(`/api/evaluation?studentID=${studentID}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/evaluation?studentID=${studentID}`
+      );
       if (!response.ok) {
         setIsRegistered(false);
       } else {

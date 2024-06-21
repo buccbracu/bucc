@@ -1,24 +1,10 @@
+import PageHeader from "@/components/page-header";
 import { GlobeIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
+import coAdvisor2Image from "/public/images/people/advisors/Afia-Mubassira-Islam.jpeg";
 import advisorImage from "/public/images/people/advisors/Annajiat-Alim-Rasel.jpeg";
 import coAdvisor1Image from "/public/images/people/advisors/Arif-Shakil.jpeg";
-import coAdvisor2Image from "/public/images/people/advisors/Afia-Mubassira-Islam.jpeg";
-import PageHeader from "@/components/page-header";
-
-{
-  /* <div className="space-y-4 text-center ">
-          <h2 className="text-3xl font-bold">Meet The Guardians of BUCC</h2>
-          <p className="text-gray-700 dark:text-gray-400">
-            Advisors play a crucial role in guiding and supporting the clubs.
-            They bring a wealth of industry experience, academic expertise, and
-            valuable connections to help the club members navigate their
-            academic and professional journeys. By providing mentorship,
-            technical guidance, and career advice, the advisors ensure the
-            club&apos;s success and the growth of its members.
-          </p>
-        </div> */
-}
 
 export default function Advisors() {
   return (
@@ -27,7 +13,7 @@ export default function Advisors() {
         title="Meet The Guardians of BUCC"
         description="Advisors play a crucial role in guiding and supporting the clubs. They bring a wealth of industry experience, academic expertise, and valuable connections to help the club members navigate their academic and professional journeys. By providing mentorship, technical guidance, and career advice, the advisors ensure the club's success and the growth of its members."
       />
-      <section className="space-y-16 max-w-5xl mx-auto py-12 md:py-20 dark:text-gray-50">
+      <section className="space-y-16 max-w-5xl mx-auto container p-4 dark:text-gray-50">
         <h2 className="text-3xl font-bold mb-4 text-center">Advisor</h2>
         <div className="grid md:grid-cols-2 gap-8 items-start">
           <div className="order-1 md:order-1">

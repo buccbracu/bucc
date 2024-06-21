@@ -2,9 +2,8 @@ import { compare } from "bcrypt";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/dbConnect";
-import UserAuth from "./model/UserAuth";
-import { authConfig } from "./auth.config";
 import MemberInfo from "./model/MemberInfo";
+import UserAuth from "./model/UserAuth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -60,6 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.designation = token.designation as string;
         session.user.buccDepartment = token.buccDepartment as string;
+        session.user.image = token.image as string;
       }
       return session;
     },
@@ -70,6 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (!user) return token;
       token.designation = user.designation;
       token.buccDepartment = user.buccDepartment;
+      token.image = user.profileImage;
       return token;
     },
   },

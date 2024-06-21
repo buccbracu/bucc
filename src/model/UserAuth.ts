@@ -23,6 +23,14 @@ const UserAuthSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  verifyToken: {
+    type: String,
+    default: null,
+  },
+  expiresIn: {
+    type: Date,
+    default: null,
+  },
 });
 
 const UserAuth =

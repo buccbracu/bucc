@@ -7,3 +7,5 @@ const intakeInfo = {
 };
 
 export { intakeInfo };
+
+export default intakeInfo;

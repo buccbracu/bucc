@@ -1,11 +1,9 @@
 import "@/app/globals.css";
 import Sidebar from "@/components/sidebar/Sidebar";
 import ThemeToggler from "@/components/theme-toggler";
-import { ThemeProvider } from "@/components/themeProvider";
+import Providers from "@/util/Providers";
 import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
 import { Outfit } from "next/font/google";
-import { Toaster } from "sonner";
 
 const font = Outfit({ subsets: ["latin"] });
 
@@ -37,24 +35,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`flex items-start justify-between ${font.className}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SessionProvider>
-            <Sidebar />
-
-            <main className="w-full min-h-screen flex justify-center items-center">
-              <div className="absolute top-3 right-3">
-                <ThemeToggler />
-              </div>
-              <Toaster closeButton richColors />
-              {children}
-            </main>
-          </SessionProvider>
-        </ThemeProvider>
+        <Providers>
+          <Sidebar />
+          <main className="w-full min-h-screen m-10 overflow-clip">
+            <div className="absolute top-3 right-3">
+              <ThemeToggler />
+            </div>
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

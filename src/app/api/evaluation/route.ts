@@ -1,12 +1,13 @@
 import dbConnect from "@/lib/dbConnect";
 import MemberEBAssesment from "@/model/MemberEBAssesment";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
+import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { studentId, gSuiteEmail, name, responseObject } = body;
+    const { studentId, gSuiteEmail, name, responseObject, firstChoice } = body;
     await dbConnect();
     const memberEB = await MemberEBAssesment.findOne({
       studentId: studentId,
@@ -25,6 +26,31 @@ export async function POST(request: NextRequest) {
       responseObject,
     });
     await memberSaveEB.save();
+
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      },
+      scopes: [
+        "https://www.googleapis.com/auth/drive",
+        "https://www.googleapis.com/auth/drive.file",
+        "https://www.googleapis.com/auth/spreadsheets",
+      ],
+    });
+
+    const sheets = google.sheets({ version: "v4", auth });
+
+    const response = await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: "A1:C1",
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [[studentId, name, firstChoice]],
+      },
+    });
+
+    console.log("Response", response);
 
     return NextResponse.json(
       { message: "Evaluation submission Successful" },
@@ -56,8 +82,6 @@ export async function GET(request: NextRequest) {
         );
       }
     }
-
-    // Till here
 
     if (studentID) {
       const preregMemberInfo = await PreregMemberInfo.findOne({
