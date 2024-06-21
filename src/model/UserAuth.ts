@@ -30,10 +30,8 @@ const UserAuthSchema = new mongoose.Schema({
   expiresIn: {
     type: Date,
     default: null,
-  }
+  },
 });
-
-
 
 const UserAuth =
   mongoose.models.UserAuth || mongoose.model("UserAuth", UserAuthSchema);

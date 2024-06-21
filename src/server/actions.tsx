@@ -25,12 +25,18 @@ const getMember = async (id: string) => {
   return res.json();
 };
 
+const getProfileData = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`);
+  return res.json();
+};
+
 export {
   getAllMembers,
   getDepartmentMembers,
   getEvaluation,
   getEvaluations,
   getMember,
+  getProfileData,
 };
 
 export default getEvaluations;

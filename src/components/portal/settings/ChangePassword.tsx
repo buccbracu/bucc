@@ -41,16 +41,19 @@ export default function ChangePassword() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("/api/users/changePassword", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/changePassword`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -69,9 +72,7 @@ export default function ChangePassword() {
       <Card className="sm:w-full h-full flex flex-col justify-between">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
-          <CardDescription>
-            Update your name, email, and profile picture.
-          </CardDescription>
+          <CardDescription>Change your password.</CardDescription>
         </CardHeader>
         <CardFooter>
           <DialogTrigger asChild>

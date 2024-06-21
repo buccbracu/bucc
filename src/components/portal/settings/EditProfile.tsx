@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import MultipleSelector from "@/components/ui/multiple-selector";
+import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import {
   Select,
   SelectContent,
@@ -28,58 +28,100 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getMember } from "@/server/actions";
+import skills from "@/constants/skills";
+import { getProfileData } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { CldUploadButton } from "next-cloudinary";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+const OPTIONS: Option[] = skills.map((skill) => ({
+  label: skill.label,
+  value: skill.label,
+}));
 
 export default function EditProfile() {
-  const session = useSession();
-  const memberID = session?.data?.user.id;
-
-  const { data } = useQuery({
-    queryKey: ["member", memberID],
-    queryFn: ({ queryKey }) => getMember(queryKey[1]),
+  const { data, refetch } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfileData,
   });
+
+  const initialProfileData = {
+    personalEmail: "",
+    contactNumber: "",
+    profileImage: "",
+    birthDate: "",
+    bloodGroup: "",
+    gender: "",
+    emergencyContact: "",
+    memberSkills: [],
+    memberSocials: {
+      Facebook: "",
+      Linkedin: "",
+      Github: "",
+    },
+  };
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [skills, setSkills] = useState(data?.user?.memberSkills || []);
-
-  const [profileData, setProfileData] = useState({
-    personalEmail: data?.user?.personalEmail || "",
-    contactNumber: data?.user?.contactNumber || "",
-    profileImage: data?.user?.profileImage || "",
-    birthday: data?.user?.birthday || "",
-    bloodGroup: data?.user?.bloodGroup || "",
-    gender: data?.user?.gender || "",
-    emergencyContact: data?.user?.emergencyContact || "",
-    memberSkills: skills,
-    socialLinks: {
-      facebook: data?.user?.socialLinks?.facebook || "",
-      linkedIn: data?.user?.socialLinks?.linkedIn || "",
-      GitHub: data?.user?.socialLinks?.GitHub || "",
-    },
-  });
+  const [profileData, setProfileData] = useState(initialProfileData);
 
   useEffect(() => {
-    setProfileData((prevData) => ({
-      ...prevData,
-      memberSkills: skills,
-    }));
-  }, [skills]);
+    if (data?.user) {
+      const {
+        personalEmail,
+        contactNumber,
+        profileImage,
+        birthDate,
+        bloodGroup,
+        gender,
+        emergencyContact,
+        memberSkills,
+        memberSocials,
+      } = data.user;
+
+      setProfileData({
+        personalEmail,
+        contactNumber,
+        profileImage,
+        birthDate: birthDate.split("T")[0],
+        bloodGroup,
+        gender,
+        emergencyContact,
+        memberSkills: memberSkills.map((skill: any) => ({
+          label: skill,
+          value: skill,
+        })),
+        memberSocials: {
+          Facebook: memberSocials.Facebook || "",
+          Linkedin: memberSocials.Linkedin || "",
+          Github: memberSocials.Github || "",
+        },
+      });
+    }
+  }, [data]);
 
   const handleChange = (e: any) => {
-    const { id, value, files } = e.target;
-    if (id.startsWith("socialLinks")) {
-      const key = id.split(".")[1];
-      setProfileData((prevData) => ({
+    const { target } = e;
+    if (!target) {
+      console.error("Event target is undefined.");
+      return;
+    }
+
+    const { id, value } = target;
+    if (!id) {
+      console.error("Target id is undefined.");
+      return;
+    }
+
+    const [mainId, subId] = id.split(".");
+    if (subId) {
+      setProfileData((prevData: any) => ({
         ...prevData,
-        socialLinks: {
-          ...prevData.socialLinks,
-          [key]: value,
+        [mainId]: {
+          ...prevData[mainId],
+          [subId]: value,
         },
       }));
     } else {
@@ -90,19 +132,50 @@ export default function EditProfile() {
     }
   };
 
+  const handleSkillsChange = (selectedOptions: Option[]) => {
+    setProfileData((prevData: any) => ({
+      ...prevData,
+      memberSkills: selectedOptions,
+    }));
+  };
+
   const handleConfirmation = () => {
-    if (showEditModal) {
-      setShowConfirmationModal(true);
-      setShowEditModal(false);
-    } else {
-      setShowEditModal(true);
-      setShowConfirmationModal(false);
-    }
+    setShowConfirmationModal(true);
+    setShowEditModal(false);
   };
 
   const handleSaveChanges = async () => {
-    setShowConfirmationModal(false);
-    console.log(profileData);
+    try {
+      const memberData: any = {
+        ...profileData,
+        memberSkills: profileData.memberSkills.map(
+          (skill: Option) => skill.value
+        ),
+      };
+
+      console.log(memberData);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(memberData),
+        }
+      );
+      if (res.ok) {
+        toast.success("Profile updated successfully!");
+        setShowConfirmationModal(false);
+        refetch();
+      } else {
+        toast.error("An error occurred. Please try again later.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred. Please try again later.");
+    }
   };
 
   return (
@@ -137,7 +210,7 @@ export default function EditProfile() {
                     src={profileData.profileImage}
                     height={100}
                     width={100}
-                    alt={`Profile Image of ${data?.user?.name}`}
+                    alt={`Profile Image of ${name}`}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
@@ -174,13 +247,13 @@ export default function EditProfile() {
               />
             </div>
             <div className="col-span-1">
-              <Label htmlFor="birthday" className="text-right">
+              <Label htmlFor="birthDate" className="text-right">
                 Birthday
               </Label>
               <Input
-                id="birthday"
+                id="birthDate"
                 type="date"
-                value={profileData.birthday}
+                value={profileData.birthDate?.split("T")[0]}
                 onChange={handleChange}
               />
             </div>
@@ -218,11 +291,26 @@ export default function EditProfile() {
               <Label htmlFor="gender" className="text-right">
                 Gender
               </Label>
-              <Input
-                id="gender"
+              <Select
                 value={profileData.gender}
-                onChange={handleChange}
-              />
+                onValueChange={(value) =>
+                  setProfileData((prevData) => ({
+                    ...prevData,
+                    gender: value,
+                  }))
+                }
+              >
+                <SelectTrigger className="">
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="MALE">Male</SelectItem>
+                    <SelectItem value="FEMALE">Female</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="col-span-1">
               <Label htmlFor="emergencyContact" className="text-right">
@@ -239,44 +327,45 @@ export default function EditProfile() {
                 Skills
               </Label>
               <MultipleSelector
-                defaultOptions={profileData.memberSkills}
+                defaultOptions={OPTIONS}
+                value={profileData.memberSkills}
                 placeholder="Add your skills..."
-                onChange={setSkills}
+                onChange={handleSkillsChange}
                 creatable
                 emptyIndicator={
                   <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                    no results found.
+                    No results found.
                   </p>
                 }
               />
             </div>
             <div className="col-span-1">
-              <Label htmlFor="socialLinks.facebook" className="text-right">
+              <Label htmlFor="memberSocials.Facebook" className="text-right">
                 Facebook
               </Label>
               <Input
-                id="socialLinks.facebook"
-                value={profileData.socialLinks.facebook}
+                id="memberSocials.Facebook"
+                value={profileData.memberSocials.Facebook}
                 onChange={handleChange}
               />
             </div>
             <div className="col-span-1">
-              <Label htmlFor="socialLinks.linkedIn" className="text-right">
+              <Label htmlFor="memberSocials.Linkedin" className="text-right">
                 LinkedIn
               </Label>
               <Input
-                id="socialLinks.linkedIn"
-                value={profileData.socialLinks.linkedIn}
+                id="memberSocials.Linkedin"
+                value={profileData.memberSocials.Linkedin}
                 onChange={handleChange}
               />
             </div>
             <div className="col-span-1">
-              <Label htmlFor="socialLinks.GitHub" className="text-right">
+              <Label htmlFor="memberSocials.Github" className="text-right">
                 GitHub
               </Label>
               <Input
-                id="socialLinks.GitHub"
-                value={profileData.socialLinks.GitHub}
+                id="memberSocials.Github"
+                value={profileData.memberSocials.Github}
                 onChange={handleChange}
               />
             </div>
@@ -310,7 +399,7 @@ export default function EditProfile() {
               </Button>
               <Button
                 variant="outline"
-                onClick={handleConfirmation}
+                onClick={() => setShowConfirmationModal(false)}
                 className="w-full"
               >
                 Cancel

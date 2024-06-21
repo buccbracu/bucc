@@ -36,18 +36,21 @@ export default function EvaluationComponent() {
     };
 
     try {
-      const response = await fetch("/api/evaluation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify({
-          studentId: evaluationData.studentId,
-          name: evaluationData.name,
-          gSuiteEmail: evaluationData.gSuiteEmail,
-          responseObject: JSON.stringify(evaluationData.responseObject),
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/evaluation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+          body: JSON.stringify({
+            studentId: evaluationData.studentId,
+            name: evaluationData.name,
+            gSuiteEmail: evaluationData.gSuiteEmail,
+            responseObject: JSON.stringify(evaluationData.responseObject),
+          }),
+        }
+      );
       if (!response.ok) {
         toast.error("Failed to submit evaluation data");
       } else {

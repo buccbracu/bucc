@@ -28,7 +28,7 @@ const getEvaluation = async (
 ): Promise<EvaluationData | null> => {
   try {
     const response = await fetch(
-      `/api/evaluation?evaluationID=${evaluationID}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/evaluation?evaluationID=${evaluationID}`,
       {
         cache: "no-store",
         next: { revalidate: 10 },

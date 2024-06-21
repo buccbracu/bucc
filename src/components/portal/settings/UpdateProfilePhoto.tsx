@@ -21,7 +21,7 @@ export default function UpdateProfilePhoto() {
     <Card className="sm:w-full h-full flex flex-col justify-between">
       <CardHeader>
         <CardTitle>Update Profile Photo</CardTitle>
-        <CardDescription>Update your personal details.</CardDescription>
+        <CardDescription>Update your profile photo.</CardDescription>
       </CardHeader>
       <div className="flex justify-center items-center flex-col">
         <div className="relative w-24 h-24 mb-4">

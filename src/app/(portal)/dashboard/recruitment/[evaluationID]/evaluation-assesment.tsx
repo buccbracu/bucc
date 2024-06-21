@@ -63,13 +63,16 @@ export default function EvaluationAssessment({ evaluationData }: any) {
         comment,
       };
 
-      const response = await fetch("/api/ebassesment", {
-        method: "PATCH",
-        body: JSON.stringify(assessmentData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ebassesment`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(assessmentData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {

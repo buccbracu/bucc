@@ -92,13 +92,14 @@ export async function PATCH(request: NextRequest) {
       };
     }
 
+    // Handle skill updates
     if (body.memberSkills) {
       updateObject.memberSkills = [
-        ...user.memberSkills,
         ...body.memberSkills.filter((skill: any) => skill),
       ].filter((value, index, self) => value && self.indexOf(value) === index);
     }
 
+    // Merge other fields
     Object.keys(body).forEach((key) => {
       if (key !== "memberSocials" && key !== "memberSkills") {
         updateObject[key] = body[key];

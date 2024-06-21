@@ -71,9 +71,6 @@ export async function PATCH(request: NextRequest) {
 
   const session = await auth();
 
-  console.log(session);
-  console.log(memberID);
-
   if (!session) {
     return NextResponse.json({
       message: "You are not authorized to view this page",
@@ -138,7 +135,6 @@ export async function PATCH(request: NextRequest) {
 
     if (body.memberSkills) {
       updateObject.memberSkills = [
-        ...user.memberSkills,
         ...body.memberSkills.filter((skill: any) => skill),
       ].filter((value, index, self) => value && self.indexOf(value) === index);
     }
