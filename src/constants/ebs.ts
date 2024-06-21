@@ -250,7 +250,7 @@ const EBs = [
   {
     fullName: "Akil Rahman Efad",
     nickName: "Akil",
-    department: "Press Release and ations",
+    department: "Press Release and Publications",
     designation: "Director",
     image: AkilImage,
     facebookURL: "https://www.facebook.com/akil.rahman.rene",
@@ -259,7 +259,7 @@ const EBs = [
   {
     fullName: "Abdul Khalek Alve",
     nickName: "Alve",
-    department: "Press Release and ations",
+    department: "Press Release and Publications",
     designation: "Director",
     image: AlveImage,
     facebookURL: "https://www.facebook.com/AK.alve.33/",
@@ -268,7 +268,7 @@ const EBs = [
   {
     fullName: "Imtela Islam",
     nickName: "Imtela",
-    department: "Press Release and ations",
+    department: "Press Release and Publications",
     designation: "Assistant Director",
     image: ImtelaImage,
     facebookURL: "https://www.facebook.com/imtela.islam",
@@ -377,16 +377,16 @@ const EBsByDepartment = [
     ),
   },
   {
-    departmentName: "Press Release and ations",
-    EBs: EBs.filter((eb) => eb.department === "Press Release and ations"),
+    departmentName: "Press Release and Publications",
+    EBs: EBs.filter((eb) => eb.department === "Press Release and Publications"),
     directors: EBs.filter(
       (eb) =>
-        eb.department === "Press Release and ations" &&
+        eb.department === "Press Release and Publications" &&
         eb.designation === "Director"
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
-        eb.department === "Press Release and ations" &&
+        eb.department === "Press Release and Publications" &&
         eb.designation === "Assistant Director"
     ),
   },

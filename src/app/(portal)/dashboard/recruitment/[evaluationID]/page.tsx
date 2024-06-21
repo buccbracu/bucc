@@ -101,13 +101,17 @@ export default function Evaluation({ params }: PageProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mx-auto">
       <Heading
         headingText="Evaluation Data"
         subHeadingText={`Evaluation of ${evaluationData.name}`}
       />
-      <div className="grid grid-cols-4 grid-flow-col">
-        <div className="p-4 col-span-3">
+      <div className="md:flex md:flex-row-reverse">
+        <div className="p-4 md:w-1/3">
+          <h3 className="text-xl font-bold mb-6">EB Assesment</h3>
+          <EvaluationAssesment evaluationData={evaluationData} />
+        </div>
+        <div className="p-4 md:w-2/3">
           <h3 className="text-xl font-bold mb-6">Evaluation Responses</h3>
           {responseObject &&
             json.pages.map((page: any) => {
@@ -118,7 +122,7 @@ export default function Evaluation({ params }: PageProps) {
               return hasPageResponse ? (
                 <div
                   key={page.name}
-                  className="mb-6  dark:bg-gray-700 dark:text-gray-100 bg-gray-100 text-gray-800 p-6 rounded-lg"
+                  className="mb-6 dark:bg-gray-700 dark:text-gray-100 bg-gray-100 text-gray-800 p-6 rounded-lg overflow-clip"
                 >
                   <h2 className="text-lg font-bold mb-2">{page.title}</h2>
                   {page.elements.map((element: any) =>
@@ -132,10 +136,6 @@ export default function Evaluation({ params }: PageProps) {
                 </div>
               ) : null;
             })}
-        </div>
-        <div className="p-4 col-span-3">
-          <h3 className="text-xl font-bold mb-6">EB Assesment</h3>
-          <EvaluationAssesment evaluationData={evaluationData} />
         </div>
       </div>
     </div>
