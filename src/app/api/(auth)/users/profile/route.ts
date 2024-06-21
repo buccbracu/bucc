@@ -77,8 +77,7 @@ export async function PATCH(request: NextRequest) {
 
       for (let key of socialKeys) {
         if (
-          !["Facebook", "Github", "Linkedin"].includes(key) ||
-          !memberSocials[key]
+          !["Facebook", "Github", "Linkedin"].includes(key)
         ) {
           return NextResponse.json({
             message:
