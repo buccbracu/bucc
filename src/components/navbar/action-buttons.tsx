@@ -104,7 +104,7 @@ export default function ActionButtons() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="h-[36px] w-[36px] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border shadow-sm">
-                <AvatarImage alt={name} src={image} />
+                <AvatarImage alt={name} src={image} className="object-cover" />
                 <AvatarFallback>{usernameFallback}</AvatarFallback>
                 <span className="sr-only">Toggle user menu</span>
               </Avatar>

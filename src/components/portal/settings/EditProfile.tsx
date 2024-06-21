@@ -31,8 +31,7 @@ import {
 import skills from "@/constants/skills";
 import { getProfileData } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
-import { CldUploadButton } from "next-cloudinary";
-import Image from "next/image";
+import { CldImage, CldUploadButton } from "next-cloudinary";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -206,10 +205,11 @@ export default function EditProfile() {
             <div className="flex justify-center items-center flex-col">
               <div className="relative w-24 h-24 mb-4">
                 {profileData.profileImage ? (
-                  <Image
+                  <CldImage
+                    width="960"
+                    height="600"
                     src={profileData.profileImage}
-                    height={100}
-                    width={100}
+                    sizes="100vw"
                     alt={`Profile Image of ${name}`}
                     className="w-full h-full rounded-full object-cover"
                   />

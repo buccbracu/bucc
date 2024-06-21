@@ -35,7 +35,7 @@ const UserInfo = ({ isCollapsed }: { isCollapsed: boolean }) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="h-[36px] w-[36px] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border shadow-sm">
-                <AvatarImage alt={name} src={image} />
+                <AvatarImage alt={name} src={image} className="object-cover" />
                 <AvatarFallback>{usernameFallback}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
@@ -60,7 +60,11 @@ const UserInfo = ({ isCollapsed }: { isCollapsed: boolean }) => {
             <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2">
                 <Avatar className="flex items-center space-x-4 h-[36px] w-[36px] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border shadow-sm">
-                  <AvatarImage alt={name} src={image} />
+                  <AvatarImage
+                    alt={name}
+                    src={image}
+                    className="object-cover"
+                  />
                   <AvatarFallback>{usernameFallback}</AvatarFallback>
                 </Avatar>
 
