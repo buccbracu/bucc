@@ -3,6 +3,7 @@ import {
   BookUser,
   Calendar,
   CalendarClock,
+  FileDown,
   LayoutDashboard,
   Library,
   Newspaper,
@@ -74,7 +75,25 @@ const menus = [
     ],
     access_designation: ["Director", "Assistant Director"],
   },
-
+  {
+    title: "Backup",
+    path: "/dashboard/backup",
+    icon: FileDown,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Human Resources",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ],
+  },
   {
     title: "Recruitment",
     path: "/dashboard/recruitment",

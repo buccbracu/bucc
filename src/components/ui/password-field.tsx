@@ -100,9 +100,9 @@ export default function PasswordField({
             side="right"
             className="flex flex-col items-start gap-1 p-4 text-sm text-gray-500 bg-transparent border-none shadow-none"
           >
-            <div className="relative mb-4 rounded-lg bg-white p-4 text-sm ml-6 mt-8 before:absolute before:-left-[30px] before:top-1/2 before:translate-y-[-50%] before:border-[15px] before:border-transparent before:border-r-white">
+            <div className="relative mb-4 rounded-lg bg-white dark:bg-gray-700 p-4 text-sm ml-6 mt-8 before:absolute before:-left-[30px] before:top-1/2 before:translate-y-[-50%] before:border-[15px] before:border-transparent before:border-r-white dark:before:border-r-gray-700">
               {!haveLength && (
-                <div className=" text-red-500">
+                <div className=" text-red-500 dark:text-red-300">
                   &#x2717; At least 8 characters
                 </div>
               )}
@@ -112,13 +112,15 @@ export default function PasswordField({
                 </div>
               )}
               {!haveNumber && (
-                <div className="text-red-500">&#x2717; At least 1 number</div>
+                <div className="text-red-500 dark:text-red-300">
+                  &#x2717; At least 1 number
+                </div>
               )}
               {haveNumber && (
                 <div className="text-green-500">&#x2713; At least 1 number</div>
               )}
               {!haveSpecialCharacter && (
-                <div className="text-red-500">
+                <div className="text-red-500 dark:text-red-300">
                   &#x2717; At least 1 special character
                 </div>
               )}
@@ -128,7 +130,7 @@ export default function PasswordField({
                 </div>
               )}
               {!haveCapitalLetter && (
-                <div className="text-red-500">
+                <div className="text-red-500 dark:text-red-300">
                   &#x2717; At least 1 capital letter
                 </div>
               )}
@@ -138,7 +140,7 @@ export default function PasswordField({
                 </div>
               )}
               {!haveLowerCaseLetter && (
-                <div className="text-red-500">
+                <div className="text-red-500 dark:text-red-300">
                   {/* Add cross */}
                   &#x2717; At least 1 lowercase letter
                 </div>

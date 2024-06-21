@@ -32,6 +32,7 @@ export default function EvaluationComponent() {
       studentId: sender.data.question2,
       name: sender.data.question1,
       gSuiteEmail: sender.data.question3,
+      firstChoice: sender.data.question8,
       responseObject: sender.data,
     };
 
@@ -47,6 +48,7 @@ export default function EvaluationComponent() {
             studentId: evaluationData.studentId,
             name: evaluationData.name,
             gSuiteEmail: evaluationData.gSuiteEmail,
+            firstChoice: evaluationData.firstChoice,
             responseObject: JSON.stringify(evaluationData.responseObject),
           }),
         }

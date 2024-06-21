@@ -31,7 +31,7 @@ import {
 import skills from "@/constants/skills";
 import { getProfileData } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
-import { CldImage, CldUploadButton } from "next-cloudinary";
+import { CldImage } from "next-cloudinary";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -218,11 +218,6 @@ export default function EditProfile() {
                     <span className="text-gray-700">No Image</span>
                   </div>
                 )}
-              </div>
-              <div className="flex space-x-4">
-                <CldUploadButton uploadPreset="bucc_members_profile_photo">
-                  Remove Photo
-                </CldUploadButton>
               </div>
             </div>
             <div className="col-span-1">
