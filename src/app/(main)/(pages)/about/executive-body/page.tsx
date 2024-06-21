@@ -12,13 +12,13 @@ export default async function ExecutiveBody() {
         title="Executive Body 2024"
         description="The Executive Body of BUCC is the driving force behind the club's initiatives and activities. Comprised of dedicated and passionate members, the Executive Body is responsible for planning events, coordinating projects, and ensuring the smooth operation of the club. They work tirelessly to foster a vibrant community, promote collaboration, and provide opportunities for personal and professional growth. By leading with vision and commitment, the Executive Body ensures that BUCC continues to thrive and make a positive impact on its members and the broader community."
       />
-      <section className="container mx-auto p-4">
+      <section className="py-6">
         {EBs.map((department) => (
           <div key={department.departmentName} className="mb-8">
             <h2 className="text-3xl font-bold text-center mb-4 mt-4">
               {department.departmentName}
             </h2>
-            <div className="flex flex-col md:flex-row justify-center gap-4">
+            <div className="flex flex-col items-center md:flex-row justify-center gap-4">
               {/* President and Vice President Row */}
               {department.presidentAndVicePresident?.map(
                 (presidentAndVicePresident) => (
@@ -63,7 +63,7 @@ export default async function ExecutiveBody() {
                 )
               )}
             </div>
-            <div className="flex flex-col md:flex-row justify-center gap-4 mt-6 ">
+            <div className="flex flex-col items-center md:flex-row justify-center gap-4 mt-6 ">
               {/* General Secretary and Treasurer Row */}
               {department.generalSecretaryAndTreasurer?.map(
                 (generalSecretaryAndTreasurer) => (
@@ -110,7 +110,7 @@ export default async function ExecutiveBody() {
                 )
               )}
             </div>
-            <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+            <div className="flex flex-col items-center md:flex-row justify-center gap-4 mt-6">
               {/* Directors Row */}
               {department.directors?.map((director) => (
                 <div
@@ -151,7 +151,7 @@ export default async function ExecutiveBody() {
                 </div>
               ))}
             </div>
-            <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+            <div className="flex flex-col items-center md:flex-row justify-center gap-4 mt-6">
               {/* Assistant Directors Row */}
               {department.assistantDirectors?.map((assistantDirector) => (
                 <div

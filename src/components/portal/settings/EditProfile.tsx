@@ -84,18 +84,21 @@ export default function EditProfile() {
         personalEmail,
         contactNumber,
         profileImage,
-        birthDate: birthDate.split("T")[0],
+        birthDate: birthDate && birthDate.split("T")[0],
         bloodGroup,
         gender,
         emergencyContact,
-        memberSkills: memberSkills.map((skill: any) => ({
-          label: skill,
-          value: skill,
-        })),
-        memberSocials: {
-          Facebook: memberSocials.Facebook || "",
-          Linkedin: memberSocials.Linkedin || "",
-          Github: memberSocials.Github || "",
+        memberSkills:
+          memberSkills &&
+          memberSkills.map((skill: any) => ({ label: skill, value: skill })),
+        memberSocials: (memberSocials && {
+          Facebook: memberSocials.Facebook,
+          Linkedin: memberSocials.Linkedin,
+          Github: memberSocials.Github,
+        }) || {
+          Facebook: "",
+          Linkedin: "",
+          Github: "",
         },
       });
     }
