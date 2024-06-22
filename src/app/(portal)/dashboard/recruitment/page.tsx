@@ -8,6 +8,7 @@ import departments from "@/constants/departments";
 import getEvaluations from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import EvaluationStats from "./EvaluationStats";
 
 const columns = [
   { header: "Student ID", accessorKey: "studentId" },
@@ -20,6 +21,7 @@ const columns = [
     ),
   },
   { header: "Assigned Department", accessorKey: "buccDepartment" },
+  { header: "Comments", accessorKey: "comment" },
 ];
 
 const filterOptions = [
@@ -45,6 +47,27 @@ const filterOptions = [
   },
 ];
 
+const statusWiseDepartments: any = {
+  Accepted: {
+    ...Object.fromEntries(
+      departments.slice(2).map((department) => [department.title, 0]),
+    ),
+    "Not Assigned": 0,
+  },
+  Rejected: {
+    ...Object.fromEntries(
+      departments.slice(2).map((department) => [department.title, 0]),
+    ),
+    "Not Assigned": 0,
+  },
+  Pending: {
+    ...Object.fromEntries(
+      departments.slice(2).map((department) => [department.title, 0]),
+    ),
+    "Not Assigned": 0,
+  },
+};
+
 export default function Evaluations() {
   const [filters, setFilters] = useState({
     search: "",
@@ -52,10 +75,24 @@ export default function Evaluations() {
     department: "",
   });
   const [filteredData, setFilteredData] = useState([]);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["evaluations"],
     queryFn: getEvaluations,
   });
+
+  useEffect(() => {
+    if (data) {
+      data.forEach((item: any) => {
+        const department = item.buccDepartment || "Not Assigned";
+        const status = item.status;
+
+        if (statusWiseDepartments[status]) {
+          statusWiseDepartments[status][department] += 1;
+        }
+      });
+    }
+  }, [data]);
 
   useEffect(() => {
     if (data) {
@@ -100,20 +137,27 @@ export default function Evaluations() {
   return (
     <div className="w-full">
       <Heading headingText="Evaluations" subHeadingText="All evaluations" />
-      <FilterComponent
-        filters={filterOptions}
-        onFilterChange={handleFilterChange}
-        onResetFilters={handleResetFilters}
-      />
-      <TableComponent
-        data={
-          filteredData.length > 0 ||
-          Object.values(filters).some((value) => value)
-            ? filteredData
-            : data
-        }
-        columns={columns}
-      />
+      <div className="flex flex-col md:flex-row">
+        <div className="order-1 mt-4 w-full md:order-2 md:ml-4 md:mt-0 md:w-1/4">
+          <EvaluationStats evaluationsStats={statusWiseDepartments} />
+        </div>
+        <div className="order-2 w-full md:order-1 md:w-3/4">
+          <FilterComponent
+            filters={filterOptions}
+            onFilterChange={handleFilterChange}
+            onResetFilters={handleResetFilters}
+          />
+          <TableComponent
+            data={
+              filteredData.length > 0 ||
+              Object.values(filters).some((value) => value)
+                ? filteredData
+                : data
+            }
+            columns={columns}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -50,7 +50,7 @@ export async function PATCH(request: NextRequest) {
 
     if (oldPublicId) {
       const cloudinaryResponse = await cloudinary.uploader.destroy(
-        `process.env.CLOUDINARY_FOLDER_PATH${oldPublicId}`
+        `${process.env.CLOUDINARY_FOLDER_PATH}${oldPublicId}`
       );
 
       if (cloudinaryResponse.result === "not found") {
@@ -99,7 +99,7 @@ export async function DELETE(request: NextRequest) {
     const publicId = user.profileImage.split("/").pop()?.split(".")[0];
 
     const cloudinaryResponse = await cloudinary.uploader.destroy(
-      `process.env.CLOUDINARY_FOLDER_PATH${publicId}`
+      `${process.env.CLOUDINARY_FOLDER_PATH}${publicId}`
     );
 
     if (cloudinaryResponse.result === "not found") {

@@ -37,7 +37,7 @@ const EBs = [
     designation: "President",
     image: NiloyImage,
     facebookURL: "https://www.facebook.com/nafissadiqueniloy.nafis",
-    linkedinURL: "https://linkedin.com/in/niloynsn",
+    linkedinURL: "https://linkedin.com/in/nafissn",
   },
   {
     fullName: "Udoy Saha",

@@ -52,7 +52,7 @@ export default function ChangePassword() {
             currentPassword,
             newPassword,
           }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -69,7 +69,7 @@ export default function ChangePassword() {
 
   return (
     <Dialog>
-      <Card className="sm:w-full h-full flex flex-col justify-between">
+      <Card className="flex h-full flex-col justify-between sm:w-full">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
           <CardDescription>Change your password.</CardDescription>

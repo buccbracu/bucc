@@ -26,7 +26,7 @@ export default function FilterComponent({
   onResetFilters: () => void;
 }) {
   const [filterValues, setFilterValues] = useState(() =>
-    Object.fromEntries(filters.map((filter) => [filter.name, ""]))
+    Object.fromEntries(filters.map((filter) => [filter.name, ""])),
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,28 +45,31 @@ export default function FilterComponent({
 
   const handleReset = () => {
     const initialFilterValues = Object.fromEntries(
-      filters.map((filter) => [filter.name, ""])
+      filters.map((filter) => [filter.name, ""]),
     );
     setFilterValues(initialFilterValues);
     onResetFilters();
   };
 
   return (
-    <div className="flex items-center justify-stretch mb-6 w-full">
-      <div className="flex items-center space-x-4 w-full">
+    <div className="mb-6 flex w-full flex-wrap items-center justify-between">
+      <div className="mb:gap-y-2 flex w-full flex-wrap items-center space-y-4 md:space-x-4 md:space-y-0">
         {filters.map((filter) => (
-          <div className="relative w-full" key={filter.name}>
+          <div
+            className="md:flex-grow-1 relative w-full flex-grow md:w-auto"
+            key={filter.name}
+          >
             {filter.type === "search" && (
               <div className="relative">
                 <Input
                   type="text"
                   name={filter.name}
                   placeholder={filter.placeholder}
-                  className="w-full p-2 pl-8 border border-gray-300 rounded-md"
+                  className="w-full rounded-md p-2 pl-10"
                   value={filterValues[filter.name]}
                   onChange={handleInputChange}
                 />
-                <SearchIcon className="absolute top-1/2 left-2 transform -translate-y-1/2 px-1" />
+                <SearchIcon className="absolute left-2 top-1/2 -translate-y-1/2 transform px-1" />
               </div>
             )}
             {filter.type === "select" && (
@@ -76,7 +79,7 @@ export default function FilterComponent({
                   handleSelectChange(filter.name, value)
                 }
               >
-                <SelectTrigger className="w-full p-2 border border-gray-300 rounded-md">
+                <SelectTrigger className="w-full rounded-md p-2">
                   <SelectValue placeholder={filter.placeholder}></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -92,7 +95,9 @@ export default function FilterComponent({
             )}
           </div>
         ))}
-        <Button onClick={handleReset}>Reset Filters</Button>
+        <Button className="w-full md:w-auto" onClick={handleReset}>
+          Reset Filters
+        </Button>
       </div>
     </div>
   );

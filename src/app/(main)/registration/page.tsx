@@ -65,7 +65,7 @@ export default function Registration() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
-          }
+          },
         );
 
         if (response.ok) {
@@ -104,7 +104,7 @@ export default function Registration() {
           </p>
         </div>
         <Button
-          className="w-full rounded-md bg-gray-900 py-2 px-4 font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-950 focus:ring-offset-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200 dark:focus:ring-gray-300 dark:focus:ring-offset-gray-950"
+          className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
           onClick={() => router.push("/")}
         >
           Go to Home
@@ -127,7 +127,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
-              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+              className="rounded-md shadow-sm sm:text-sm"
               id="name"
               placeholder="Enter your name"
               type="text"
@@ -138,7 +138,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="studentId">Student ID</Label>
             <Input
-              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+              className="rounded-md shadow-sm sm:text-sm"
               id="studentId"
               placeholder="Enter your student ID"
               type="text"
@@ -149,7 +149,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="email">G-Suite Email Address</Label>
             <Input
-              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+              className="rounded-md shadow-sm sm:text-sm"
               id="email"
               placeholder="Enter your G-Suite email"
               type="email"
@@ -166,7 +166,7 @@ export default function Registration() {
               >
                 <SelectTrigger
                   id="semester-name"
-                  className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+                  className="rounded-md shadow-sm sm:text-sm"
                 >
                   <SelectValue placeholder="Select semester" />
                 </SelectTrigger>
@@ -177,7 +177,7 @@ export default function Registration() {
                 </SelectContent>
               </Select>
               <Input
-                className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+                className="rounded-md shadow-sm sm:text-sm"
                 id="year"
                 placeholder="Year"
                 type="number"
@@ -192,7 +192,7 @@ export default function Registration() {
           <div className="space-y-2">
             <Label htmlFor="departmentBracu">BRACU Department</Label>
             <Input
-              className="shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+              className="rounded-md shadow-sm sm:text-sm"
               id="departmentBracu"
               placeholder="Enter Your BRACU Department"
               type="text"
@@ -202,7 +202,7 @@ export default function Registration() {
           </div>
           <Button
             disabled={isPending}
-            className="w-full rounded-md bg-gray-900 py-2 px-4 font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-950 focus:ring-offset-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200 dark:focus:ring-gray-300 dark:focus:ring-offset-gray-950"
+            className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
             type="submit"
           >
             Register

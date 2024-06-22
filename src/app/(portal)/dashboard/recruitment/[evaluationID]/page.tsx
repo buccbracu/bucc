@@ -2,6 +2,13 @@
 
 import { json } from "@/components/evaluation/questionJSON";
 import Heading from "@/components/portal/heading";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import EvaluationAssesment from "./evaluation-assesment";
 
@@ -24,7 +31,7 @@ type PageProps = {
 };
 
 const getEvaluation = async (
-  evaluationID: string
+  evaluationID: string,
 ): Promise<EvaluationData | null> => {
   try {
     const response = await fetch(
@@ -32,7 +39,7 @@ const getEvaluation = async (
       {
         cache: "no-store",
         next: { revalidate: 10 },
-      }
+      },
     );
     if (!response.ok) {
       throw new Error(`Error fetching evaluation: ${response.statusText}`);
@@ -46,7 +53,7 @@ const getEvaluation = async (
 
 export default function Evaluation({ params }: PageProps) {
   const [evaluationData, setEvaluationData] = useState<EvaluationData | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -78,23 +85,47 @@ export default function Evaluation({ params }: PageProps) {
     const response = responseObject[element.name];
     if (Array.isArray(response)) {
       return (
-        <ul className="list-disc pl-8">
+        <ul className="list-disc pl-8 text-muted-foreground">
           {response.map((choice: any, index: number) => (
             <li key={index}>{findChoiceText(element, choice)}</li>
           ))}
         </ul>
       );
     } else {
-      return <p>{findChoiceText(element, response)}</p>;
+      return (
+        <p className="text-muted-foreground">
+          {findChoiceText(element, response)}
+        </p>
+      );
     }
   };
 
-  const findChoiceText = (element: any, value: any): string => {
+  const findChoiceText = (element: any, value: any): React.ReactNode => {
     if (typeof value === "boolean") {
       return value ? "Yes" : "No";
     }
     if (element.choices) {
       const choice = element.choices.find((c: any) => c.value === value);
+      if (
+        [
+          "Communications & Marketing",
+          "Creative",
+          "Event Management",
+          "Finance",
+          "Human Resources",
+          "Press Release & Publications",
+          "Research & Development",
+        ].includes(value)
+      ) {
+        return (
+          <Badge
+            className="mt-2 bg-blue-200 p-1 px-3 text-blue-900 hover:bg-blue-300 dark:bg-blue-900/90 dark:text-blue-200 dark:hover:bg-blue-800/90"
+            variant={"accepted"}
+          >
+            {value}
+          </Badge>
+        );
+      }
       return choice ? choice.text : value;
     }
     return value;
@@ -107,33 +138,33 @@ export default function Evaluation({ params }: PageProps) {
         subHeadingText={`Evaluation of ${evaluationData.name}`}
       />
       <div className="md:flex md:flex-row-reverse">
-        <div className="p-4 md:w-1/3">
-          <h3 className="text-xl font-bold mb-6">EB Assesment</h3>
+        <div className="py-4 md:w-1/3">
+          <h3 className="mb-6 text-xl font-bold">EB Assesment</h3>
           <EvaluationAssesment evaluationData={evaluationData} />
         </div>
-        <div className="p-4 md:w-2/3">
-          <h3 className="text-xl font-bold mb-6">Evaluation Responses</h3>
+        <div className="pt-6 md:w-2/3 md:pr-4 md:pt-4">
+          <h3 className="mb-6 text-xl font-bold">Evaluation Responses</h3>
           {responseObject &&
             json.pages.map((page: any) => {
               const hasPageResponse = page.elements.some((element: any) =>
-                hasValidResponse(element.name)
+                hasValidResponse(element.name),
               );
-
               return hasPageResponse ? (
-                <div
-                  key={page.name}
-                  className="mb-6 dark:bg-gray-700 dark:text-gray-100 bg-gray-100 text-gray-800 p-6 rounded-lg overflow-clip"
-                >
-                  <h2 className="text-lg font-bold mb-2">{page.title}</h2>
+                <Card className="mb-4" key={page.name}>
+                  <CardHeader className="text-lg font-semibold">
+                    {page.title}
+                  </CardHeader>
                   {page.elements.map((element: any) =>
                     hasValidResponse(element.name) ? (
-                      <div key={element.name} className="mb-4">
-                        <h3 className="font-semibold">{element.title}</h3>
+                      <CardContent key={element.name}>
+                        <CardDescription className="text-md font-semibold text-black dark:text-gray-200">
+                          {element.title}
+                        </CardDescription>
                         {renderResponse(element)}
-                      </div>
-                    ) : null
+                      </CardContent>
+                    ) : null,
                   )}
-                </div>
+                </Card>
               ) : null;
             })}
         </div>
