@@ -135,7 +135,7 @@ export default function Evaluations() {
   }
 
   return (
-    <div className="w-full">
+    <div className="">
       <Heading headingText="Evaluations" subHeadingText="All evaluations" />
       <div className="flex flex-col md:flex-row">
         <div className="order-1 mt-4 w-full md:order-2 md:ml-4 md:mt-0 md:w-1/4">

@@ -52,8 +52,8 @@ export default function FilterComponent({
   };
 
   return (
-    <div className="mb-6 flex w-full flex-wrap items-center justify-between">
-      <div className="mb:gap-y-2 flex w-full flex-wrap items-center space-y-4 md:space-x-4 md:space-y-0">
+    <div className="mb-6 flex w-[calc(100vw-160px)] flex-wrap items-center justify-between md:w-full">
+      <div className="mb:gap-y-2 flex flex-wrap items-center gap-y-2 space-y-4 md:w-full md:space-x-4 md:space-y-0">
         {filters.map((filter) => (
           <div
             className="md:flex-grow-1 relative w-full flex-grow md:w-auto"
