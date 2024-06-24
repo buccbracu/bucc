@@ -14,7 +14,8 @@ export default function page() {
         headingText="Data Backup"
         subHeadingText="This is the backup page. You can download the data from this page clicking the button below. The data will be downloaded in a zip file."
       />
-      <Button>Download Data</Button>
+
+      <Button className="mr-3">Download Data</Button>
       <Button
         className="mx-3"
         onClick={() => {
