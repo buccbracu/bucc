@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import exportFromJSON from "export-from-json";
 
 export default function page() {
-  const fileName = "PreRegMemberInfos";
+  const fileNamePre = "PreRegMemberInfos";
+  const fileNameMem = "MemberInfos";
   const exportType = exportFromJSON.types.csv;
 
   return (
@@ -20,11 +21,31 @@ export default function page() {
           fetch("http://localhost:3000/api/preregmembers")
             .then((res) => res.json())
             .then((response) =>
-              exportFromJSON({ data: response.users, fileName, exportType })
+              exportFromJSON({
+                data: response.users,
+                fileName: fileNamePre,
+                exportType,
+              })
             );
         }}
       >
         Download PreRegMemberInfos CSV
+      </Button>
+      <Button
+        className="mx-3"
+        onClick={() => {
+          fetch("http://localhost:3000/api/members")
+            .then((res) => res.json())
+            .then((response) =>
+              exportFromJSON({
+                data: response.users,
+                fileName: fileNameMem,
+                exportType,
+              })
+            );
+        }}
+      >
+        Download Dept Members CSV
       </Button>
     </main>
   );
