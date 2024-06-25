@@ -301,9 +301,11 @@ export default function EditProfile() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="MALE">Male</SelectItem>
-                    <SelectItem value="FEMALE">Female</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Prefer not to say">
+                      Prefer not to say
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -381,7 +383,7 @@ export default function EditProfile() {
         open={showConfirmationModal}
         onOpenChange={setShowConfirmationModal}
       >
-        <DialogContent className="max-w-sm rounded-md sm:max-w-md">
+        <DialogContent className="h-fit max-w-sm rounded-md sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm Changes</DialogTitle>
             <DialogDescription>

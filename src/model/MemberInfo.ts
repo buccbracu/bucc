@@ -30,15 +30,15 @@ const MemberSchema = new mongoose.Schema({
   buccDepartment: {
     type: String,
     enum: [
-      "ADVISORS BODY",
-      "GOVERNING BODY",
-      "COMMUNICATION AND MARKETING",
-      "CREATIVE",
-      "EVENT MANAGEMENT",
-      "FINANCE",
-      "HUMAN RESOURCES",
-      "PRESS RELEASE AND PUBLICATIONS",
-      "RESEARCH AND DEVELOPMENT",
+      "Advisors Body",
+      "Governing Body",
+      "Communications and Marketing",
+      "Creative",
+      "Event Management",
+      "Finance",
+      "Human Resources",
+      "Press Release and Publications",
+      "Research and Development",
     ],
     required: true,
   },
@@ -46,20 +46,20 @@ const MemberSchema = new mongoose.Schema({
   designation: {
     type: String,
     enum: [
-      "ADVISOR",
-      "ALUMNI",
-      "PRESIDENT",
-      "VICE PRESIDENT",
-      "GENERAL SECRETARY",
-      "TREASURER",
-      "DIRECTOR",
-      "ASSISTANT DIRECTOR",
-      "SENIOR EXECUTIVE",
-      "EXECUTIVE",
-      "GENERAL MEMBER",
+      "Advisor",
+      "Alumni",
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+      "Senior Executive",
+      "Executive",
+      "General Member",
     ],
     required: true,
-    default: "GENERAL MEMBER",
+    default: "General Member",
   },
 
   personalEmail: {
@@ -84,6 +84,7 @@ const MemberSchema = new mongoose.Schema({
 
   profileImage: {
     type: String,
+    default: "",
     required: false,
   },
 
@@ -105,7 +106,7 @@ const MemberSchema = new mongoose.Schema({
   gender: {
     type: String,
     required: false,
-    enum: ["MALE", "FEMALE", "OTHER"],
+    enum: ["Male", "Female", "Prefer not to say"],
   },
 
   emergencyContact: {
@@ -137,10 +138,10 @@ const MemberSchema = new mongoose.Schema({
   },
 
   //membersociocials will contain objects of social media links
-    memberSocials: {
+  memberSocials: {
     type: Object,
-    required: false
-    }
+    required: false,
+  },
 });
 
 const MemberInfo =

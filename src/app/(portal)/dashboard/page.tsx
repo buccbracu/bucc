@@ -1,3 +1,4 @@
+import DigitalIdCard from "@/components/portal/DigitalIdCard";
 import Heading from "@/components/portal/heading";
 import {
   Card,
@@ -12,6 +13,10 @@ export default function Dashboard() {
         headingText="Dashboard"
         subHeadingText="This is a scrollable dashboard. Scroll down to see more content..."
       />
+
+      <section className="mx-auto">
+        <DigitalIdCard />
+      </section>
 
       <section className="mx-auto">
         <div className="mb-6 grid h-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -18,46 +18,43 @@ export default function UpdateProfilePhoto() {
   const profilePhoto = data?.user?.image;
   const name = data?.user?.name;
 
-  const handleProfilePhoto = (imageUrl: string, action: string) => {
-    if (action === "upload") {
-      console.log(imageUrl);
-      try {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/profileImage`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ profileImage: imageUrl }),
-        });
-      } catch (error) {
-        console.error(error);
+  const handleProfilePhoto = async (imageUrl: string, action: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/profile/profileImage`,
+        {
+          method: action === "update" ? "PATCH" : "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body:
+            action === "update"
+              ? JSON.stringify({ profileImage: imageUrl })
+              : undefined,
+        },
+      );
+
+      if (response.ok) {
+        const message =
+          action === "update"
+            ? "Profile Image Updated"
+            : "Profile Image Removed";
+        toast.success(message);
+      } else {
+        toast.error("Error in Profile Image Operation");
       }
-    }
-    if (action === "remove") {
-      try {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/profileImage`, {
-          method: "DELETE",
-        }).then((res) => {
-          if (res.ok) {
-            toast.success("Profile Image Removed");
-          } else {
-            toast.error("Error Removing Profile Image");
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error in Profile Image Operation");
     }
   };
 
   return (
-    <Card className="sm:w-full h-full flex flex-col justify-between">
+    <Card className="flex h-full flex-col justify-between sm:w-full">
       <CardHeader>
         <CardTitle>Update Profile Photo</CardTitle>
         <CardDescription>Update your profile photo.</CardDescription>
       </CardHeader>
-      <div className="flex justify-center items-center flex-col">
-        <div className="relative w-24 h-24 mb-4">
+      <div className="flex flex-col items-center justify-center">
+        <div className="relative mb-4 h-24 w-24">
           {profilePhoto ? (
             <CldImage
               width="960"
@@ -65,10 +62,10 @@ export default function UpdateProfilePhoto() {
               src={profilePhoto}
               sizes="100vw"
               alt={`Profile Image of ${name}`}
-              className="w-full h-full rounded-full object-cover"
+              className="h-full w-full rounded-full object-cover"
             />
           ) : (
-            <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center rounded-full bg-gray-300">
               <span className="text-gray-700">No Image</span>
             </div>
           )}
@@ -77,13 +74,13 @@ export default function UpdateProfilePhoto() {
       <CardFooter className="flex justify-center">
         <div className="flex space-x-4">
           <CldUploadButton
-            className="font-medium text-sm text-primary underline-offset-4 hover:underline"
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
             options={{
               multiple: false,
               sources: ["local", "url", "google_drive"],
             }}
             onUpload={(result: any) => {
-              handleProfilePhoto(result.info?.secure_url, "upload");
+              handleProfilePhoto(result.info?.secure_url, "update");
             }}
             uploadPreset="bucc_members_profile_photo"
           >

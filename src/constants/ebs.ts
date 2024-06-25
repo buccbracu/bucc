@@ -69,7 +69,7 @@ const EBs = [
   {
     fullName: "Souharda Bhattacharjee",
     nickName: "Souharda",
-    department: "Communication and Marketing",
+    department: "Communications and Marketing",
     designation: "Director",
     image: SouhardaImage,
     facebookURL: "https://www.facebook.com/profile.php?id=100010819243774",
@@ -78,7 +78,7 @@ const EBs = [
   {
     fullName: "Maliha Binte Masud",
     nickName: "Maliha",
-    department: "Communication and Marketing",
+    department: "Communications and Marketing",
     designation: "Director",
     image: MalihaImage,
     facebookURL: "https://www.facebook.com/Maliha.Ishrar",
@@ -87,7 +87,7 @@ const EBs = [
   {
     fullName: "Ariful Islam",
     nickName: "Arif",
-    department: "Communication and Marketing",
+    department: "Communications and Marketing",
     designation: "Assistant Director",
     image: ArifImage,
     facebookURL: "https://www.facebook.com/arifulislam.ash8",
@@ -96,7 +96,7 @@ const EBs = [
   {
     fullName: "Bokthier Bin Foysal",
     nickName: "Bokthier",
-    department: "Communication and Marketing",
+    department: "Communications and Marketing",
     designation: "Assistant Director",
     image: BokthierImage,
     facebookURL: "https://www.facebook.com/bokthier.rahmanfoysal",
@@ -308,35 +308,35 @@ const EBsByDepartment = [
     departmentName: "Governing Body",
     EBs: EBs.filter((eb) => eb.department === "Governing Body"),
     presidentAndVicePresident: EBs.filter((eb) =>
-      ["President", "Vice President"].includes(eb.designation)
+      ["President", "Vice President"].includes(eb.designation),
     ),
     generalSecretaryAndTreasurer: EBs.filter((eb) =>
-      ["General Secretary", "Treasurer"].includes(eb.designation)
+      ["General Secretary", "Treasurer"].includes(eb.designation),
     ),
   },
   {
-    departmentName: "Communication and Marketing",
-    EBs: EBs.filter((eb) => eb.department === "Communication and Marketing"),
+    departmentName: "Communications and Marketing",
+    EBs: EBs.filter((eb) => eb.department === "Communications and Marketing"),
     directors: EBs.filter(
       (eb) =>
-        eb.department === "Communication and Marketing" &&
-        eb.designation === "Director"
+        eb.department === "Communications and Marketing" &&
+        eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
-        eb.department === "Communication and Marketing" &&
-        eb.designation === "Assistant Director"
+        eb.department === "Communications and Marketing" &&
+        eb.designation === "Assistant Director",
     ),
   },
   {
     departmentName: "Creative",
     EBs: EBs.filter((eb) => eb.department === "Creative"),
     directors: EBs.filter(
-      (eb) => eb.department === "Creative" && eb.designation === "Director"
+      (eb) => eb.department === "Creative" && eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
-        eb.department === "Creative" && eb.designation === "Assistant Director"
+        eb.department === "Creative" && eb.designation === "Assistant Director",
     ),
   },
   {
@@ -344,23 +344,23 @@ const EBsByDepartment = [
     EBs: EBs.filter((eb) => eb.department === "Event Management"),
     directors: EBs.filter(
       (eb) =>
-        eb.department === "Event Management" && eb.designation === "Director"
+        eb.department === "Event Management" && eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
         eb.department === "Event Management" &&
-        eb.designation === "Assistant Director"
+        eb.designation === "Assistant Director",
     ),
   },
   {
     departmentName: "Finance",
     EBs: EBs.filter((eb) => eb.department === "Finance"),
     directors: EBs.filter(
-      (eb) => eb.department === "Finance" && eb.designation === "Director"
+      (eb) => eb.department === "Finance" && eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
-        eb.department === "Finance" && eb.designation === "Assistant Director"
+        eb.department === "Finance" && eb.designation === "Assistant Director",
     ),
   },
   {
@@ -368,12 +368,12 @@ const EBsByDepartment = [
     EBs: EBs.filter((eb) => eb.department === "Human Resources"),
     directors: EBs.filter(
       (eb) =>
-        eb.department === "Human Resources" && eb.designation === "Director"
+        eb.department === "Human Resources" && eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
         eb.department === "Human Resources" &&
-        eb.designation === "Assistant Director"
+        eb.designation === "Assistant Director",
     ),
   },
   {
@@ -382,12 +382,12 @@ const EBsByDepartment = [
     directors: EBs.filter(
       (eb) =>
         eb.department === "Press Release and Publications" &&
-        eb.designation === "Director"
+        eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
         eb.department === "Press Release and Publications" &&
-        eb.designation === "Assistant Director"
+        eb.designation === "Assistant Director",
     ),
   },
   {
@@ -396,12 +396,12 @@ const EBsByDepartment = [
     directors: EBs.filter(
       (eb) =>
         eb.department === "Research and Development" &&
-        eb.designation === "Director"
+        eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
         eb.department === "Research and Development" &&
-        eb.designation === "Assistant Director"
+        eb.designation === "Assistant Director",
     ),
   },
 ];

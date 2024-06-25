@@ -18,16 +18,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import PasswordField from "@/components/ui/password-field";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function ChangePassword() {
+  const [openModal, setOpenModal] = useState(false);
   const [isStrongPassword, setIsStrongPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMatch, setPasswordMatch] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (newPassword && confirmPassword) {
@@ -40,6 +43,7 @@ export default function ChangePassword() {
   }, [newPassword, confirmPassword]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/users/changePassword`,
@@ -57,9 +61,12 @@ export default function ChangePassword() {
 
       if (response.ok) {
         const data = await response.json();
+        setLoading(false);
+        setOpenModal(false);
         toast.success(data.message);
       } else {
         const data = await response.json();
+        setLoading(false);
         toast.error(data.message);
       }
     } catch (error) {
@@ -68,7 +75,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <Dialog>
+    <Dialog open={openModal} onOpenChange={setOpenModal}>
       <Card className="flex h-full flex-col justify-between sm:w-full">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
@@ -80,11 +87,12 @@ export default function ChangePassword() {
           </DialogTrigger>
         </CardFooter>
       </Card>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="h-fit sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            Make changes to your password here. Click save when you&apos;re
+            done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-2">
@@ -120,13 +128,14 @@ export default function ChangePassword() {
           </div>
         </div>
         <DialogFooter>
-          <Button
-            disabled={!isStrongPassword || !passwordMatch}
+          <LoadingButton
             type="button"
+            disabled={!isStrongPassword || !passwordMatch || loading}
+            loading={loading}
             onClick={handleSubmit}
           >
-            Save changes
-          </Button>
+            Change Password
+          </LoadingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

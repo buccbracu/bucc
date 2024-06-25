@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import {
   Select,
   SelectContent,
@@ -158,7 +159,7 @@ export default function Registration() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="semester">Semester</Label>
+            <Label htmlFor="semester">Joined BRACU</Label>
             <div className="flex gap-2">
               <Select
                 value={formData.semester}
@@ -200,13 +201,14 @@ export default function Registration() {
               onChange={handleChange}
             />
           </div>
-          <Button
-            disabled={isPending}
-            className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
+          <LoadingButton
+            className="w-full"
             type="submit"
+            disabled={isPending}
+            loading={isPending}
           >
             Register
-          </Button>
+          </LoadingButton>
         </form>
       </div>
     </div>
