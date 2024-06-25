@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import departments from "@/constants/departments";
+import designations from "@/constants/designations";
 import skills from "@/constants/skills";
 import { getMemberData } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
@@ -361,23 +363,63 @@ export default function EditMember({ id }: { id: string }) {
                 <Label htmlFor="buccDepartment" className="text-right">
                   BUCC Department
                 </Label>
-                <Input
-                  id="buccDepartment"
+                <Select
                   value={memberData.buccDepartment}
-                  onChange={handleChange}
+                  onValueChange={(value) =>
+                    setMemberData((prevData) => ({
+                      ...prevData,
+                      buccDepartment: value,
+                    }))
+                  }
                   disabled={!isEditable}
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select BUCC Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {departments.slice(2).map((department) => (
+                        <SelectItem
+                          key={department.title}
+                          value={department.title}
+                        >
+                          {department.title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="col-span-1">
                 <Label htmlFor="designation" className="text-right">
                   Designation
                 </Label>
-                <Input
-                  id="designation"
+                <Select
                   value={memberData.designation}
-                  onChange={handleChange}
+                  onValueChange={(value) =>
+                    setMemberData((prevData) => ({
+                      ...prevData,
+                      designation: value,
+                    }))
+                  }
                   disabled={!isEditable}
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select BUCC Designation" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {designations.slice(2).map((designation) => (
+                        <SelectItem
+                          key={designation.title}
+                          value={designation.title}
+                        >
+                          {designation.title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="col-span-1">
                 <Label htmlFor="joinedBucc" className="text-right">

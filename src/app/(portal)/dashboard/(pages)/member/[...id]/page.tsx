@@ -5,5 +5,5 @@ import { useParams } from "next/navigation";
 
 export default function Member() {
   const { id } = useParams();
-  return <EditMember id={id} />;
+  return <EditMember id={id[0]} />;
 }
