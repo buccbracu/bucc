@@ -7,7 +7,7 @@ import exportFromJSON from "export-from-json";
 export default function page() {
   const fileNamePre = "PreRegMemberInfos";
   const fileNameMem = "MemberInfos";
-  const fileNameEB = "EbassesmentInfos";
+  const fileNameEB = "EbassessmentInfos";
   const exportType = exportFromJSON.types.csv;
 
   const completeRegistration = () => {
@@ -71,7 +71,7 @@ export default function page() {
         <Button
           className="mx-3"
           onClick={() => {
-            fetch("http://localhost:3000/api/ebassesment")
+            fetch("http://localhost:3000/api/ebassessment")
               .then((res) => res.json())
               .then((response) =>
                 exportFromJSON({
@@ -82,7 +82,7 @@ export default function page() {
               );
           }}
         >
-          Download Ebassesment CSV
+          Download Ebassessment CSV
         </Button>
         <Button onClick={completeRegistration} className="ml-3">
           Complete Registration

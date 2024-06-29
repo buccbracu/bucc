@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
       intake,
       intake_start_date,
       intake_end_date,
-      assesment_form_link,
-      assesment_sheet_link,
+      assessment_form_link,
+      assessment_sheet_link,
       is_intake_active,
     } = body;
 
@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
       intake,
       intake_start_date,
       intake_end_date,
-      assesment_form_link,
-      assesment_sheet_link,
+      assessment_form_link,
+      assessment_sheet_link,
       is_intake_active,
     });
 

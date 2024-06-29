@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import departments from "@/constants/departments";
 import { useEffect, useState } from "react";
-import EvaluationAssesment from "./evaluation-assesment";
+import EvaluationAssessment from "./evaluation-assessment";
 
 type EvaluationData = {
   name: string;
@@ -135,8 +135,8 @@ export default function Evaluation({ params }: PageProps) {
       />
       <div className="md:flex md:flex-row-reverse">
         <div className="py-4 md:w-1/3">
-          <h3 className="mb-6 text-xl font-bold">EB Assesment</h3>
-          <EvaluationAssesment evaluationData={evaluationData} />
+          <h3 className="mb-6 text-xl font-bold">EB Assessment</h3>
+          <EvaluationAssessment evaluationData={evaluationData} />
         </div>
         <div className="pt-6 md:w-2/3 md:pr-4 md:pt-4">
           <h3 className="mb-6 text-xl font-bold">Evaluation Responses</h3>

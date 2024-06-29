@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const allowedStatuses = ["Pending", "Accepted", "Rejected"];
 
-const MemberEBAssesmentSchema = new mongoose.Schema({
+const MemberEBAssessmentSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -54,8 +54,8 @@ const MemberEBAssesmentSchema = new mongoose.Schema({
   },
 });
 
-const MemberEBAssesment =
-  mongoose.models.MemberEBAssesment ||
-  mongoose.model("MemberEBAssesment", MemberEBAssesmentSchema);
+const MemberEBAssessment =
+  mongoose.models.MemberEBAssessment ||
+  mongoose.model("MemberEBAssessment", MemberEBAssessmentSchema);
 
-export default MemberEBAssesment;
+export default MemberEBAssessment;

@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import MemberEBAssesment from "@/model/MemberEBAssesment";
+import MemberEBAssessment from "@/model/MemberEBAssessment";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { studentId, gSuiteEmail, name, responseObject, firstChoice } = body;
     await dbConnect();
-    const memberEB = await MemberEBAssesment.findOne({
+    const memberEB = await MemberEBAssessment.findOne({
       studentId: studentId,
     });
     if (memberEB) {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    const memberSaveEB = new MemberEBAssesment({
+    const memberSaveEB = new MemberEBAssessment({
       studentId,
       gSuiteEmail,
       name,
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     const evaluationID = url.searchParams.get("evaluationID");
 
     if (evaluationID) {
-      const evaluationData = await MemberEBAssesment.findOne({
+      const evaluationData = await MemberEBAssessment.findOne({
         _id: evaluationID,
       });
 

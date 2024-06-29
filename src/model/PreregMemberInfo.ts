@@ -38,10 +38,10 @@ const PreregMemberInfoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  ebAssesmentDetails: {
+  ebAssessmentDetails: {
     //TODO: REMOVE THIS
     type: mongoose.Schema.Types.ObjectId,
-    ref: "MemberEBAssesment",
+    ref: "MemberEBAssessment",
   },
 });
 

@@ -21,11 +21,11 @@ const IntakeShema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  assesment_form_link: {
+  assessment_form_link: {
     type: String,
     required: true,
   },
-  assesment_sheet_link: {
+  assessment_sheet_link: {
     type: String,
     required: true,
   },

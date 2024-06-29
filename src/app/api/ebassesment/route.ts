@@ -1,9 +1,9 @@
-import MemberEBAssesment from "@/model/MemberEBAssesment";
+import MemberEBAssessment from "@/model/MemberEBAssessment";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const assessment = await MemberEBAssesment.find({});
+    const assessment = await MemberEBAssessment.find({});
 
     return NextResponse.json({ messages: assessment }, { status: 200 });
   } catch (error: any) {
@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest) {
       comment,
     };
 
-    const assessment = await MemberEBAssesment.findOne({ _id });
+    const assessment = await MemberEBAssessment.findOne({ _id });
 
     assessment.interviewTakenBy = [];
 
@@ -41,7 +41,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(
       { message: "Evaluation updated successfully", assessment },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -66,7 +66,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/ebassesment`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ebassessment`,
         {
           method: "PATCH",
           body: JSON.stringify(assessmentData),
@@ -89,7 +89,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   }
 
   return (
-    <Card className="">
+    <Card className="top-2 md:sticky">
       <CardContent className="py-6">
         <div className="mb-4">
           <Label htmlFor="studentId" className="mb-2 block font-bold">
