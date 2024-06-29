@@ -71,7 +71,9 @@ export default function EditMember({ id }: { id: string }) {
     queryFn: () => getMemberData(memberId),
   });
 
-  const userData = data?.users[0];
+  console.log(data);
+
+  const userData = data?.user;
 
   const initialMemberData: MemberData = {
     profileImage: "",
@@ -378,7 +380,7 @@ export default function EditMember({ id }: { id: string }) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {departments.slice(2).map((department) => (
+                      {departments.map((department) => (
                         <SelectItem
                           key={department.title}
                           value={department.title}

@@ -32,7 +32,7 @@ const getProfileData = async () => {
 
 const getMemberData = async (memberId: string) => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/members/?id=${memberId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/member/?id=${memberId}`,
   );
   return res.json();
 };
