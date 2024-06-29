@@ -6,9 +6,9 @@ export default function Heading({
   subHeadingText?: string;
 }) {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-3">{headingText}</h1>
-      <p className="text-lg mb-1 text-slate-400">{subHeadingText}</p>
+    <div className="mt-10 md:mt-0">
+      <h1 className="mb-3 text-3xl font-bold">{headingText}</h1>
+      <p className="mb-1 text-lg text-slate-400">{subHeadingText}</p>
       <hr className="mb-3 border-transparent" />
     </div>
   );

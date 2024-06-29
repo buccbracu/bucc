@@ -151,7 +151,7 @@ export default function EditProfile() {
       const memberData: any = {
         ...profileData,
         memberSkills: profileData.memberSkills.map(
-          (skill: Option) => skill.value
+          (skill: Option) => skill.value,
         ),
       };
 
@@ -163,7 +163,7 @@ export default function EditProfile() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(memberData),
-        }
+        },
       );
       if (res.ok) {
         toast.success("Profile updated successfully!");
@@ -181,7 +181,7 @@ export default function EditProfile() {
   return (
     <div>
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <Card className="sm:w-full h-full flex flex-col justify-between">
+        <Card className="flex h-full flex-col justify-between sm:w-full">
           <CardHeader>
             <CardTitle>Edit Profile</CardTitle>
             <CardDescription>Update your personal details.</CardDescription>
@@ -194,7 +194,7 @@ export default function EditProfile() {
             </DialogTrigger>
           </CardFooter>
         </Card>
-        <DialogContent className="sm:max-w-md max-w-sm overflow-y-scroll max-h-screen">
+        <DialogContent className="max-h-screen max-w-sm overflow-y-scroll sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -203,8 +203,8 @@ export default function EditProfile() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-4 py-4">
-            <div className="flex justify-center items-center flex-col">
-              <div className="relative w-24 h-24 mb-4">
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative mb-4 h-24 w-24">
                 {profileData.profileImage ? (
                   <CldImage
                     width="960"
@@ -212,10 +212,10 @@ export default function EditProfile() {
                     src={profileData.profileImage}
                     sizes="100vw"
                     alt={`Profile Image of ${name}`}
-                    className="w-full h-full rounded-full object-cover"
+                    className="h-full w-full rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-gray-300">
                     <span className="text-gray-700">No Image</span>
                   </div>
                 )}
@@ -301,9 +301,11 @@ export default function EditProfile() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="MALE">Male</SelectItem>
-                    <SelectItem value="FEMALE">Female</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Prefer not to say">
+                      Prefer not to say
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -381,7 +383,7 @@ export default function EditProfile() {
         open={showConfirmationModal}
         onOpenChange={setShowConfirmationModal}
       >
-        <DialogContent className="sm:max-w-md max-w-sm rounded-md">
+        <DialogContent className="h-fit max-w-sm rounded-md sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm Changes</DialogTitle>
             <DialogDescription>

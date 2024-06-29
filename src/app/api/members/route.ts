@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
 import { auth } from "@/auth";
+import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   await dbConnect();
@@ -12,8 +12,8 @@ export async function GET() {
     });
   }
   if (
-    user?.user.designation !== "DIRECTOR" &&
-    user?.user.designation !== "ASSISTANT DIRECTOR"
+    user?.user.designation !== "Director" &&
+    user?.user.designation !== "Assistant Director"
   ) {
     return NextResponse.json({
       message: `Designation: ${user?.user.designation} don't have the permission to view this page.`,

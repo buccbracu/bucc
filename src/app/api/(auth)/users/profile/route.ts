@@ -76,10 +76,7 @@ export async function PATCH(request: NextRequest) {
       const socialKeys = Object.keys(memberSocials);
 
       for (let key of socialKeys) {
-        if (
-          !["Facebook", "Github", "Linkedin"].includes(key) ||
-          !memberSocials[key]
-        ) {
+        if (!["Facebook", "Github", "Linkedin"].includes(key)) {
           return NextResponse.json({
             message:
               "Invalid Request. You are not authorized to update these fields",
@@ -109,7 +106,7 @@ export async function PATCH(request: NextRequest) {
     const updatedUser = await MemberInfo.findByIdAndUpdate(
       userID,
       { $set: updateObject },
-      { new: true }
+      { new: true },
     );
 
     return NextResponse.json({ user: updatedUser });

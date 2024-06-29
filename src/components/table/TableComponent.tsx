@@ -41,7 +41,7 @@ export default function TableComponent({
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10,
   });
 
   const table = useReactTable({
@@ -68,8 +68,8 @@ export default function TableComponent({
   };
 
   return (
-    <div className="w3-container">
-      <Table>
+    <div className="w-[calc(100vw-160px)] overflow-scroll md:w-full">
+      <Table className="border">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -77,13 +77,13 @@ export default function TableComponent({
                 <TableHead
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
-                  className="cursor-pointer bg-gray-200 dark:bg-gray-700 "
+                  className="cursor-pointer bg-gray-200 dark:bg-gray-700"
                 >
                   {header.isPlaceholder ? null : (
                     <div>
                       {flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                       {header.column.getIsSorted()
                         ? header.column.getIsSorted() === "asc"
@@ -101,7 +101,7 @@ export default function TableComponent({
           {table.getRowModel().rows.length === 0 && (
             <TableRow>
               <TableCell colSpan={columns.length}>
-                <div className="text-center align-middle text-gray-500 my-2">
+                <div className="my-2 text-center align-middle text-gray-500">
                   No data found
                 </div>
               </TableCell>
@@ -122,32 +122,38 @@ export default function TableComponent({
           ))}
         </TableBody>
       </Table>
-      <div className="flex justify-between mt-4">
+      <div className="mt-4 flex items-center justify-between">
         <Button
+          variant="link"
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
+          className="hidden sm:block"
         >
           ⟪ First page
         </Button>
         <Button
+          variant="link"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           ⟨ Previous page
         </Button>
-        <span>
+        <span className="text-sm">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </span>
         <Button
+          variant="link"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           Next page ⟩
         </Button>
         <Button
+          variant="link"
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
+          className="hidden sm:block"
         >
           Last page ⟫
         </Button>

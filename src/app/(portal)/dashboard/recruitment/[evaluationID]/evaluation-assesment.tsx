@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import {
   Select,
@@ -27,9 +28,9 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   const params = useParams();
 
   const evaluationID = params.evaluationID;
-
+  const [loading, setLoading] = useState(false);
   const [department, setDepartment] = useState(
-    evaluationData.buccDepartment || ""
+    evaluationData.buccDepartment || "",
   );
   const [status, setStatus] = useState(evaluationData.status || "");
   const [comment, setComment] = useState(evaluationData.comment || "");
@@ -37,7 +38,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
     evaluationData.interviewTakenBy.map((eb: string) => ({
       label: eb,
       value: eb,
-    })) || []
+    })) || [],
   );
 
   const handleDepartmentChange = (value: string) => {
@@ -53,6 +54,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   };
 
   async function submitAssessment() {
+    setLoading(true);
     try {
       const assessmentData = {
         _id: evaluationID,
@@ -71,11 +73,12 @@ export default function EvaluationAssessment({ evaluationData }: any) {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
       if (response.ok) {
+        setLoading(false);
         toast.success("Assessment added successfully.");
       } else {
         toast.error("Error submitting assessment:");
@@ -86,101 +89,104 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-6 rounded shadow-lg dark:bg-gray-700 dark:text-gray-100 bg-gray-100 text-gray-800">
-      <div className="mb-4">
-        <Label htmlFor="studentId" className="block font-bold mb-2">
-          Student ID
-        </Label>
-        <Input
-          type="text"
-          id="studentId"
-          value={evaluationData.studentId}
-          readOnly
-          className="px-3 py-2 w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2"
-        />
-      </div>
-      <div className="mb-4">
-        <Label htmlFor="studentName" className="block font-bold mb-2">
-          Student Name
-        </Label>
-        <Input
-          type="text"
-          id="studentName"
-          value={evaluationData.name}
-          readOnly
-          className="px-3 py-2 w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2"
-        />
-      </div>
+    <Card className="">
+      <CardContent className="py-6">
+        <div className="mb-4">
+          <Label htmlFor="studentId" className="mb-2 block font-bold">
+            Student ID
+          </Label>
+          <Input
+            type="text"
+            id="studentId"
+            value={evaluationData.studentId}
+            readOnly
+            className="w-full rounded px-3 py-2 dark:bg-black/10"
+          />
+        </div>
+        <div className="mb-4">
+          <Label htmlFor="studentName" className="mb-2 block font-bold">
+            Student Name
+          </Label>
+          <Input
+            type="text"
+            id="studentName"
+            value={evaluationData.name}
+            readOnly
+            className="w-full rounded px-3 py-2 dark:bg-black/10"
+          />
+        </div>
 
-      <div className="mb-4">
-        <Label htmlFor="interviewTakenBy" className="block font-bold mb-2">
-          Interview Taken By
-        </Label>
-        <MultipleSelector
-          value={selectedEBs}
-          onChange={setSelectedEBs}
-          defaultOptions={OPTIONS}
-          commandProps={{
-            className:
-              "w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-0",
-          }}
-          emptyIndicator={
-            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-              no results found.
-            </p>
-          }
-        />
-      </div>
+        <div className="mb-4">
+          <Label htmlFor="interviewTakenBy" className="mb-2 block font-bold">
+            Interview Taken By
+          </Label>
+          <MultipleSelector
+            value={selectedEBs}
+            onChange={setSelectedEBs}
+            defaultOptions={OPTIONS}
+            commandProps={{
+              className: "w-full rounded dark:bg-black/10",
+            }}
+            emptyIndicator={
+              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                no results found.
+              </p>
+            }
+          />
+        </div>
 
-      <div className="mb-4">
-        <Label htmlFor="assignedDepartment" className="block font-bold mb-2">
-          Assigned Department
-        </Label>
-        <Select onValueChange={handleDepartmentChange}>
-          <SelectTrigger className="px-4 py-2 w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2">
-            <SelectValue placeholder={department} />
-          </SelectTrigger>
-          <SelectContent>
-            {departments.slice(2).map((department) => (
-              <SelectItem key={department.title} value={department.title}>
-                {department.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="mb-4">
-        <Label htmlFor="status" className="block font-bold mb-2">
-          Status
-        </Label>
-        <Select onValueChange={handleStatusChange}>
-          <SelectTrigger className="px-4 py-2 w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2">
-            <SelectValue placeholder={status} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="Accepted">Accepted</SelectItem>
-            <SelectItem value="Rejected">Rejected</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="mb-4">
-        <Label htmlFor="comment" className="block font-bold mb-2">
-          Comment
-        </Label>
-        <Textarea
-          id="comment"
-          value={comment}
-          onChange={handleCommentChange}
-          className="px-3 py-2 w-full rounded border dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring-2"
-        ></Textarea>
-      </div>
-      <Button
-        onClick={submitAssessment}
-        className="w-full font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Save
-      </Button>
-    </div>
+        <div className="mb-4">
+          <Label htmlFor="assignedDepartment" className="mb-2 block font-bold">
+            Assigned Department
+          </Label>
+          <Select onValueChange={handleDepartmentChange}>
+            <SelectTrigger className="w-full rounded px-4 py-2 dark:bg-black/10">
+              <SelectValue placeholder={department} />
+            </SelectTrigger>
+            <SelectContent>
+              {departments.slice(2).map((department) => (
+                <SelectItem key={department.title} value={department.title}>
+                  {department.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="mb-4">
+          <Label htmlFor="status" className="mb-2 block font-bold">
+            Status
+          </Label>
+          <Select onValueChange={handleStatusChange}>
+            <SelectTrigger className="w-full rounded px-4 py-2 dark:bg-black/10">
+              <SelectValue placeholder={status} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Pending">Pending</SelectItem>
+              <SelectItem value="Accepted">Accepted</SelectItem>
+              <SelectItem value="Rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="mb-4">
+          <Label htmlFor="comment" className="mb-2 block font-bold">
+            Comment
+          </Label>
+          <Textarea
+            id="comment"
+            value={comment}
+            onChange={handleCommentChange}
+            className="w-full rounded px-3 py-2 dark:bg-black/10"
+          ></Textarea>
+        </div>
+        <LoadingButton
+          onClick={submitAssessment}
+          disabled={loading}
+          loading={loading}
+          className="w-full"
+        >
+          Submit
+        </LoadingButton>
+      </CardContent>
+    </Card>
   );
 }

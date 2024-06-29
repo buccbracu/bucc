@@ -12,10 +12,9 @@ export async function POST(request: NextRequest) {
     const member = await PreregMemberInfo.findOne({ email: email });
 
     if (member) {
-      console.log("User already exists");
       return NextResponse.json(
         { message: "User already exists" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -29,11 +28,9 @@ export async function POST(request: NextRequest) {
 
     await newMember.save();
 
-    console.log(body);
-
     return NextResponse.json(
       { message: "Registration Successful" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

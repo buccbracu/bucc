@@ -23,7 +23,7 @@ const menus = [
     access_department: [
       "Advisors Body",
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -65,7 +65,7 @@ const menus = [
     icon: UsersRound,
     variant: "ghost",
     access_department: [
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -101,7 +101,7 @@ const menus = [
     variant: "ghost",
     access_department: [
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -125,7 +125,7 @@ const menus = [
     variant: "ghost",
     access_department: [
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -149,7 +149,7 @@ const menus = [
     variant: "ghost",
     access_department: [
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -173,7 +173,7 @@ const menus = [
     variant: "ghost",
     access_department: [
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -245,7 +245,7 @@ const menus = [
     variant: "ghost",
     access_department: [
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",
@@ -273,7 +273,7 @@ const menus = [
     access_department: [
       "Advisors Body",
       "Governing Body",
-      "Communication and Marketing",
+      "Communications and Marketing",
       "Creative",
       "Event Management",
       "Finance",

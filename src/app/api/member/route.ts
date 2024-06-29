@@ -3,14 +3,14 @@ import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextRequest, NextResponse } from "next/server";
 
-const permittedDepartments = ["GOVERNING BODY", "HUMAN RESOURCES"];
+const permittedDepartments = ["Governing Body", "Human Resources"];
 const permittedDesignations = [
-  "PRESIDENT",
-  "VICE PRESIDENT",
-  "GENERAL SECRETARY",
-  "TREASURER",
-  "DIRECTOR",
-  "ASSISTANT DIRECTOR",
+  "President",
+  "Vice President",
+  "General Secretary",
+  "Treasurer",
+  "Director",
+  "Assistant Director",
 ];
 const permittedFields = [
   "name",
@@ -117,10 +117,7 @@ export async function PATCH(request: NextRequest) {
       const socialKeys = Object.keys(memberSocials);
 
       for (let key of socialKeys) {
-        if (
-          !["Facebook", "Github", "Linkedin"].includes(key) ||
-          !memberSocials[key]
-        ) {
+        if (!["Facebook", "Github", "Linkedin"].includes(key)) {
           return NextResponse.json({
             message:
               "Invalid Request. You are not authorized to update these fields",
@@ -133,12 +130,14 @@ export async function PATCH(request: NextRequest) {
       };
     }
 
+    // Handle skill updates
     if (body.memberSkills) {
       updateObject.memberSkills = [
         ...body.memberSkills.filter((skill: any) => skill),
       ].filter((value, index, self) => value && self.indexOf(value) === index);
     }
 
+    // Merge other fields
     Object.keys(body).forEach((key) => {
       if (key !== "memberSocials" && key !== "memberSkills") {
         updateObject[key] = body[key];
@@ -148,7 +147,7 @@ export async function PATCH(request: NextRequest) {
     const updatedUser = await MemberInfo.findByIdAndUpdate(
       memberID,
       { $set: updateObject },
-      { new: true }
+      { new: true },
     );
 
     return NextResponse.json({ user: updatedUser });

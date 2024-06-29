@@ -71,7 +71,7 @@ export default function PasswordField({
         <TooltipTrigger asChild>
           <div className="relative mb-4">
             <Input
-              className="pl-10 shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"
+              className="rounded-md pl-10 shadow-sm sm:text-sm"
               name="password"
               placeholder={placeholder}
               type={showPassword ? "text" : "password"}
@@ -82,7 +82,7 @@ export default function PasswordField({
                 checkPasswordStrength(e.target.value);
               }}
             />
-            <LockIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4" />
+            <LockIcon className="absolute left-3 top-1/2 w-4 -translate-y-1/2 text-gray-400" />
             <Button
               type="button"
               className="absolute bottom-1.5 right-1 h-7 w-7"
@@ -98,11 +98,11 @@ export default function PasswordField({
         {isRegistering && (
           <TooltipContent
             side="right"
-            className="flex flex-col items-start gap-1 p-4 text-sm text-gray-500 bg-transparent border-none shadow-none"
+            className="flex flex-col items-start gap-1 border-none bg-transparent p-4 text-sm text-gray-500 shadow-none"
           >
-            <div className="relative mb-4 rounded-lg bg-white dark:bg-gray-700 p-4 text-sm ml-6 mt-8 before:absolute before:-left-[30px] before:top-1/2 before:translate-y-[-50%] before:border-[15px] before:border-transparent before:border-r-white dark:before:border-r-gray-700">
+            <div className="relative mb-4 ml-6 mt-8 rounded-lg bg-white p-4 text-sm before:absolute before:-left-[30px] before:top-1/2 before:translate-y-[-50%] before:border-[15px] before:border-transparent before:border-r-white dark:bg-gray-700 dark:before:border-r-gray-700">
               {!haveLength && (
-                <div className=" text-red-500 dark:text-red-300">
+                <div className="text-red-500 dark:text-red-300">
                   &#x2717; At least 8 characters
                 </div>
               )}

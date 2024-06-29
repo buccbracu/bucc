@@ -3,14 +3,14 @@ import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextResponse } from "next/server";
 
-const permittedDepartments = ["GOVERNING BODY", "HUMAN RESOURCES"];
+const permittedDepartments = ["Governing Body", "Human Resources"];
 const permittedDesignations = [
-  "PRESIDENT",
-  "VICE PRESIDENT",
-  "GENERAL SECRETARY",
-  "TREASURER",
-  "DIRECTOR",
-  "ASSISTANT DIRECTOR",
+  "President",
+  "Vice President",
+  "General Secretary",
+  "Treasurer",
+  "Director",
+  "Assistant Director",
 ];
 
 export async function GET() {

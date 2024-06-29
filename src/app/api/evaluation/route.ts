@@ -13,10 +13,9 @@ export async function POST(request: NextRequest) {
       studentId: studentId,
     });
     if (memberEB) {
-      console.log("Form already submitted");
       return NextResponse.json(
         { message: "Evaluation already submitted" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const memberSaveEB = new MemberEBAssesment({
@@ -50,11 +49,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("Response", response);
-
     return NextResponse.json(
       { message: "Evaluation submission Successful" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -78,7 +75,7 @@ export async function GET(request: NextRequest) {
       } else {
         return NextResponse.json(
           { error: "Evaluation Data not found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
     }
@@ -93,13 +90,13 @@ export async function GET(request: NextRequest) {
       } else {
         return NextResponse.json(
           { error: "Student ID not found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
     } else {
       return NextResponse.json(
         { error: "Student ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
   } catch (error) {
