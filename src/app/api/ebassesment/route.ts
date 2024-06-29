@@ -1,6 +1,16 @@
 import MemberEBAssesment from "@/model/MemberEBAssesment";
 import { NextRequest, NextResponse } from "next/server";
 
+export async function GET() {
+  try {
+    const assessment = await MemberEBAssesment.find({});
+
+    return NextResponse.json({ messages: assessment }, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function PATCH(request: NextRequest) {
   try {
     const {

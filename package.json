@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "dotenv": "^16.4.5",
+    "export-from-json": "^1.7.4",
     "googleapis": "^140.0.0",
     "gsap": "^3.12.5",
     "input-otp": "^1.2.4",
