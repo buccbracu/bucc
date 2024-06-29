@@ -32,6 +32,10 @@ type PageProps = {
   };
 };
 
+const buccDepartments = [
+  ...departments.map((department: any) => department.title),
+];
+
 const getEvaluation = async (
   evaluationID: string,
 ): Promise<EvaluationData | null> => {
@@ -108,7 +112,7 @@ export default function Evaluation({ params }: PageProps) {
     }
     if (element.choices) {
       const choice = element.choices.find((c: any) => c.value === value);
-      if (departments.includes(value)) {
+      if (buccDepartments.includes(value)) {
         return (
           <Badge
             className="mt-2 bg-blue-200 p-1 px-3 text-blue-900 hover:bg-blue-300 dark:bg-blue-900/90 dark:text-blue-200 dark:hover:bg-blue-800/90"

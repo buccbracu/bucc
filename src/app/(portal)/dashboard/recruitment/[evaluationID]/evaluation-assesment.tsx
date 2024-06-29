@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import {
   Select,
@@ -28,7 +28,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   const params = useParams();
 
   const evaluationID = params.evaluationID;
-
+  const [loading, setLoading] = useState(false);
   const [department, setDepartment] = useState(
     evaluationData.buccDepartment || "",
   );
@@ -54,6 +54,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   };
 
   async function submitAssessment() {
+    setLoading(true);
     try {
       const assessmentData = {
         _id: evaluationID,
@@ -77,6 +78,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
 
       const data = await response.json();
       if (response.ok) {
+        setLoading(false);
         toast.success("Assessment added successfully.");
       } else {
         toast.error("Error submitting assessment:");
@@ -176,12 +178,14 @@ export default function EvaluationAssessment({ evaluationData }: any) {
             className="w-full rounded px-3 py-2 dark:bg-black/10"
           ></Textarea>
         </div>
-        <Button
+        <LoadingButton
           onClick={submitAssessment}
-          className="w-full rounded px-4 py-2 font-bold"
+          disabled={loading}
+          loading={loading}
+          className="w-full"
         >
-          Save
-        </Button>
+          Submit
+        </LoadingButton>
       </CardContent>
     </Card>
   );
