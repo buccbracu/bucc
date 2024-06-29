@@ -1,10 +1,19 @@
 // TODO: Convert all these to HTML
 
-function welcomeMail(name: String) {
+function welcomeMail(name: String, email?: String, password?: String) {
   return `
 Dear ${name},
 Welcome to BUCC. We are excited to have you on board.
 Remember to join our Discord and Facebook group to stay updated with the latest news and events.
+
+Your login credentials are:
+Email: ${email}
+Password: ${password}
+
+Please change your password after logging in. See you soon!
+
+Regards,
+BUCC Team
 `;
 }
 

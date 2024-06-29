@@ -1,6 +1,7 @@
 "use client";
 import Heading from "@/components/portal/heading";
 import { Button } from "@/components/ui/button";
+import getEvaluations from "@/server/actions";
 import exportFromJSON from "export-from-json";
 
 export default function page() {
@@ -8,6 +9,20 @@ export default function page() {
   const fileNameMem = "MemberInfos";
   const fileNameEB = "EbassesmentInfos";
   const exportType = exportFromJSON.types.csv;
+
+  const completeRegistration = () => {
+    const evaluationsData = getEvaluations().then((evaluations) => {
+      evaluations.forEach((evaluation: any) => {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register-all`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(evaluation),
+        });
+      });
+    });
+  };
 
   return (
     <main>
@@ -68,6 +83,9 @@ export default function page() {
           }}
         >
           Download Ebassesment CSV
+        </Button>
+        <Button onClick={completeRegistration} className="ml-3">
+          Complete Registration
         </Button>
       </div>
     </main>
