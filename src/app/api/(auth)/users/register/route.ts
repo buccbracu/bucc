@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (user) {
       return NextResponse.json(
         { message: "User already exists" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const hashPass = await hash(password, saltRounds);
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     await newMember.save();
     return NextResponse.json(
       { message: "Register Successful" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

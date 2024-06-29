@@ -167,6 +167,8 @@ export default function Registration() {
               id="studentId"
               placeholder="Enter your student ID"
               type="text"
+              pattern="^[0-9]{8}$"
+              title="Please enter a valid student ID."
               value={formData.studentId}
               onChange={handleChange}
             />
@@ -180,6 +182,7 @@ export default function Registration() {
               placeholder="Enter your G-Suite email"
               type="email"
               pattern="^[a-zA-Z0-9._%+-]+@bracu.ac.bd$"
+              title="Please enter a valid G-Suite email address."
               value={formData.email}
               onChange={handleChange}
             />

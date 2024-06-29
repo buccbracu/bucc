@@ -29,7 +29,7 @@ export default function page() {
                   data: response.users,
                   fileName: fileNamePre,
                   exportType,
-                })
+                }),
               );
           }}
         >
@@ -45,7 +45,7 @@ export default function page() {
                   data: response.users,
                   fileName: fileNameMem,
                   exportType,
-                })
+                }),
               );
           }}
         >
@@ -63,7 +63,7 @@ export default function page() {
                   data: response.users,
                   fileName: fileNameEB,
                   exportType,
-                })
+                }),
               );
           }}
         >

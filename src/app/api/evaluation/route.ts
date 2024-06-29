@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       name,
       responseObject,
     });
+
     await memberSaveEB.save();
 
     const auth = new google.auth.GoogleAuth({
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "A1:C1",
+      range: "Evaluations!A1:C1",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[studentId, name, firstChoice]],
