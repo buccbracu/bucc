@@ -71,7 +71,7 @@ export default function UpdateProfilePhoto() {
           )}
         </div>
       </div>
-      <CardFooter className="flex justify-center">
+      <CardFooter className="flex flex-col justify-center">
         <div className="flex space-x-4">
           <CldUploadButton
             className="text-sm font-medium text-primary underline-offset-4 hover:underline"
@@ -95,6 +95,10 @@ export default function UpdateProfilePhoto() {
             Remove
           </Button>
         </div>
+        <p className="block text-xs text-red-700 dark:text-red-400">
+          Upload images less than 100 kb and use a square image for best
+          results.
+        </p>
       </CardFooter>
     </Card>
   );

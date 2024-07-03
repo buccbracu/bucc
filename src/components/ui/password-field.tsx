@@ -21,7 +21,7 @@ export default function PasswordField({
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isStrongPassword, setIsStrongPassword] = useState(false);
-
+  const [openTooltip, setOpenTooltip] = useState(false);
   const [haveLength, setHaveLength] = useState(false);
   const [haveNumber, setHaveNumber] = useState(false);
   const [haveSpecialCharacter, setHaveSpecialCharacter] = useState(false);
@@ -67,13 +67,15 @@ export default function PasswordField({
 
   return (
     <div className="">
-      <Tooltip>
+      <Tooltip open={openTooltip}>
         <TooltipTrigger asChild>
           <div className="relative mb-4">
             <Input
               className="rounded-md pl-10 shadow-sm sm:text-sm"
               name="password"
               placeholder={placeholder}
+              onFocus={() => setOpenTooltip(true)}
+              onBlur={() => setOpenTooltip(false)}
               type={showPassword ? "text" : "password"}
               required
               value={password}
@@ -97,10 +99,10 @@ export default function PasswordField({
         </TooltipTrigger>
         {isRegistering && (
           <TooltipContent
-            side="right"
-            className="flex flex-col items-start gap-1 border-none bg-transparent p-4 text-sm text-gray-500 shadow-none"
+            side="top"
+            className="flex w-[25rem] flex-col items-start border-none text-sm text-gray-500 shadow-md md:w-96"
           >
-            <div className="relative mb-4 ml-6 mt-8 rounded-lg bg-white p-4 text-sm before:absolute before:-left-[30px] before:top-1/2 before:translate-y-[-50%] before:border-[15px] before:border-transparent before:border-r-white dark:bg-gray-700 dark:before:border-r-gray-700">
+            <div className="relative flex flex-col gap-2 rounded-lg p-2 text-xs">
               {!haveLength && (
                 <div className="text-red-500 dark:text-red-300">
                   &#x2717; At least 8 characters
