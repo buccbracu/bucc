@@ -11,11 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-<Suspense fallback={<SpinnerComponent />}>
-  <ResetPassword />
-</Suspense>;
-
-export default function ResetPassword() {
+function ResetPassword() {
   const token = useSearchParams().get("token");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -154,5 +150,13 @@ export default function ResetPassword() {
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<SpinnerComponent />}>
+      <ResetPassword />
+    </Suspense>
   );
 }
