@@ -24,9 +24,6 @@ const singleWelcomeMail = async (
   email: String,
   password: String,
 ) => {
-  console.log(process.env.GMAIL_USERNAME);
-  console.log(process.env.GMAIL_APP_SECRET);
-
   try {
     const user = await UserAuth.findOne({ _id: userId });
     if (!user) {
@@ -35,7 +32,7 @@ const singleWelcomeMail = async (
     const mailOptions = {
       from: process.env.GMAIL_USERNAME,
       to: email.toString(),
-      subject: "Welcome to BUCC",
+      subject: "Welcome to BUCC Portal",
       text: welcomeMail(name, email, password),
     };
     await transporter.sendMail(mailOptions);

@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
 
     await newMember.save();
 
-    // Send the data to Google Sheets as well
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
