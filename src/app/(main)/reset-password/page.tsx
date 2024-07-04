@@ -1,16 +1,22 @@
 "use client";
 
+import SpinnerComponent from "@/components/SpinnerComponent";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
 import PasswordField from "@/components/ui/password-field";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+<Suspense fallback={<SpinnerComponent />}>
+  <ResetPassword />
+</Suspense>;
+
 export default function ResetPassword() {
-  const token = new URLSearchParams(document.location.search).get("token");
+  const token = useSearchParams().get("token");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -20,11 +26,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (newPassword && confirmPassword) {
-      if (newPassword === confirmPassword) {
-        setPasswordMatch(true);
-      } else {
-        setPasswordMatch(false);
-      }
+      setPasswordMatch(newPassword === confirmPassword);
     }
   }, [newPassword, confirmPassword]);
 
@@ -51,6 +53,7 @@ export default function ResetPassword() {
       }
     } catch (error) {
       console.error(error);
+      toast.error("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -60,17 +63,24 @@ export default function ResetPassword() {
     event.preventDefault();
     setLoading(true);
     try {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/resetPassword`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/resetPassword`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
         },
-        body: JSON.stringify({ email }),
-      });
+      );
+      if (response.ok) {
+        toast.success("Reset link sent to your email");
+      } else {
+        toast.error("Failed to send reset link");
+      }
     } catch (error) {
-      toast.error("Failed to send reset link");
+      toast.error("An error occurred");
     } finally {
-      toast.success("Reset link sent to your email");
       setLoading(false);
     }
   }
