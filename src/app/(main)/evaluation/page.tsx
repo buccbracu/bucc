@@ -4,20 +4,23 @@ import EvaluationComponent from "@/components/evaluation/EvaluationComponent";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { intakeInfo } from "@/constants/buccInfo";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function EvaluationForm() {
   const router = useRouter();
   const [studentID, setStudentID] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
   const [showForm, setShowForm] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const checkPreregistered = async (studentID: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/evaluation?studentID=${studentID}`
+        `${process.env.NEXT_PUBLIC_API_URL}/evaluation?studentID=${studentID}`,
       );
       if (!response.ok) {
         setIsRegistered(false);
@@ -32,39 +35,44 @@ export default function EvaluationForm() {
 
   const handleSubmit = () => {
     if (studentID) {
+      setLoading(true);
       router.push(`/evaluation?studentID=${studentID}`);
       checkPreregistered(studentID);
+    } else {
+      toast.error("Please enter your student ID.");
     }
   };
 
   return (
     <div>
-      <h1 className="text-xl md:text-3xl font-bold tracking-tight mt-6 text-center">
+      <h1 className="mt-6 text-center text-xl font-bold tracking-tight md:text-3xl">
         BUCC Written Evaluation Form - {intakeInfo.intakeName}
       </h1>
 
       {showForm ? (
         isRegistered ? (
-          <div className="flex flex-col min-h-[calc(100vh-140px)] items-center justify-center px-4 w-full">
+          <div className="flex min-h-[calc(100vh-140px)] w-full flex-col items-center justify-center px-4">
             <EvaluationComponent />
           </div>
         ) : (
-          <div className="flex flex-col items-center mt-12">
-            <h1 className="text-2xl font-semibold text-center mb-6">
+          <div className="mt-12 flex flex-col items-center">
+            <h1 className="mb-6 text-center text-2xl font-semibold">
               You have not completed the pre-registration process.
             </h1>
-            <p className="text-lg text-center mb-4">
+            <p className="mb-4 text-center text-lg">
               Please complete the pre-registration process before proceeding.
             </p>
-            {/* Add link or button for pre-registration */}
+            <Button>
+              <Link href="/registration"> Go to pre-registration</Link>
+            </Button>
           </div>
         )
       ) : (
-        <div className="flex flex-col items-center mt-12">
-          <h1 className="text-2xl font-semibold text-center mb-6">
+        <div className="mt-12 flex flex-col items-center">
+          <h1 className="mb-6 text-center text-2xl font-semibold">
             Please enter your student ID to proceed.
           </h1>
-          <Label htmlFor="studentID" className="text-lg font-bold mb-2">
+          <Label htmlFor="studentID" className="mb-2 text-lg font-bold">
             Student ID
           </Label>
           <Input
@@ -72,14 +80,16 @@ export default function EvaluationForm() {
             value={studentID}
             placeholder="Enter your student ID"
             onChange={(e) => setStudentID(e.target.value)}
-            className="p-2 text-lg mb-4 w-72 border border-gray-300 rounded"
+            className="mb-4 w-72 rounded border border-gray-300 p-2 text-lg"
           />
-          <Button
+          <LoadingButton
+            type="submit"
+            disabled={loading}
+            loading={loading}
             onClick={handleSubmit}
-            className="px-4 py-2 text-lg text-white bg-blue-500 rounded hover:bg-blue-700"
           >
-            Submit
-          </Button>
+            Proceed to Evaluation
+          </LoadingButton>
         </div>
       )}
     </div>

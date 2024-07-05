@@ -17,23 +17,23 @@
 // });
 
 // export const config = {
-//  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+//   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 // };
-// import { NextResponse, type NextRequest } from "next/server";
-// export function middleware(request: NextRequest) {
-//   const pathname = new URL(request.url).pathname;
-//   if (!(process.env.NODE_ENV === "development")) {
-//     if (pathname.startsWith("/dashboard")) {
-//       if (pathname === "/dashboard") {
-//         return NextResponse.rewrite(new URL("/dashboard", request.url));
-//       }
-//       return NextResponse.rewrite(
-//         new URL("/dashboard/under-construction", request.url)
-//       );
-//     }
-//     return NextResponse.rewrite(new URL("/under-construction", request.url));
-//   }
-// }
+// // };
+// // export function middleware(request: NextRequest) {
+// //   const pathname = new URL(request.url).pathname;
+// //   if (!(process.env.NODE_ENV === "development")) {
+// //     if (pathname.startsWith("/dashboard")) {
+// //       if (pathname === "/dashboard") {
+// //         return NextResponse.rewrite(new URL("/dashboard", request.url));
+// //       }
+// //       return NextResponse.rewrite(
+// //         new URL("/dashboard/under-construction", request.url),
+// //       );
+// //     }
+// //     return NextResponse.rewrite(new URL("/under-construction", request.url));
+// //   }
+// // }
 
 export const config = {
   matcher: [],

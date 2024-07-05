@@ -1,8 +1,11 @@
 "use client";
 
+import IntakeInactive from "@/components/intake-inactive";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import {
   Select,
   SelectContent,
@@ -10,13 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { intakeInfo } from "@/constants/buccInfo";
+import { buccSocials, intakeInfo } from "@/constants/buccInfo";
+import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 export default function Registration() {
+  const registrationActive = intakeInfo.isIntakeActive;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isRegistered, setIsRegistered] = useState(false);
@@ -80,36 +85,54 @@ export default function Registration() {
     });
   };
 
+  if (!registrationActive) {
+    return <IntakeInactive endDate={intakeInfo.intakeEndDate} />;
+  }
+
   return isRegistered ? (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <div className="w-full max-w-lg space-y-6 p-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Registration Successful!
-          </h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            You have successfully registered for {intakeInfo.intakeName}. Please
-            make sure to fill up the
-            <strong className="text-blue-500">
-              <Link href={"/evaluation"}> Written Evaluation Form</Link>
-            </strong>{" "}
-            before attending for interview. Keep an eye on your email and our
-            <strong className="text-blue-500">
-              {" "}
-              <Link href={"https://www.facebook.com/BRACUCC"}>
-                Facebook page
-              </Link>
-            </strong>{" "}
-            for further updates.
-          </p>
+      <Card className="w-full max-w-lg space-y-6 p-8">
+        <CardHeader className="flex items-center justify-center">
+          <div className="flex items-center justify-center rounded-full bg-green-500/20 p-6">
+            <CircleCheckBig className="h-16 w-16 text-green-500" />
+          </div>
+        </CardHeader>
+
+        <CardContent className="items-center justify-center text-center">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Registration Successful!
+            </h1>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              You have successfully registered for {intakeInfo.intakeName}.
+              Please make sure to fill up the
+              <strong className="text-blue-500">
+                <Link href={"/evaluation"}> Written Evaluation Form</Link>
+              </strong>{" "}
+              before attending for interview. Keep an eye on your email and our
+              <strong className="text-blue-500">
+                {" "}
+                <Link href={buccSocials.facebook}>Facebook page</Link>
+              </strong>{" "}
+              for further updates.
+            </p>
+          </div>
+        </CardContent>
+        <div className="flex gap-2">
+          <Button
+            className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-600 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-600"
+            onClick={() => router.push("/evaluation")}
+          >
+            Fill Evaluation Form
+          </Button>
+          <Button
+            className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
+            onClick={() => router.push("/")}
+          >
+            Go to Home
+          </Button>
         </div>
-        <Button
-          className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
-          onClick={() => router.push("/")}
-        >
-          Go to Home
-        </Button>
-      </div>
+      </Card>
     </div>
   ) : (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
@@ -128,6 +151,7 @@ export default function Registration() {
             <Label htmlFor="name">Name</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
+              required
               id="name"
               placeholder="Enter your name"
               type="text"
@@ -139,9 +163,12 @@ export default function Registration() {
             <Label htmlFor="studentId">Student ID</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
+              required
               id="studentId"
               placeholder="Enter your student ID"
               type="text"
+              pattern="^[0-9]{8}$"
+              title="Please enter a valid student ID."
               value={formData.studentId}
               onChange={handleChange}
             />
@@ -150,17 +177,21 @@ export default function Registration() {
             <Label htmlFor="email">G-Suite Email Address</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
+              required
               id="email"
               placeholder="Enter your G-Suite email"
               type="email"
+              pattern="^[a-zA-Z0-9._%+-]+@bracu.ac.bd$"
+              title="Please enter a valid G-Suite email address."
               value={formData.email}
               onChange={handleChange}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="semester">Semester</Label>
+            <Label htmlFor="semester">Joined BRACU</Label>
             <div className="flex gap-2">
               <Select
+                required
                 value={formData.semester}
                 onValueChange={(value) => handleSelectChange(value, "semester")}
               >
@@ -178,6 +209,7 @@ export default function Registration() {
               </Select>
               <Input
                 className="rounded-md shadow-sm sm:text-sm"
+                required
                 id="year"
                 placeholder="Year"
                 type="number"
@@ -193,6 +225,7 @@ export default function Registration() {
             <Label htmlFor="departmentBracu">BRACU Department</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
+              required
               id="departmentBracu"
               placeholder="Enter Your BRACU Department"
               type="text"
@@ -200,13 +233,14 @@ export default function Registration() {
               onChange={handleChange}
             />
           </div>
-          <Button
-            disabled={isPending}
-            className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
+          <LoadingButton
+            className="w-full"
             type="submit"
+            disabled={isPending}
+            loading={isPending}
           >
             Register
-          </Button>
+          </LoadingButton>
         </form>
       </div>
     </div>

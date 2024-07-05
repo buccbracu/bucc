@@ -33,19 +33,17 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
   const { designation, buccDepartment } = session.data?.user || {};
 
   const filteredMenus = menus.filter((menu) => {
-    const userDepartment = buccDepartment?.toLowerCase();
-    const userDesignation = designation?.toLowerCase();
+    const userDepartment = buccDepartment;
+    const userDesignation = designation;
 
     const isDepartmentMatch =
       !menu.access_department ||
-      menu.access_department
-        .map((dept) => dept.toLowerCase())
-        .includes(userDepartment || "");
+      menu.access_department.map((dept) => dept).includes(userDepartment || "");
 
     const isDesignationMatch =
       !menu.access_designation ||
       menu.access_designation
-        .map((desig) => desig.toLowerCase())
+        .map((desig) => desig)
         .includes(userDesignation || "");
 
     return isDepartmentMatch && isDesignationMatch;
@@ -69,7 +67,7 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
                       size: "icon",
                     }),
                     "h-9 w-9",
-                    menu.variant === "default"
+                    menu.variant === "default",
                   )}
                 >
                   <menu.icon className="h-4 w-4" />
@@ -95,7 +93,7 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
                   size: "sm",
                 }),
                 menu.variant === "default",
-                "justify-start"
+                "justify-start",
               )}
             >
               <menu.icon className="mr-2 h-4 w-4" />
@@ -106,7 +104,7 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
                 </span>
               )}
             </Link>
-          )
+          ),
         )}
       </nav>
     </div>

@@ -9,7 +9,7 @@ import rndImage from "/public/images/departments/rnd.jpeg";
 export const departments = [
   { title: "Advisors Body" },
   { title: "Governing Body" },
-  { title: "Communication and Marketing" },
+  { title: "Communications and Marketing" },
   { title: "Creative" },
   { title: "Event Management" },
   { title: "Finance" },
@@ -20,7 +20,7 @@ export const departments = [
 
 export const departmentsInfo = [
   {
-    name: "Communication and Marketing",
+    name: "Communications and Marketing",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
     image: cnmImage,

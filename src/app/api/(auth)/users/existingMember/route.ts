@@ -16,22 +16,33 @@ export async function POST(request: NextRequest) {
     await dbConnect();
 
     const body = await request.json();
-    const { name, studentId, gSuiteEmail, buccDepartment, status } = body;
-    const { departmentBracu, joinedBracu } = await PreregMemberInfo.findOne({
+    const {
+      name,
       studentId,
-    }).exec();
+      departmentBracu,
+      designation,
+      buccDepartment,
+      personalEmail,
+      gSuiteEmail,
+      contactNumber,
+      emergencyContact,
+      bloodGroup,
+      birthDate,
+      gender,
+      joinedBracu,
+      joinedBucc,
+      lastPromotion,
+      Facebook,
+      LinkedIn,
+      Github,
+    } = body;
 
-    if (status !== "Accepted") {
-      return NextResponse.json(
-        { message: "User is not accepted" },
-        { status: 400 },
-      );
-    }
+    let user = await UserAuth.findOne({ email: gSuiteEmail }).exec();
+    let member = await MemberInfo.findOne({ email: gSuiteEmail }).exec();
 
-    const user = await MemberInfo.findOne({ email: gSuiteEmail }).exec();
-    if (user) {
+    if (member && user) {
       return NextResponse.json(
-        { message: "User already exists" },
+        { message: "Member already exists" },
         { status: 400 },
       );
     }
@@ -39,28 +50,63 @@ export async function POST(request: NextRequest) {
     const password = generatePassword();
     const hashPass = await hash(password, saltRounds);
 
-    const newUser = new UserAuth({
-      name,
-      email: gSuiteEmail,
-      password: hashPass,
-    });
+    if (user) {
+      user.password = hashPass;
+      await user.save();
 
-    await newUser.save();
+      member = new MemberInfo({
+        _id: user._id.toString(),
+        name,
+        email: gSuiteEmail,
+        studentId,
+        buccDepartment,
+        departmentBracu,
+        joinedBracu,
+        designation,
+        personalEmail,
+        contactNumber,
+        emergencyContact,
+        bloodGroup,
+        birthDate,
+        gender,
+        joinedBucc,
+        lastPromotion,
+      });
 
-    const userID = await UserAuth.findOne({ email: gSuiteEmail }).exec();
-    const newMember = new MemberInfo({
-      _id: userID.id.toString(),
-      name,
-      email: gSuiteEmail,
-      studentId,
-      buccDepartment,
-      departmentBracu,
-      joinedBracu,
-    });
-    await newMember.save();
+      await member.save();
+    } else {
+      user = new UserAuth({
+        name,
+        email: gSuiteEmail,
+        password: hashPass,
+      });
+
+      await user.save();
+
+      member = new MemberInfo({
+        _id: user._id.toString(),
+        name,
+        email: gSuiteEmail,
+        studentId,
+        buccDepartment,
+        departmentBracu,
+        joinedBracu,
+        designation,
+        personalEmail,
+        contactNumber,
+        emergencyContact,
+        bloodGroup,
+        birthDate,
+        gender,
+        joinedBucc,
+        lastPromotion,
+      });
+
+      await member.save();
+    }
 
     const createdMember = await MemberInfo.findOne({
-      _id: userID.id.toString(),
+      _id: user._id.toString(),
     }).exec();
 
     if (!createdMember) {
@@ -94,7 +140,7 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    const response = await sheets.spreadsheets.values.append({
+    await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
       range: "SelectedMembers!A1:E1",
       valueInputOption: "USER_ENTERED",
@@ -113,7 +159,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await singleWelcomeMail(userID.id.toString(), name, gSuiteEmail, password);
+    await singleWelcomeMail(user._id.toString(), name, gSuiteEmail, password);
 
     await PreregMemberInfo.findOneAndDelete({ studentId }).exec();
     await MemberEBAssessment.findOneAndDelete({ studentId }).exec();

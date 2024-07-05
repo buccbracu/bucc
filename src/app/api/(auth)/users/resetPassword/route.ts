@@ -19,8 +19,6 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
     const user = await UserAuth.findOne({ verifyToken: token });
 
-    console.log(user);
-
     if (!user) {
       return NextResponse.json({
         message: "Invalid or expired token. Please try again",
@@ -67,7 +65,7 @@ export async function POST(request: NextRequest) {
     const member = await UserAuth.findOneAndUpdate(
       { email: email },
       { verifyToken: verifyToken, expiresIn: expiresIn },
-      { new: true }
+      { new: true },
     );
 
     if (!member) {

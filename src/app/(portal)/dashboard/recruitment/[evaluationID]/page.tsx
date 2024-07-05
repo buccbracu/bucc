@@ -1,5 +1,6 @@
 "use client";
 
+import SpinnerComponent from "@/components/SpinnerComponent";
 import { json } from "@/components/evaluation/questionJSON";
 import Heading from "@/components/portal/heading";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +10,9 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import departments from "@/constants/departments";
 import { useEffect, useState } from "react";
-import EvaluationAssesment from "./evaluation-assesment";
+import EvaluationAssessment from "./evaluation-assessment";
 
 type EvaluationData = {
   name: string;
@@ -29,6 +31,10 @@ type PageProps = {
     evaluationID: string;
   };
 };
+
+const buccDepartments = [
+  ...departments.map((department: any) => department.title),
+];
 
 const getEvaluation = async (
   evaluationID: string,
@@ -65,7 +71,7 @@ export default function Evaluation({ params }: PageProps) {
   }, [params.evaluationID]);
 
   if (!evaluationData) {
-    return <div>Loading...</div>;
+    return <SpinnerComponent />;
   }
 
   const responseObject = JSON.parse(evaluationData.responseObject);
@@ -85,7 +91,7 @@ export default function Evaluation({ params }: PageProps) {
     const response = responseObject[element.name];
     if (Array.isArray(response)) {
       return (
-        <ul className="list-disc pl-8 text-muted-foreground">
+        <ul className="list-disc overflow-hidden pl-8">
           {response.map((choice: any, index: number) => (
             <li key={index}>{findChoiceText(element, choice)}</li>
           ))}
@@ -106,17 +112,7 @@ export default function Evaluation({ params }: PageProps) {
     }
     if (element.choices) {
       const choice = element.choices.find((c: any) => c.value === value);
-      if (
-        [
-          "Communications & Marketing",
-          "Creative",
-          "Event Management",
-          "Finance",
-          "Human Resources",
-          "Press Release & Publications",
-          "Research & Development",
-        ].includes(value)
-      ) {
+      if (buccDepartments.includes(value)) {
         return (
           <Badge
             className="mt-2 bg-blue-200 p-1 px-3 text-blue-900 hover:bg-blue-300 dark:bg-blue-900/90 dark:text-blue-200 dark:hover:bg-blue-800/90"
@@ -132,15 +128,15 @@ export default function Evaluation({ params }: PageProps) {
   };
 
   return (
-    <div className="mx-auto">
+    <div className="mx-auto w-[calc(100vw-140px)] md:w-full">
       <Heading
         headingText="Evaluation Data"
         subHeadingText={`Evaluation of ${evaluationData.name}`}
       />
       <div className="md:flex md:flex-row-reverse">
         <div className="py-4 md:w-1/3">
-          <h3 className="mb-6 text-xl font-bold">EB Assesment</h3>
-          <EvaluationAssesment evaluationData={evaluationData} />
+          <h3 className="mb-6 text-xl font-bold">EB Assessment</h3>
+          <EvaluationAssessment evaluationData={evaluationData} />
         </div>
         <div className="pt-6 md:w-2/3 md:pr-4 md:pt-4">
           <h3 className="mb-6 text-xl font-bold">Evaluation Responses</h3>
@@ -156,7 +152,10 @@ export default function Evaluation({ params }: PageProps) {
                   </CardHeader>
                   {page.elements.map((element: any) =>
                     hasValidResponse(element.name) ? (
-                      <CardContent key={element.name}>
+                      <CardContent
+                        className="overflow-hidden"
+                        key={element.name}
+                      >
                         <CardDescription className="text-md font-semibold text-black dark:text-gray-200">
                           {element.title}
                         </CardDescription>

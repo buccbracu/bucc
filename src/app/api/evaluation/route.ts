@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import MemberEBAssesment from "@/model/MemberEBAssesment";
+import MemberEBAssessment from "@/model/MemberEBAssessment";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,22 +9,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { studentId, gSuiteEmail, name, responseObject, firstChoice } = body;
     await dbConnect();
-    const memberEB = await MemberEBAssesment.findOne({
+    const memberEB = await MemberEBAssessment.findOne({
       studentId: studentId,
     });
     if (memberEB) {
-      console.log("Form already submitted");
       return NextResponse.json(
         { message: "Evaluation already submitted" },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    const memberSaveEB = new MemberEBAssesment({
+    const memberSaveEB = new MemberEBAssessment({
       studentId,
       gSuiteEmail,
       name,
       responseObject,
     });
+
     await memberSaveEB.save();
 
     const auth = new google.auth.GoogleAuth({
@@ -43,18 +43,16 @@ export async function POST(request: NextRequest) {
 
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "A1:C1",
+      range: "Evaluations!A1:C1",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[studentId, name, firstChoice]],
       },
     });
 
-    console.log("Response", response);
-
     return NextResponse.json(
       { message: "Evaluation submission Successful" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -69,7 +67,7 @@ export async function GET(request: NextRequest) {
     const evaluationID = url.searchParams.get("evaluationID");
 
     if (evaluationID) {
-      const evaluationData = await MemberEBAssesment.findOne({
+      const evaluationData = await MemberEBAssessment.findOne({
         _id: evaluationID,
       });
 
@@ -78,7 +76,7 @@ export async function GET(request: NextRequest) {
       } else {
         return NextResponse.json(
           { error: "Evaluation Data not found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
     }
@@ -93,13 +91,13 @@ export async function GET(request: NextRequest) {
       } else {
         return NextResponse.json(
           { error: "Student ID not found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
     } else {
       return NextResponse.json(
         { error: "Student ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
   } catch (error) {

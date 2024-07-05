@@ -1,7 +1,7 @@
 "use client";
 import { login } from "@/actions/login";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingButton } from "@/components/ui/loading-button";
 import PasswordField from "@/components/ui/password-field";
 import { MailIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -57,24 +57,25 @@ export default function Login() {
           <div className="flex items-center justify-between">
             <Link
               className="text-sm font-medium text-gray-900 underline transition-colors hover:text-gray-800 dark:text-gray-50 dark:hover:text-gray-200"
-              href="#"
+              href="/reset-password"
             >
               Forgot your password?
             </Link>
             <Link
               className="f text-sm font-medium text-gray-900 underline transition-colors hover:text-gray-800 dark:text-gray-50 dark:hover:text-gray-200"
-              href="#"
+              href="/registration"
             >
               Not a member? Register
             </Link>
           </div>
-          <Button
-            disabled={isPending}
-            className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900"
+          <LoadingButton
+            className="w-full"
             type="submit"
+            disabled={isPending}
+            loading={isPending}
           >
             Login
-          </Button>
+          </LoadingButton>
         </form>
       </div>
     </div>

@@ -50,7 +50,7 @@ export async function PATCH(request: NextRequest) {
 
     if (oldPublicId) {
       const cloudinaryResponse = await cloudinary.uploader.destroy(
-        `${process.env.CLOUDINARY_FOLDER_PATH}${oldPublicId}`
+        `${process.env.CLOUDINARY_FOLDER_PATH}${oldPublicId}`,
       );
 
       if (cloudinaryResponse.result === "not found") {
@@ -58,7 +58,7 @@ export async function PATCH(request: NextRequest) {
           {
             message: "Profile Image not found",
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
     }
@@ -80,7 +80,7 @@ export async function DELETE(request: NextRequest) {
       {
         message: "You are not authorized to view this page",
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -92,14 +92,14 @@ export async function DELETE(request: NextRequest) {
         {
           message: "User not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const publicId = user.profileImage.split("/").pop()?.split(".")[0];
 
     const cloudinaryResponse = await cloudinary.uploader.destroy(
-      `${process.env.CLOUDINARY_FOLDER_PATH}${publicId}`
+      `${process.env.CLOUDINARY_FOLDER_PATH}${publicId}`,
     );
 
     if (cloudinaryResponse.result === "not found") {
@@ -107,7 +107,7 @@ export async function DELETE(request: NextRequest) {
         {
           message: "Profile Image not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -117,7 +117,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { message: "Profile Image Deleted" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

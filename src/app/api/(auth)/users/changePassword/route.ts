@@ -13,13 +13,11 @@ export async function PATCH(request: NextRequest) {
     if (!userID) {
       return NextResponse.json(
         { message: "You are not authorized to initiate Password Change" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const { currentPassword, newPassword } = await request.json();
-
-    console.log(currentPassword, newPassword);
 
     const member = await UserAuth.findById(userID);
 
@@ -29,13 +27,13 @@ export async function PATCH(request: NextRequest) {
 
     const isSameCurrentPassword = await compare(
       currentPassword,
-      member.password
+      member.password,
     );
 
     if (!isSameCurrentPassword) {
       return NextResponse.json(
         { message: "Current Password is incorrect" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +42,7 @@ export async function PATCH(request: NextRequest) {
     if (isSameNewPassword) {
       return NextResponse.json(
         { message: "New Password cannot be the same as the current password" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,7 +51,7 @@ export async function PATCH(request: NextRequest) {
     await UserAuth.findByIdAndUpdate(
       userID,
       { password: hashPass },
-      { new: true }
+      { new: true },
     );
 
     return NextResponse.json({ message: "Password Changed Successfully" });

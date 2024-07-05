@@ -5,7 +5,7 @@ const getEvaluations = async () => {
 
 const getEvaluation = async ({ evaluationID }: { evaluationID: string }) => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/evaluations/${evaluationID}`
+    `${process.env.NEXT_PUBLIC_API_URL}/evaluations/${evaluationID}`,
   );
   return res.json();
 };
@@ -30,12 +30,20 @@ const getProfileData = async () => {
   return res.json();
 };
 
+const getMemberData = async (memberId: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/member/?id=${memberId}`,
+  );
+  return res.json();
+};
+
 export {
   getAllMembers,
   getDepartmentMembers,
   getEvaluation,
   getEvaluations,
   getMember,
+  getMemberData,
   getProfileData,
 };
 

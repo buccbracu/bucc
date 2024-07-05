@@ -110,9 +110,9 @@ export const json = {
       elements: [
         {
           type: "html",
-          name: "Communications & Marketing Details First",
-          visibleIf: "{question8} = 'Communications & Marketing'",
-          html: "<strong>Communications & Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
+          name: "Communications and Marketing Details First",
+          visibleIf: "{question8} = 'Communications and Marketing'",
+          html: "<strong>Communications and Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
         },
         {
           type: "html",
@@ -140,15 +140,15 @@ export const json = {
         },
         {
           type: "html",
-          name: "Press Release & Publications Details First",
-          visibleIf: "{question8} = 'Press Release & Publications'",
-          html: "<strong>Press Release & Publications: </strong>This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
+          name: "Press Release and Publications Details First",
+          visibleIf: "{question8} = 'Press Release and Publications'",
+          html: "<strong>Press Release and Publications: </strong>This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
         },
         {
           type: "html",
-          name: "Research & Development Details First",
-          visibleIf: "{question8} = 'Research & Development'",
-          html: "<strong>Research & Development: </strong>The Research & Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
+          name: "Research and Development Details First",
+          visibleIf: "{question8} = 'Research and Development'",
+          html: "<strong>Research and Development: </strong>The Research and Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
         },
         {
           type: "radiogroup",
@@ -157,13 +157,13 @@ export const json = {
           isRequired: true,
           requiredErrorText: "This field is required",
           choices: [
-            "Communications & Marketing",
+            "Communications and Marketing",
             "Creative",
             "Event Management",
             "Finance",
             "Human Resources",
-            "Press Release & Publications",
-            "Research & Development",
+            "Press Release and Publications",
+            "Research and Development",
           ],
         },
         {
@@ -188,7 +188,7 @@ export const json = {
         "Choose any of the departments from below and read their respective section before continuing to the next one. Read the description provided for each department carefully before choosing your preferred department. Note that, your entire club journey depends on how you fill up the upcoming sections. We couldn't get the Sorting Hat from Hogwarts, so we need you to be completely honest and precise about your choices. Let's start!",
     },
     {
-      name: "Communications & Marketing",
+      name: "Communications and Marketing",
       elements: [
         {
           type: "comment",
@@ -207,8 +207,8 @@ export const json = {
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{question8} = 'Communications & Marketing'",
-      title: "Communications & Marketing",
+      visibleIf: "{question8} = 'Communications and Marketing'",
+      title: "Communications and Marketing",
       description:
         "This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
     },
@@ -246,13 +246,13 @@ export const json = {
           type: "radiogroup",
           name: "question14",
           title:
-            "Suppose, you are in the creative department & have basic knowledge of designing. Suddenly you are assigned to create a poster for an event. As it is going to be published in all the social media its design has to be attractive and sophisticated but you don't have any previous experience of creating anything like this. At the same time, you are given a deadline of 2 days. So what would you do?",
+            "Suppose, you are in the creative department and have basic knowledge of designing. Suddenly you are assigned to create a poster for an event. As it is going to be published in all the social media its design has to be attractive and sophisticated but you don't have any previous experience of creating anything like this. At the same time, you are given a deadline of 2 days. So what would you do?",
           isRequired: true,
           requiredErrorText: "This field is required",
           choices: [
             {
               value: "Item 1",
-              text: "Take help from your graphics designer friend & do your design beautifully",
+              text: "Take help from your graphics designer friend and do your design beautifully",
             },
             {
               value: "Item 2",
@@ -264,7 +264,7 @@ export const json = {
             },
             {
               value: "Item 4",
-              text: "Find already done beautiful covers on the internet & just change some tweaks",
+              text: "Find already done beautiful covers on the internet and just change some tweaks",
             },
           ],
         },
@@ -404,7 +404,7 @@ export const json = {
         "This department at BUCC is tasked with managing and maintaining member data, allocating volunteers, and ensuring their presence at every event. They handle registration and maintain etiquette among executive bodies, ensuring smooth operation of club activities. Additionally, they notify members about club events or other relevant information through email. If you're organized, communicative, and enjoy working with people, you might have what it takes to excel in HR.",
     },
     {
-      name: "Press Release & Publications",
+      name: "Press Release and Publications",
       elements: [
         {
           type: "text",
@@ -442,13 +442,13 @@ export const json = {
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{question8} = 'Press Release & Publications'",
-      title: "Press Release & Publications",
+      visibleIf: "{question8} = 'Press Release and Publications'",
+      title: "Press Release and Publications",
       description:
         "This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
     },
     {
-      name: "Research & Development",
+      name: "Research and Development",
       elements: [
         {
           type: "checkbox",
@@ -486,19 +486,19 @@ export const json = {
           inputType: "url",
         },
       ],
-      visibleIf: "{question8} = 'Research & Development'",
-      title: "Research & Development",
+      visibleIf: "{question8} = 'Research and Development'",
+      title: "Research and Development",
       description:
-        "The Research & Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
+        "The Research and Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
     },
     {
       name: "Second Preferred Department",
       elements: [
         {
           type: "html",
-          name: "Communications & Marketing Details Second",
-          visibleIf: "{question32} = 'Communications & Marketing'",
-          html: "<strong>Communications & Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
+          name: "Communications and Marketing Details Second",
+          visibleIf: "{question32} = 'Communications and Marketing'",
+          html: "<strong>Communications and Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
         },
         {
           type: "html",
@@ -526,15 +526,15 @@ export const json = {
         },
         {
           type: "html",
-          name: "Press Release & Publications Details Second",
-          visibleIf: "{question32} = 'Press Release & Publications'",
-          html: "<strong>Press Release & Publications: </strong>This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
+          name: "Press Release and Publications Details Second",
+          visibleIf: "{question32} = 'Press Release and Publications'",
+          html: "<strong>Press Release and Publications: </strong>This department takes charge of creating post-event press releases, promotional posts, and publications for all BUCC events. Individuals with writing skills and a penchant for research are encouraged to join this department. They play a crucial role in documenting and publicizing the outcomes of BUCC's events to a wider audience.",
         },
         {
           type: "html",
-          name: "Research & Development Details Second",
-          visibleIf: "{question32} = 'Research & Development'",
-          html: "<strong>Research & Development: </strong>The Research & Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
+          name: "Research and Development Details Second",
+          visibleIf: "{question32} = 'Research and Development'",
+          html: "<strong>Research and Development: </strong>The Research and Development department at BUCC focuses on exploring innovative ideas and enhancing the organization's offerings. This team is dedicated to conducting research to improve existing projects and develop new initiatives. Individuals with a passion for exploring new concepts and problem-solving are encouraged to join this department. They play a key role in innovation through their dedication to continuous improvement and forward-thinking strategies.",
         },
         {
           type: "radiogroup",
@@ -543,13 +543,13 @@ export const json = {
           isRequired: true,
           requiredErrorText: "This field is required",
           choices: [
-            "Communications & Marketing",
+            "Communications and Marketing",
             "Creative",
             "Event Management",
             "Finance",
             "Human Resources",
-            "Press Release & Publications",
-            "Research & Development",
+            "Press Release and Publications",
+            "Research and Development",
             "Skip",
           ],
         },

@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
+import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -12,10 +13,9 @@ export async function POST(request: NextRequest) {
     const member = await PreregMemberInfo.findOne({ email: email });
 
     if (member) {
-      console.log("User already exists");
       return NextResponse.json(
         { message: "User already exists" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -29,11 +29,32 @@ export async function POST(request: NextRequest) {
 
     await newMember.save();
 
-    console.log(body);
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      },
+      scopes: [
+        "https://www.googleapis.com/auth/drive",
+        "https://www.googleapis.com/auth/drive.file",
+        "https://www.googleapis.com/auth/spreadsheets",
+      ],
+    });
+
+    const sheets = google.sheets({ version: "v4", auth });
+
+    const response = await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: "Preregs!A1:E1",
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [[studentId, name, email, joinedBracu, departmentBracu]],
+      },
+    });
 
     return NextResponse.json(
       { message: "Registration Successful" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

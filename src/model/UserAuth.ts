@@ -4,10 +4,6 @@ const UserAuthSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a name"],
   },
-  image: {
-    type: String,
-    default: null,
-  },
   email: {
     type: String,
     required: true,
