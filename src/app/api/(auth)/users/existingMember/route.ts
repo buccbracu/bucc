@@ -1,4 +1,5 @@
 const saltRounds = 10;
+import { auth } from "@/auth";
 import generatePassword from "@/helpers/generatePassword";
 import { singleWelcomeMail } from "@/helpers/mailer";
 import dbConnect from "@/lib/dbConnect";
@@ -8,11 +9,55 @@ import MemberInfo from "@/model/MemberInfo";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
-import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
+
+const permittedDepartments = ["Governing Body", "Human Resources"];
+const permittedDesignations = [
+  "President",
+  "Vice President",
+  "General Secretary",
+  "Treasurer",
+  "Director",
+  "Assistant Director",
+];
+const permittedFields = [
+  "name",
+  "studentId",
+  "email",
+  "buccDepartment",
+  "designation",
+  "personalEmail",
+  "contactNumber",
+  "joinedBracu",
+  "departmentBracu",
+  "profileImage",
+  "rfid",
+  "birthDate",
+  "bloodGroup",
+  "gender",
+  "emergencyContact",
+  "joinedBucc",
+  "lastPromotion",
+  "memberStatus",
+  "memberSkills",
+  "memberSocials",
+];
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+
+    if (
+      !session ||
+      !permittedDesignations.includes(session.user.designation) ||
+      !permittedDepartments.includes(session.user.buccDepartment)
+    ) {
+      return NextResponse.json(
+        { message: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
+
     await dbConnect();
 
     const body = await request.json();
@@ -71,6 +116,11 @@ export async function POST(request: NextRequest) {
         gender,
         joinedBucc,
         lastPromotion,
+        memberSocials: {
+          Facebook,
+          LinkedIn,
+          Github,
+        },
       });
 
       await member.save();
@@ -100,6 +150,11 @@ export async function POST(request: NextRequest) {
         gender,
         joinedBucc,
         lastPromotion,
+        memberSocials: {
+          Facebook,
+          LinkedIn,
+          Github,
+        },
       });
 
       await member.save();
@@ -116,49 +171,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = {
-      name: createdMember.name,
-      studentId: createdMember.studentId,
-      email: createdMember.email,
-      buccDepartment: createdMember.buccDepartment,
-      designation: createdMember.designation,
-      joinedBucc: createdMember.joinedBracu,
-      lastPromotion: createdMember.lastPromotion || "Never Promoted",
-    };
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-      },
-      scopes: [
-        "https://www.googleapis.com/auth/drive",
-        "https://www.googleapis.com/auth/drive.file",
-        "https://www.googleapis.com/auth/spreadsheets",
-      ],
-    });
-
-    const sheets = google.sheets({ version: "v4", auth });
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "SelectedMembers!A1:E1",
-      valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [
-          [
-            data.name,
-            data.studentId,
-            data.email,
-            data.buccDepartment,
-            data.designation,
-            data.joinedBucc,
-            data.lastPromotion,
-          ],
-        ],
-      },
-    });
-
     await singleWelcomeMail(user._id.toString(), name, gSuiteEmail, password);
 
     await PreregMemberInfo.findOneAndDelete({ studentId }).exec();
@@ -168,6 +180,64 @@ export async function POST(request: NextRequest) {
       { message: "Register Successful" },
       { status: 200 },
     );
+  } catch (error: any) {
+    console.log(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (
+      !session ||
+      !permittedDesignations.includes(session.user.designation) ||
+      !permittedDepartments.includes(session.user.buccDepartment)
+    ) {
+      return NextResponse.json(
+        { message: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
+
+    await dbConnect();
+
+    const body = await request.json();
+    const { gSuiteEmail, ...updateFields } = body;
+
+    let member = await MemberInfo.findOne({ email: gSuiteEmail }).exec();
+    let user = await UserAuth.findOne({ email: gSuiteEmail }).exec();
+
+    if (!member || !user) {
+      return NextResponse.json(
+        { message: "Member not found" },
+        { status: 404 },
+      );
+    }
+
+    const updateData: any = {
+      memberSocials: {
+        Facebook: "",
+        LinkedIn: "",
+        Github: "",
+      },
+    };
+    for (const key in updateFields) {
+      if (permittedFields.includes(key)) {
+        updateData[key] = updateFields[key];
+      }
+      if (key === "Facebook" || key === "LinkedIn" || key === "Github") {
+        updateData.memberSocials[key] = updateFields[key];
+      }
+    }
+
+    await MemberInfo.updateOne(
+      { email: gSuiteEmail },
+      { $set: updateData },
+    ).exec();
+
+    return NextResponse.json({ message: "Update Successful" }, { status: 200 });
   } catch (error: any) {
     console.log(error);
     return NextResponse.json({ error: error.message }, { status: 500 });

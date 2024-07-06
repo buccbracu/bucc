@@ -4,19 +4,23 @@ import Link from "next/link";
 
 export default function UnderConstruction() {
   return (
-    <div className="p-4 flex flex-col items-center">
+    <div className="flex flex-col items-center p-4">
       <Image
-        className="p-3 dark:filter dark:invert"
+        className="p-3 dark:invert dark:filter"
         src="/images/under-construction.png"
         width={200}
         height={200}
         alt="Under Construction"
       />
-      <h1 className="text-lg">This Page Is Under Construction</h1>
-      <p className="text-sm mt-2">
-        This page is under construction. Please check back later.
-      </p>
-      <Button className="mt-4 text-md bg-blue-500 hover:bg-blue-600 text-white dark:hover:bg-blue-600">
+      <div className="max-w-[500px] text-center">
+        <h1 className="text-lg">This Page Is Under Construction</h1>
+        <p className="mt-2 text-sm">
+          Good things take time! We are trying to build the best ever experience
+          for our members. This page is also under construction. Please check
+          back later.
+        </p>
+      </div>
+      <Button className="text-md mt-4 bg-blue-500 text-white hover:bg-blue-600 dark:hover:bg-blue-600">
         <Link href={"/"}>Back to Home</Link>
       </Button>
     </div>

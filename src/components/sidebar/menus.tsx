@@ -76,8 +76,8 @@ const menus = [
     access_designation: ["Director", "Assistant Director"],
   },
   {
-    title: "Backup",
-    path: "/dashboard/backup",
+    title: "Manage Data",
+    path: "/dashboard/manage-data",
     icon: FileDown,
     variant: "ghost",
     access_department: [

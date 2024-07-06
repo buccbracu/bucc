@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import heroBanner from "/public/images/hero-banner-image.png";
+import heroBanner from "/public/images/homepage/hero-banner-image.png";
 
 export default function Hero() {
   return (

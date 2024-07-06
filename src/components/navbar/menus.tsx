@@ -30,4 +30,35 @@ const menus = [
   { title: "Contact", path: "/contact" },
 ];
 
+const footer_menu = [
+  {
+    title: "Services",
+    childrens: [
+      { title: "Branding", path: "/branding" },
+      { title: "Design", path: "/design" },
+      { title: "Marketing", path: "/marketing" },
+      { title: "Advertisement", path: "/advertisement" },
+    ],
+  },
+
+  {
+    title: "Company",
+    childrens: [
+      { title: "About Us", path: "/about" },
+      { title: "Contact", path: "/contact" },
+      { title: "Jobs", path: "/jobs" },
+      { title: "Press", path: "/press" },
+    ],
+  },
+
+  {
+    title: "Legal",
+    childrens: [
+      { title: "Terms of Use", path: "/tou" },
+      { title: "Privacy Policy", path: "/privacy-policy" },
+      { title: "Cookie Policy", path: "/cookie-policy" },
+    ],
+  },
+];
+
 export { menus };
