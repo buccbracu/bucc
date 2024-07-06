@@ -3,7 +3,7 @@ import aboutUsImage from "/public/images/homepage/bucc-about-us.jpg";
 
 export default function AboutUs() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32">
+    <section className="w-full py-12 md:py-16">
       <div className="container px-4 md:px-6">
         <div className="grid gap-10 sm:px-10 md:grid-cols-2 md:gap-16">
           <div className="space-y-4">

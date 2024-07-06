@@ -11,6 +11,7 @@ import {
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import { useRef } from "react";
+import SectionHeading from "./SectionHeading";
 import SJAIWorkshop from "/public/images/events/bucc-event1.jpg";
 import CareerCrafters from "/public/images/events/bucc-event2.jpg";
 import CVandIoT from "/public/images/events/bucc-event3.jpg";
@@ -65,11 +66,12 @@ export default function Events() {
   const autoplay = useRef(emblaCarouselAutoplay({ delay: 2000 }));
 
   return (
-    <section className="w-full">
+    <section className="w-full px-20 py-10">
       <div className="container px-4 md:px-6">
-        <h2 className="mb-8 text-center text-3xl font-bold">
-          Events and Activities
-        </h2>
+        <SectionHeading
+          title="Events"
+          description="Check out our recent events and workshops. Stay tuned for more exciting events!"
+        />
         <Carousel
           plugins={[autoplay.current]}
           opts={{
@@ -96,7 +98,7 @@ export default function Events() {
                           className="rounded-lg"
                         />
                       </div>
-                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                         <div className="p-4 text-center text-white">
                           <h3 className="text-lg font-bold">{event.title}</h3>
                           <p className="text-sm">{event.date}</p>

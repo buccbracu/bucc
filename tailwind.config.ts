@@ -62,6 +62,10 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        "loop-scroll": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-100%)" },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -89,10 +93,11 @@ const config = {
         dash: "dash 1.5s ease-in-out forwards",
         check: "check 1s ease-in-out forwards",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "loop-scroll": "loop-scroll 150s linear infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("daisyui")],
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;
 
 export default config;

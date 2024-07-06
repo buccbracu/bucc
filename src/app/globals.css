@@ -78,3 +78,9 @@
 .page-header {
   width: 100%;
 }
+
+@layer utilities {
+  .paused {
+    animation-play-state: paused;
+  }
+}
