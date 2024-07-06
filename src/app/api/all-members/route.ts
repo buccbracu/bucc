@@ -1,7 +1,12 @@
 import { auth } from "@/auth";
+import departments from "@/constants/departments";
+import designations from "@/constants/designations";
 import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextResponse } from "next/server";
+
+const departmentsName = departments.map((department) => department.title);
+const designationsName = designations.map((designation) => designation.title);
 
 const permittedDepartments = ["Governing Body", "Human Resources"];
 const permittedDesignations = [
@@ -32,6 +37,22 @@ export async function GET() {
 
   try {
     const users = await MemberInfo.find({});
+
+    users.sort((a, b) => {
+      const departmentComparison =
+        departmentsName.indexOf(a.buccDepartment) -
+        departmentsName.indexOf(b.buccDepartment);
+
+      if (departmentComparison !== 0) {
+        return departmentComparison;
+      }
+
+      return (
+        designationsName.indexOf(a.designation) -
+        designationsName.indexOf(b.designation)
+      );
+    });
+
     return NextResponse.json({ user: users });
   } catch (error) {
     return NextResponse.json({ error: error });
