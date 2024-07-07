@@ -12,7 +12,7 @@ const GBs = EBs.filter((eb) => eb.department === "Governing Body");
 
 export default function CurrentPanel() {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center space-y-8 px-20 py-16">
+    <div className="flex h-full w-full flex-col items-center justify-center space-y-8 px-10 py-16 md:px-20">
       <div className="flex flex-col items-center">
         <SectionHeading
           title="Current Panel"

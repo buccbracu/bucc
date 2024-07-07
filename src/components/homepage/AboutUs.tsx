@@ -3,7 +3,7 @@ import aboutUsImage from "/public/images/homepage/bucc-about-us.jpg";
 
 export default function AboutUs() {
   return (
-    <section className="flex w-full items-center justify-center py-12 md:py-16">
+    <section className="flex w-full items-center justify-center px-10 py-12 md:px-4 md:py-16">
       <div className="container px-4 md:px-6">
         <div className="grid gap-10 sm:px-10 md:grid-cols-2 md:gap-16">
           <div className="space-y-4">
@@ -44,7 +44,7 @@ export default function AboutUs() {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-center">
+          <div className="mt-4 flex items-center justify-center">
             <div className="relative w-full max-w-[550px] overflow-hidden rounded-xl sm:h-[500px] md:h-[400px]">
               <Image
                 src={aboutUsImage}

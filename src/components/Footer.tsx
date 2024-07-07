@@ -132,13 +132,16 @@ const Footer = () => {
                 />
               </div>
               <div className="my-4 text-center md:text-left">
-                <p>
+                <p className="mb-1">
                   <strong>Contact Number:</strong> +8801717399105
                 </p>
-                <p>
+                <p className="mb-1">
                   <strong>Email:</strong> info@bracucc.org
                 </p>
-                <p>
+                <p className="mb-1">
+                  <strong>For Business:</strong> marketing@bracucc.org
+                </p>
+                <p className="mb-1">
                   <strong>Address:</strong> Kha 226, Bir Uttam Rafiqul Islam
                   Ave,
                   <br />
