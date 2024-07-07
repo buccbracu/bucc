@@ -16,7 +16,7 @@ export default function CurrentPanel() {
       <div className="flex flex-col items-center">
         <SectionHeading
           title="Current Panel"
-          description="Meet the current panel of the BRAC University Computer Club."
+          description="Meet the current panel of the BRAC University Computer Club. These are the people who are leading the club to new heights. Click on the button below to view the full executive body."
         />
       </div>
 
@@ -49,7 +49,7 @@ export default function CurrentPanel() {
         {GBs.map((gb) => (
           <div
             key={gb.fullName}
-            className="relative h-80 overflow-hidden rounded-lg shadow-lg"
+            className="relative h-56 overflow-hidden rounded-lg shadow-lg md:h-80"
           >
             <Image
               src={gb.image}

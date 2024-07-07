@@ -48,9 +48,11 @@ export async function PATCH(request: NextRequest) {
       profileImage: profileImage,
     });
 
+    console.log(oldPublicId);
+
     if (oldPublicId) {
       const cloudinaryResponse = await cloudinary.uploader.destroy(
-        `${process.env.CLOUDINARY_FOLDER_PATH}people/members/${oldPublicId}`,
+        `${oldPublicId}`,
       );
 
       if (cloudinaryResponse.result === "not found") {
@@ -98,9 +100,7 @@ export async function DELETE(request: NextRequest) {
 
     const publicId = user.profileImage.split("/").pop()?.split(".")[0];
 
-    const cloudinaryResponse = await cloudinary.uploader.destroy(
-      `${process.env.CLOUDINARY_FOLDER_PATH}people/members/${publicId}`,
-    );
+    const cloudinaryResponse = await cloudinary.uploader.destroy(`${publicId}`);
 
     if (cloudinaryResponse.result === "not found") {
       return NextResponse.json(

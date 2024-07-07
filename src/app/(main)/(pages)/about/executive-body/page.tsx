@@ -10,21 +10,21 @@ export default async function ExecutiveBody() {
     <div className="w-full">
       <PageHeader
         title="Executive Body 2024"
-        description="The Executive Body of BUCC is the driving force behind the club's initiatives and activities. Comprised of dedicated and passionate members, the Executive Body is responsible for planning events, coordinating projects, and ensuring the smooth operation of the club. They work tirelessly to foster a vibrant community, promote collaboration, and provide opportunities for personal and professional growth. By leading with vision and commitment, the Executive Body ensures that BUCC continues to thrive and make a positive impact on its members and the broader community."
+        description="The Executive Body of the BRAC University Computer Club (BUCC) is the heart and soul of the club's operations. Composed of enthusiastic and committed members, this team is the engine driving all club activities and initiatives. They excel in planning events, managing projects, and ensuring that everything runs smoothly within the club. Their primary goal is to nurture a dynamic and collaborative environment that encourages personal and professional development for all members. Through their vision and dedication, the Executive Body continually elevates BUCC, creating a lasting positive impact on its members and the broader community."
       />
       <section className="py-6">
         {EBs.map((department) => (
           <div key={department.departmentName} className="mb-8">
-            <h2 className="text-3xl font-bold text-center mb-4 mt-4">
+            <h2 className="mb-4 mt-4 text-center text-3xl font-bold">
               {department.departmentName}
             </h2>
-            <div className="flex flex-col items-center md:flex-row justify-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
               {/* President and Vice President Row */}
               {department.presidentAndVicePresident?.map(
                 (presidentAndVicePresident) => (
                   <div
                     key={presidentAndVicePresident.fullName}
-                    className="flex flex-col items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-96"
+                    className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
                   >
                     <Image
                       src={presidentAndVicePresident.image.src}
@@ -33,7 +33,7 @@ export default async function ExecutiveBody() {
                       placeholder="blur"
                       blurDataURL={presidentAndVicePresident.image.blurDataURL}
                       alt={presidentAndVicePresident.fullName}
-                      className=" object-cover rounded-t-lg"
+                      className="rounded-t-lg object-cover"
                     />
                     <div className="mt-4 text-center">
                       <h3 className="text-xl font-semibold">
@@ -42,34 +42,35 @@ export default async function ExecutiveBody() {
                       <p className="text-gray-500">
                         {presidentAndVicePresident.designation}
                       </p>
+
                       <div className="mt-2 flex justify-center gap-4">
                         <Link
                           href={presidentAndVicePresident.facebookURL}
                           prefetch={false}
-                          className="text-gray-500 hover:text-blue-700"
+                          className="text-gray-500 hover:text-[#1f4864]"
                         >
                           <Facebook size={24} />
                         </Link>
                         <Link
                           href={presidentAndVicePresident.linkedinURL}
                           prefetch={false}
-                          className="text-gray-500 hover:text-blue-900"
+                          className="text-gray-500 hover:text-[#1f4864]"
                         >
                           <Linkedin size={24} />
                         </Link>
                       </div>
                     </div>
                   </div>
-                )
+                ),
               )}
             </div>
-            <div className="flex flex-col items-center md:flex-row justify-center gap-4 mt-6 ">
+            <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
               {/* General Secretary and Treasurer Row */}
               {department.generalSecretaryAndTreasurer?.map(
                 (generalSecretaryAndTreasurer) => (
                   <div
                     key={generalSecretaryAndTreasurer.fullName}
-                    className="flex flex-col items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-96"
+                    className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
                   >
                     <Image
                       src={generalSecretaryAndTreasurer.image.src}
@@ -80,7 +81,7 @@ export default async function ExecutiveBody() {
                         generalSecretaryAndTreasurer.image.blurDataURL
                       }
                       alt={generalSecretaryAndTreasurer.fullName}
-                      className=" object-cover rounded-t-lg"
+                      className="rounded-t-lg object-cover"
                     />
                     <div className="mt-4 text-center">
                       <h3 className="text-xl font-semibold">
@@ -93,29 +94,29 @@ export default async function ExecutiveBody() {
                         <Link
                           href={generalSecretaryAndTreasurer.facebookURL}
                           prefetch={false}
-                          className="text-gray-500 hover:text-blue-700"
+                          className="text-gray-500 hover:text-[#1f4864]"
                         >
                           <Facebook size={24} />
                         </Link>
                         <Link
                           href={generalSecretaryAndTreasurer.linkedinURL}
                           prefetch={false}
-                          className="text-gray-500 hover:text-blue-900"
+                          className="text-gray-500 hover:text-[#1f4864]"
                         >
                           <Linkedin size={24} />
                         </Link>
                       </div>
                     </div>
                   </div>
-                )
+                ),
               )}
             </div>
-            <div className="flex flex-col items-center md:flex-row justify-center gap-4 mt-6">
+            <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
               {/* Directors Row */}
               {department.directors?.map((director) => (
                 <div
                   key={director.fullName}
-                  className="flex flex-col items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-96"
+                  className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
                 >
                   <Image
                     src={director.image.src}
@@ -124,7 +125,7 @@ export default async function ExecutiveBody() {
                     placeholder="blur"
                     blurDataURL={director.image.blurDataURL}
                     alt={director.fullName}
-                    className=" object-cover rounded-t-lg"
+                    className="rounded-t-lg object-cover"
                   />
                   <div className="mt-4 text-center">
                     <h3 className="text-xl font-semibold">
@@ -135,14 +136,14 @@ export default async function ExecutiveBody() {
                       <Link
                         href={director.facebookURL}
                         prefetch={false}
-                        className="text-gray-500 hover:text-blue-700"
+                        className="text-gray-500 hover:text-[#1f4864]"
                       >
                         <Facebook size={24} />
                       </Link>
                       <Link
                         href={director.linkedinURL}
                         prefetch={false}
-                        className="text-gray-500 hover:text-blue-900"
+                        className="text-gray-500 hover:text-[#1f4864]"
                       >
                         <Linkedin size={24} />
                       </Link>
@@ -151,12 +152,12 @@ export default async function ExecutiveBody() {
                 </div>
               ))}
             </div>
-            <div className="flex flex-col items-center md:flex-row justify-center gap-4 mt-6">
+            <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
               {/* Assistant Directors Row */}
               {department.assistantDirectors?.map((assistantDirector) => (
                 <div
                   key={assistantDirector.fullName}
-                  className="flex flex-col items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-96"
+                  className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
                 >
                   <Image
                     src={assistantDirector.image.src}
@@ -165,7 +166,7 @@ export default async function ExecutiveBody() {
                     placeholder="blur"
                     blurDataURL={assistantDirector.image.blurDataURL}
                     alt={assistantDirector.fullName}
-                    className=" object-cover rounded-t-lg"
+                    className="rounded-t-lg object-cover"
                   />
                   <div className="mt-4 text-center">
                     <h3 className="text-xl font-semibold">
@@ -178,14 +179,14 @@ export default async function ExecutiveBody() {
                       <Link
                         href={assistantDirector.facebookURL}
                         prefetch={false}
-                        className="text-gray-500 hover:text-blue-700"
+                        className="text-gray-500 hover:text-[#1f4864]"
                       >
                         <Facebook size={24} />
                       </Link>
                       <Link
                         href={assistantDirector.linkedinURL}
                         prefetch={false}
-                        className="text-gray-500 hover:text-blue-900"
+                        className="text-gray-500 hover:text-[#1f4864]"
                       >
                         <Linkedin size={24} />
                       </Link>

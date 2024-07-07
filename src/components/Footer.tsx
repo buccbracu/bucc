@@ -118,7 +118,7 @@ const Footer = () => {
 
   return (
     <div className="relative bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      <div className="relative z-10 md:px-24 md:py-10">
+      <div className="relative z-10 py-8 md:px-24 md:py-10">
         <footer className="footer text-base-content mt-4 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <aside className="space-y-8">
             <div>

@@ -20,7 +20,7 @@ export default function UnderConstruction() {
           back later.
         </p>
       </div>
-      <Button className="text-md mt-4 bg-blue-500 text-white hover:bg-blue-600 dark:hover:bg-blue-600">
+      <Button className="text-md mt-4 bg-[#127cc1] text-white hover:bg-[#1f4864] dark:hover:bg-[#1f4864]">
         <Link href={"/"}>Back to Home</Link>
       </Button>
     </div>

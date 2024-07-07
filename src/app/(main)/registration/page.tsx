@@ -106,11 +106,11 @@ export default function Registration() {
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               You have successfully registered for {intakeInfo.intakeName}.
               Please make sure to fill up the
-              <strong className="text-blue-500">
+              <strong className="text-[#127cc1]">
                 <Link href={"/evaluation"}> Written Evaluation Form</Link>
               </strong>{" "}
               before attending for interview. Keep an eye on your email and our
-              <strong className="text-blue-500">
+              <strong className="text-[#127cc1]">
                 {" "}
                 <Link href={buccSocials.facebook}>Facebook page</Link>
               </strong>{" "}
@@ -120,7 +120,7 @@ export default function Registration() {
         </CardContent>
         <div className="flex gap-2">
           <Button
-            className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-600 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-600"
+            className="w-full rounded-md bg-[#127cc1] px-4 py-2 font-medium text-white transition-colors hover:bg-[#1f4864] dark:bg-[#127cc1] dark:text-white dark:hover:bg-[#1f4864]"
             onClick={() => router.push("/evaluation")}
           >
             Fill Evaluation Form

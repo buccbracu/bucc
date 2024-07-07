@@ -63,10 +63,10 @@ const events = [
 ];
 
 export default function Events() {
-  const autoplay = useRef(emblaCarouselAutoplay({ delay: 2000 }));
+  const autoplay = useRef(emblaCarouselAutoplay({ delay: 4000 }));
 
   return (
-    <section className="w-full px-20 py-10">
+    <section className="w-full px-10 py-10 md:px-20">
       <div className="container px-4 md:px-6">
         <SectionHeading
           title="Events"
@@ -98,7 +98,7 @@ export default function Events() {
                           className="rounded-lg"
                         />
                       </div>
-                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                         <div className="p-4 text-center text-white">
                           <h3 className="text-lg font-bold">{event.title}</h3>
                           <p className="text-sm">{event.date}</p>

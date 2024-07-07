@@ -9,7 +9,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "bg-[#127cc1] hover:bg-[#1f4864] text-white dark:bg-[#127cc1] shadow  dark:hover:bg-[#1f4864]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -96,4 +98,4 @@ const LoadingButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 LoadingButton.displayName = "LoadingButton";
 
-export { LoadingButton, buttonVariants };
+export { buttonVariants, LoadingButton };

@@ -4,6 +4,7 @@ import Activities from "./homepage/Activities";
 import CurrentPanel from "./homepage/CurrentPanel";
 import Departments from "./homepage/Departments";
 import Events from "./homepage/Events";
+import JoinCTA from "./homepage/JoinCTA";
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <CurrentPanel />
       <Departments />
       <Events />
+      <JoinCTA />
     </div>
   );
 }

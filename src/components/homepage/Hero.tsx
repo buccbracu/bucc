@@ -3,7 +3,7 @@
 import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import heroBanner from "/public/images/homepage/hero-banner-image.png";
+import heroBanner from "/public/images/homepage/Executive Body 2024.jpeg";
 
 export default function Hero() {
   const videoId = "HFHzFeb-kHc";

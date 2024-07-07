@@ -22,7 +22,7 @@ export const departmentsInfo = [
   {
     name: "Communications and Marketing",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "At BUCC’s Communications and Marketing department, we’re the storytellers and strategists behind the club’s vibrant image. We craft compelling narratives, design eye-catching campaigns, and connect with audiences through diverse channels. Whether promoting events, engaging with the community, or building our brand, our team ensures BUCC’s message is heard loud and clear. Join us to be at the forefront of dynamic marketing initiatives and strategic communication efforts, driving the club’s success and expanding our reach.",
     image: cnmImage,
     url: "/communication-and-marketing",
     color: "bg-blue-500",
@@ -30,7 +30,7 @@ export const departmentsInfo = [
   {
     name: "Creative",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "The Creative Department of BUCC is the hub of innovation and artistic expression. We transform ideas into visually stunning and impactful creations, from graphics and videos to interactive media. Our team thrives on imagination and ingenuity, turning visions into reality. We are the designers, artists, and visionaries who breathe life into every project, program, and so on. Collaborate with us to unleash your creativity and collaborate on projects that push the boundaries of visual storytelling.",
     image: creativeImage,
     url: "/creative",
     color: "bg-yellow-500",
@@ -38,7 +38,7 @@ export const departmentsInfo = [
   {
     name: "Event Management",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "BUCC’s Event Management department is where ideas come to life through meticulously planned and executed events. We organize workshops, seminars, and social gatherings that inspire, educate, and entertain. Our team excels in logistics, coordination, and creating memorable experiences. From brainstorming themes to managing on-the-day details, we ensure every event is a success. Hence, you have a passion for planning and a knack for making things happen, let us grow together.",
     image: emImage,
     url: "/event-management",
     color: "bg-red-500",
@@ -46,7 +46,7 @@ export const departmentsInfo = [
   {
     name: "Finance",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "The Finance department is the backbone of BUCC’s operations, managing budgets, securing funding, and ensuring financial stability. We handle everything from budgeting for events to seeking sponsorships and managing expenses. Our team is dedicated to maintaining transparency and financial health. Let us welcome you to develop your financial acumen and contribute to the sustainable growth of BUCC.",
     image: financeImage,
     url: "/finance",
     color: "bg-green-500",
@@ -54,7 +54,7 @@ export const departmentsInfo = [
   {
     name: "Human Resources",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "In the Human Resources department, we focus on nurturing talent and fostering a positive club culture. We recruit passionate members, facilitate training sessions, and ensure the well-being and development of our team. Our mission is to create an inclusive and motivating environment where everyone can thrive. Join us to play a crucial role in building and supporting a dynamic and engaged community at BUCC.",
     image: hrImage,
     url: "/human-resources",
     color: "bg-purple-500",
@@ -62,7 +62,7 @@ export const departmentsInfo = [
   {
     name: "Press Release and Publications",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "The Press Release and Publications department is the voice of BUCC, producing high-quality content that informs and engages. We handle newsletters, articles, and official communications, ensuring accurate and compelling storytelling. Our team of writers and editors captures the essence of our activities and shares them with the world. If you have a passion for writing and want to contribute to our narrative, you're in the right place.",
     image: prImage,
     url: "/press-release-and-publications",
     color: "bg-pink-500",
@@ -71,7 +71,7 @@ export const departmentsInfo = [
   {
     name: "Research and Development",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl nec ultricies lacus, nisl nec ultricies lacus.",
+      "At BUCC’s Research and Development department, we’re the innovators pushing the boundaries of technology and creativity. We explore new ideas, develop projects, and keep BUCC at the cutting edge of computer science advancements. Our team thrives on curiosity and problem-solving, working on everything from software development to experimental tech. Like so this amazing website was pulled through purely by us. You're welcome to dive deep into research and drive the club’s technological progress.",
     image: rndImage,
     url: "/research-and-development",
     color: "bg-indigo-500",

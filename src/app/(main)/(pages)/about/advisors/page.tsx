@@ -9,7 +9,7 @@ export default function Advisors() {
     <div className="w-full">
       <PageHeader
         title="Meet The Guardians of BUCC"
-        description="Advisors play a crucial role in guiding and supporting the clubs. They bring a wealth of industry experience, academic expertise, and valuable connections to help the club members navigate their academic and professional journeys. By providing mentorship, technical guidance, and career advice, the advisors ensure the club's success and the growth of its members."
+        description="Advisors are invaluable to BUCC, offering essential guidance and support. With their extensive industry experience and academic knowledge, they help club members navigate their academic and professional paths. Advisors provide mentorship, share technical expertise, and offer career advice, all of which contribute to the club’s success and the personal growth of its members. Their involvement ensures that BUCC remains a beacon of learning and innovation."
       />
       <section className="container mx-auto max-w-5xl space-y-16 p-4 dark:text-gray-50">
         <div>

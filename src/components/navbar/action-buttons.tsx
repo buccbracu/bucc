@@ -113,7 +113,7 @@ export default function ActionButtons() {
                           Login
                         </Link>
                       </Button>
-                      <Button className="text-md w-full bg-blue-500 text-white hover:bg-blue-600 dark:hover:bg-blue-600">
+                      <Button className="text-md w-full bg-[#127cc1] text-white hover:bg-[#1f4864] dark:hover:bg-[#1f4864]">
                         <Link
                           onClick={() => {
                             setIsSheetOpen(false);
@@ -171,7 +171,7 @@ export default function ActionButtons() {
               Login
             </Link>
           </Button>
-          <Button className="text-md bg-blue-500 text-white hover:bg-blue-600 dark:hover:bg-blue-600">
+          <Button className="text-md bg-[#127cc1] text-white hover:bg-[#1f4864] dark:hover:bg-[#1f4864]">
             <Link onClick={handleSheetClose} href={"/registration"}>
               Register
             </Link>
