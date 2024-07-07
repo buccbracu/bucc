@@ -18,7 +18,7 @@ export default function JoinCTA() {
             </p>
           </div>
           <div className="flex items-center">
-            <Button className="px- rounded-full bg-white px-10 py-8 text-lg font-semibold text-[#1f4864] shadow-sm transition-all duration-500">
+            <Button className="px- rounded-full bg-white px-10 py-8 text-lg font-semibold text-[#1f4864] shadow-sm transition-all duration-500 hover:text-white">
               <Link
                 href="/registration"
                 className="flex items-center gap-2 rounded-full"
