@@ -69,7 +69,7 @@ const EBs = [
   {
     fullName: "Souharda Bhattacharjee",
     nickName: "Souharda",
-    department: "Communications and Marketing",
+    department: "Communication and Marketing",
     designation: "Director",
     image: SouhardaImage,
     facebookURL: "https://www.facebook.com/profile.php?id=100010819243774",
@@ -78,7 +78,7 @@ const EBs = [
   {
     fullName: "Maliha Binte Masud",
     nickName: "Maliha",
-    department: "Communications and Marketing",
+    department: "Communication and Marketing",
     designation: "Director",
     image: MalihaImage,
     facebookURL: "https://www.facebook.com/Maliha.Ishrar",
@@ -87,7 +87,7 @@ const EBs = [
   {
     fullName: "Ariful Islam",
     nickName: "Arif",
-    department: "Communications and Marketing",
+    department: "Communication and Marketing",
     designation: "Assistant Director",
     image: ArifImage,
     facebookURL: "https://www.facebook.com/arifulislam.ash8",
@@ -96,7 +96,7 @@ const EBs = [
   {
     fullName: "Bokthier Bin Foysal",
     nickName: "Bokthier",
-    department: "Communications and Marketing",
+    department: "Communication and Marketing",
     designation: "Assistant Director",
     image: BokthierImage,
     facebookURL: "https://www.facebook.com/bokthier.rahmanfoysal",
@@ -315,16 +315,16 @@ const EBsByDepartment = [
     ),
   },
   {
-    departmentName: "Communications and Marketing",
-    EBs: EBs.filter((eb) => eb.department === "Communications and Marketing"),
+    departmentName: "Communication and Marketing",
+    EBs: EBs.filter((eb) => eb.department === "Communication and Marketing"),
     directors: EBs.filter(
       (eb) =>
-        eb.department === "Communications and Marketing" &&
+        eb.department === "Communication and Marketing" &&
         eb.designation === "Director",
     ),
     assistantDirectors: EBs.filter(
       (eb) =>
-        eb.department === "Communications and Marketing" &&
+        eb.department === "Communication and Marketing" &&
         eb.designation === "Assistant Director",
     ),
   },

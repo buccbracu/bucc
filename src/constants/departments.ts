@@ -9,7 +9,7 @@ import rndImage from "/public/images/departments/rnd.jpeg";
 export const departments = [
   { title: "Advisors Body" },
   { title: "Governing Body" },
-  { title: "Communications and Marketing" },
+  { title: "Communication and Marketing" },
   { title: "Creative" },
   { title: "Event Management" },
   { title: "Finance" },
@@ -20,9 +20,9 @@ export const departments = [
 
 export const departmentsInfo = [
   {
-    name: "Communications and Marketing",
+    name: "Communication and Marketing",
     description:
-      "At BUCC’s Communications and Marketing department, we’re the storytellers and strategists behind the club’s vibrant image. We craft compelling narratives, design eye-catching campaigns, and connect with audiences through diverse channels. Whether promoting events, engaging with the community, or building our brand, our team ensures BUCC’s message is heard loud and clear. Join us to be at the forefront of dynamic marketing initiatives and strategic communication efforts, driving the club’s success and expanding our reach.",
+      "At BUCC’s Communication and Marketing department, we’re the storytellers and strategists behind the club’s vibrant image. We craft compelling narratives, design eye-catching campaigns, and connect with audiences through diverse channels. Whether promoting events, engaging with the community, or building our brand, our team ensures BUCC’s message is heard loud and clear. Join us to be at the forefront of dynamic marketing initiatives and strategic communication efforts, driving the club’s success and expanding our reach.",
     image: cnmImage,
     url: "/communication-and-marketing",
     color: "bg-blue-500",
@@ -62,7 +62,7 @@ export const departmentsInfo = [
   {
     name: "Press Release and Publications",
     description:
-      "The Press Release and Publications department is the voice of BUCC, producing high-quality content that informs and engages. We handle newsletters, articles, and official communications, ensuring accurate and compelling storytelling. Our team of writers and editors captures the essence of our activities and shares them with the world. If you have a passion for writing and want to contribute to our narrative, you're in the right place.",
+      "The Press Release and Publications department is the voice of BUCC, producing high-quality content that informs and engages. We handle newsletters, articles, and official Communication, ensuring accurate and compelling storytelling. Our team of writers and editors captures the essence of our activities and shares them with the world. If you have a passion for writing and want to contribute to our narrative, you're in the right place.",
     image: prImage,
     url: "/press-release-and-publications",
     color: "bg-pink-500",

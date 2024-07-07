@@ -32,7 +32,7 @@ const MemberSchema = new mongoose.Schema({
     enum: [
       "Advisors Body",
       "Governing Body",
-      "Communications and Marketing",
+      "Communication and Marketing",
       "Creative",
       "Event Management",
       "Finance",

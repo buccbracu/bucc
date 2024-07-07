@@ -110,9 +110,9 @@ export const json = {
       elements: [
         {
           type: "html",
-          name: "Communications and Marketing Details First",
-          visibleIf: "{question8} = 'Communications and Marketing'",
-          html: "<strong>Communications and Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
+          name: "Communication and Marketing Details First",
+          visibleIf: "{question8} = 'Communication and Marketing'",
+          html: "<strong>Communication and Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
         },
         {
           type: "html",
@@ -157,7 +157,7 @@ export const json = {
           isRequired: true,
           requiredErrorText: "This field is required",
           choices: [
-            "Communications and Marketing",
+            "Communication and Marketing",
             "Creative",
             "Event Management",
             "Finance",
@@ -188,7 +188,7 @@ export const json = {
         "Choose any of the departments from below and read their respective section before continuing to the next one. Read the description provided for each department carefully before choosing your preferred department. Note that, your entire club journey depends on how you fill up the upcoming sections. We couldn't get the Sorting Hat from Hogwarts, so we need you to be completely honest and precise about your choices. Let's start!",
     },
     {
-      name: "Communications and Marketing",
+      name: "Communication and Marketing",
       elements: [
         {
           type: "comment",
@@ -207,8 +207,8 @@ export const json = {
           requiredErrorText: "This field is required",
         },
       ],
-      visibleIf: "{question8} = 'Communications and Marketing'",
-      title: "Communications and Marketing",
+      visibleIf: "{question8} = 'Communication and Marketing'",
+      title: "Communication and Marketing",
       description:
         "This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
     },
@@ -496,9 +496,9 @@ export const json = {
       elements: [
         {
           type: "html",
-          name: "Communications and Marketing Details Second",
-          visibleIf: "{question32} = 'Communications and Marketing'",
-          html: "<strong>Communications and Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
+          name: "Communication and Marketing Details Second",
+          visibleIf: "{question32} = 'Communication and Marketing'",
+          html: "<strong>Communication and Marketing: </strong>This department manages the marketing and advertising efforts of BUCC. Their key responsibilities include promoting upcoming events, workshops, or seminars through online channels or posters. They play a vital role in spreading awareness and attracting participants to BUCC's activities.",
         },
         {
           type: "html",
@@ -543,7 +543,7 @@ export const json = {
           isRequired: true,
           requiredErrorText: "This field is required",
           choices: [
-            "Communications and Marketing",
+            "Communication and Marketing",
             "Creative",
             "Event Management",
             "Finance",
