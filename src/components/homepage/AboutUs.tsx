@@ -24,7 +24,7 @@ export default function AboutUs() {
                   contributors.
                 </p>
                 <p className="text-sm font-normal text-muted-foreground">
-                  Since our establishment in 2005, BUCC has consistently opened
+                  Since our establishment in 2001, BUCC has consistently opened
                   vibrant doors to collaborative workshops. These workshops
                   bring together professionals and beginners from the tech
                   industry, allowing them to cooperate and make the most of

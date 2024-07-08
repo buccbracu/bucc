@@ -1,6 +1,7 @@
 "use client";
 
 import EvaluationComponent from "@/components/evaluation/EvaluationComponent";
+import IntakeInactive from "@/components/intake-inactive";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +43,10 @@ export default function EvaluationForm() {
       toast.error("Please enter your student ID.");
     }
   };
+
+  if (!intakeInfo.isEvaluationActive) {
+    return <IntakeInactive endDate={intakeInfo.intakeEndDate} />;
+  }
 
   return (
     <div>

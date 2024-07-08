@@ -31,6 +31,7 @@
     "googleapis": "^140.0.0",
     "gsap": "^3.12.5",
     "input-otp": "^1.2.4",
+    "lottie-react": "^2.4.0",
     "lucide-react": "^0.376.0",
     "mongoose": "^8.3.4",
     "next": "14.2.3",
