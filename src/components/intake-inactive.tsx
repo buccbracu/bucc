@@ -53,7 +53,7 @@ export default function IntakeInactive({ endDate }: IntakeInactiveProps) {
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <Card className="w-1/3 px-6">
+      <Card className="w-full px-6 md:w-1/3">
         <CardHeader className="flex items-center justify-center">
           <div className="flex items-center justify-center rounded-full bg-blue-500/20 p-6">
             <TriangleAlert className="h-16 w-16 text-blue-500" />

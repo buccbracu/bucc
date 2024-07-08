@@ -80,7 +80,7 @@ const Footer = () => {
   if (!navbar_menus_paths.includes(path)) {
     return (
       <div className="h-[55px] border-t py-4 dark:border-gray-700">
-        <div className="container flex items-center justify-between">
+        <div className="container flex flex-col items-center justify-between gap-2 pb-3 md:flex-row">
           <div className="text-sm text-gray-500 dark:text-gray-400">
             <Link href="/" className="text-blue-500 dark:text-blue-400">
               &copy; BUCC
@@ -96,7 +96,7 @@ const Footer = () => {
               BUCC R&D Web Team 2024
             </a>
           </div>
-          <div>
+          <div className="hidden md:block">
             <a
               href="/about/privacy-policy"
               className="text-sm text-gray-500 dark:text-gray-400"
