@@ -93,7 +93,16 @@ export default function Registration() {
 
   return isRegistered ? (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <Lottie className="absolute" animationData={confettiData} loop={false} />
+      <div id="confetti">
+        <Lottie
+          className="absolute left-0 top-0 h-full w-full"
+          animationData={confettiData}
+          loop={false}
+          onComplete={() => {
+            document.getElementById("confetti")?.remove();
+          }}
+        />
+      </div>
       <Card className="w-full max-w-lg space-y-6 p-8">
         <CardHeader className="flex items-center justify-center">
           <div className="flex items-center justify-center rounded-full bg-green-500/20 p-6">
@@ -136,7 +145,7 @@ export default function Registration() {
             </Button>
           )}
           <Button
-            className="w-full rounded-md bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200"
+            className="w-full rounded-md px-4 py-2 font-medium"
             onClick={() => router.push("/")}
           >
             Go to Home
