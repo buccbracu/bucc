@@ -1,29 +1,31 @@
-"use server";
+import { signIn } from "next-auth/react";
 
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
+interface LoginValues {
+  email: string;
+  password: string;
+}
 
-export const login = async (values: any) => {
-  if (!values) {
-    return { error: "Invalid fields!" };
+export const login = async (values: LoginValues) => {
+  const { email, password } = values;
+
+  if (!email || !password) {
+    return { error: "Both email and password are required!" };
   }
-  const email = values.get("email");
-  const password = values.get("password");
+
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
+      redirect: false,
       email,
       password,
-      redirectTo: "/dashboard",
     });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          return { error: "Invalid credintails!" };
-        default:
-          return { error: "Something went wrong!" };
-      }
+
+    if (result?.error) {
+      return { error: "Invalid credentials!" };
     }
-    throw error;
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: "An unexpected error occurred" };
   }
 };

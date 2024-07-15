@@ -1,24 +1,32 @@
 "use client";
 
+import { LoginSchema } from "@/schemas/loginSchema";
 import { EyeIcon, LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
-export default function PasswordField({
-  isRegistering = false,
-  onPasswordStrengthChange,
-  placeholder = "Password",
-  password,
-  setPassword,
-}: {
+interface PasswordFieldProps {
+  register: UseFormRegister<LoginSchema>;
+  errors: FieldErrors<LoginSchema>;
   isRegistering?: boolean;
   onPasswordStrengthChange?: (isStrongPassword: boolean) => void | false;
   placeholder?: string;
   password?: string;
   setPassword?: (password: string) => void;
-}) {
+}
+
+export default function PasswordField({
+  register,
+  errors,
+  isRegistering = false,
+  onPasswordStrengthChange,
+  placeholder = "Password",
+  password,
+  setPassword,
+}: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isStrongPassword, setIsStrongPassword] = useState(false);
   const [openTooltip, setOpenTooltip] = useState(false);
@@ -69,20 +77,26 @@ export default function PasswordField({
     <div className="">
       <Tooltip open={openTooltip}>
         <TooltipTrigger asChild>
-          <div className="relative mb-4">
+          <div className="relative">
             <Input
-              className="rounded-md pl-10 shadow-sm sm:text-sm"
-              name="password"
+              className={`rounded-md pl-10 shadow-sm sm:text-sm ${errors.password ? "border-red-600" : ""}`}
               placeholder={placeholder}
               onFocus={() => setOpenTooltip(true)}
-              onBlur={() => setOpenTooltip(false)}
+              // onBlur={() => setOpenTooltip(false)}
               type={showPassword ? "text" : "password"}
-              required
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                onChange: (e) => {
+                  const value = e.target.value;
+                  setPassword && setPassword(value);
+                  checkPasswordStrength(value);
+                },
+              })}
               value={password}
-              onChange={(e) => {
-                setPassword && setPassword(e.target.value);
-                checkPasswordStrength(e.target.value);
-              }}
             />
             <LockIcon className="absolute left-3 top-1/2 w-4 -translate-y-1/2 text-gray-400" />
             <Button
@@ -97,6 +111,9 @@ export default function PasswordField({
             </Button>
           </div>
         </TooltipTrigger>
+        {errors.password && (
+          <p className="text-sm text-red-600">{errors.password.message}</p>
+        )}
         {isRegistering && (
           <TooltipContent
             side="top"
@@ -143,7 +160,6 @@ export default function PasswordField({
               )}
               {!haveLowerCaseLetter && (
                 <div className="text-red-500 dark:text-red-300">
-                  {/* Add cross */}
                   &#x2717; At least 1 lowercase letter
                 </div>
               )}
