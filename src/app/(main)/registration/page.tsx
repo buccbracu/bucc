@@ -1,8 +1,7 @@
 "use client";
 
 import IntakeInactive from "@/components/intake-inactive";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import RegistrationSuccess from "@/components/RegistrationSuccess";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
@@ -13,21 +12,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { buccSocials, intakeInfo } from "@/constants/buccInfo";
-import confettiData from "@/lottie/confetti.json";
-import Lottie from "lottie-react";
-import { CircleCheckBig } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import BRACUDepartments from "@/constants/BRACUDepartments";
+import { intakeInfo } from "@/constants/buccInfo";
+import { registrationSchema } from "@/schemas/registrationSchema";
 import { ChangeEvent, FormEvent, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
+
+type FormData = z.infer<typeof registrationSchema>;
 
 export default function Registration() {
   const registrationActive = intakeInfo.isIntakeActive;
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isRegistered, setIsRegistered] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     studentId: "",
     name: "",
     semester: "",
@@ -35,6 +33,7 @@ export default function Registration() {
     departmentBracu: "",
     email: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -54,13 +53,18 @@ export default function Registration() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const data = {
-      studentId: formData.studentId,
-      name: formData.name,
-      joinedBracu: `${formData.semester} ${formData.year}`,
-      departmentBracu: formData.departmentBracu,
-      email: formData.email,
-    };
+    const result = registrationSchema.safeParse(formData);
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        if (error.path && error.path[0]) {
+          newErrors[error.path[0] as string] = error.message;
+        }
+      });
+      setErrors(newErrors);
+      toast.error("Please correct the errors in the form");
+      return;
+    }
 
     startTransition(async () => {
       try {
@@ -71,15 +75,17 @@ export default function Registration() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(formData),
           },
         );
 
+        const responseData = await response.json();
+
         if (response.ok) {
-          toast.success("Registration successful!");
+          toast.success(responseData.message || "Registration successful!");
           setIsRegistered(true);
         } else {
-          toast.error("Registration failed!");
+          toast.error(responseData.error || "Registration failed!");
         }
       } catch (error) {
         toast.error("An error occurred. Please try again.");
@@ -92,67 +98,7 @@ export default function Registration() {
   }
 
   return isRegistered ? (
-    <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <div id="confetti">
-        <Lottie
-          className="absolute left-0 top-0 h-full w-full"
-          animationData={confettiData}
-          loop={false}
-          onComplete={() => {
-            document.getElementById("confetti")?.remove();
-          }}
-        />
-      </div>
-      <Card className="w-full max-w-lg space-y-6 p-8">
-        <CardHeader className="flex items-center justify-center">
-          <div className="flex items-center justify-center rounded-full bg-green-500/20 p-6">
-            <CircleCheckBig className="h-16 w-16 text-green-500" />
-          </div>
-        </CardHeader>
-
-        <CardContent className="items-center justify-center text-center">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Pre Registration Successful!
-            </h1>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              You have successfully registered for {intakeInfo.intakeName}.
-              {intakeInfo.isEvaluationActive && (
-                <span>
-                  Please make sure to fill up the
-                  <strong className="text-[#127cc1]">
-                    <Link href={"/evaluation"}> Written Evaluation Form</Link>
-                  </strong>{" "}
-                  before attending for interview.
-                </span>
-              )}{" "}
-              Keep an eye on your email and our
-              <strong className="text-[#127cc1]">
-                {" "}
-                <Link href={buccSocials.facebook}>Facebook page</Link>
-              </strong>{" "}
-              for further updates.
-            </p>
-          </div>
-        </CardContent>
-        <div className="flex gap-2">
-          {intakeInfo.isEvaluationActive && (
-            <Button
-              className="w-full rounded-md bg-[#127cc1] px-4 py-2 font-medium text-white transition-colors hover:bg-[#1f4864] dark:bg-[#127cc1] dark:text-white dark:hover:bg-[#1f4864]"
-              onClick={() => router.push("/evaluation")}
-            >
-              Fill Evaluation Form
-            </Button>
-          )}
-          <Button
-            className="w-full rounded-md px-4 py-2 font-medium"
-            onClick={() => router.push("/")}
-          >
-            Go to Home
-          </Button>
-        </div>
-      </Card>
-    </div>
+    <RegistrationSuccess />
   ) : (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
       <div className="w-full max-w-lg space-y-6 p-8">
@@ -165,101 +111,127 @@ export default function Registration() {
             {intakeInfo.intakeName}.
           </p>
         </div>
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-2">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="">
             <Label htmlFor="name">Name</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
-              required
               id="name"
               placeholder="Enter your name"
-              type="text"
               value={formData.name}
               onChange={handleChange}
+              error={errors.name}
             />
           </div>
-          <div className="space-y-2">
+          <div className="">
             <Label htmlFor="studentId">Student ID</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
               required
               id="studentId"
               placeholder="Enter your student ID"
-              type="text"
-              pattern="^[0-9]{8}$"
               title="Please enter a valid student ID."
               value={formData.studentId}
               onChange={handleChange}
+              error={errors.studentId}
             />
           </div>
-          <div className="space-y-2">
+          <div className="">
             <Label htmlFor="email">G-Suite Email Address</Label>
             <Input
               className="rounded-md shadow-sm sm:text-sm"
               required
               id="email"
               placeholder="Enter your G-Suite email"
-              type="email"
-              pattern="^[a-zA-Z0-9._%+-]+@bracu.ac.bd$"
               title="Please enter a valid G-Suite email address."
               value={formData.email}
               onChange={handleChange}
+              error={errors.email}
             />
           </div>
-          <div className="space-y-2">
+          <div className="w-full">
             <Label htmlFor="semester">Joined BRACU</Label>
-            <div className="flex gap-2">
-              <Select
-                required
-                value={formData.semester}
-                onValueChange={(value) => handleSelectChange(value, "semester")}
-              >
-                <SelectTrigger
-                  id="semester-name"
-                  className="rounded-md shadow-sm sm:text-sm"
+            <div className="flex w-full gap-2">
+              <div className="w-1/2">
+                <Select
+                  required
+                  value={formData.semester}
+                  onValueChange={(value) =>
+                    handleSelectChange(value, "semester")
+                  }
                 >
-                  <SelectValue placeholder="Select semester" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Spring">Spring</SelectItem>
-                  <SelectItem value="Summer">Summer</SelectItem>
-                  <SelectItem value="Fall">Fall</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                className="rounded-md shadow-sm sm:text-sm"
-                required
-                id="year"
-                placeholder="Year"
-                type="number"
-                min={2000}
-                max={2099}
-                step="1"
-                value={formData.year}
-                onChange={handleChange}
-              />
+                  <SelectTrigger
+                    error={errors.semester}
+                    className="rounded-md shadow-sm sm:text-sm"
+                  >
+                    <SelectValue placeholder="Semester" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Spring">Spring</SelectItem>
+                    <SelectItem value="Summer">Summer</SelectItem>
+                    <SelectItem value="Fall">Fall</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-1/2">
+                <Select
+                  required
+                  value={formData.year}
+                  onValueChange={(value) => handleSelectChange(value, "year")}
+                >
+                  <SelectTrigger
+                    error={errors.year}
+                    className="rounded-md shadow-sm sm:text-sm"
+                  >
+                    <SelectValue placeholder="Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="departmentBracu">BRACU Department</Label>
-            <Input
-              className="rounded-md shadow-sm sm:text-sm"
+
+          <div className="">
+            <Label htmlFor="departmentBracu">Department</Label>
+            <Select
               required
-              id="departmentBracu"
-              placeholder="CS, CSE, BBA, etc."
-              type="text"
               value={formData.departmentBracu}
-              onChange={handleChange}
-            />
+              onValueChange={(value) =>
+                handleSelectChange(value, "departmentBracu")
+              }
+            >
+              <SelectTrigger
+                error={errors.departmentBracu}
+                className="rounded-md shadow-sm sm:text-sm"
+              >
+                <SelectValue placeholder="Department" />
+              </SelectTrigger>
+              <SelectContent>
+                {BRACUDepartments.map((department) => (
+                  <SelectItem
+                    key={department.initial}
+                    value={department.initial}
+                  >
+                    {department.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <LoadingButton
-            className="w-full"
-            type="submit"
-            disabled={isPending}
-            loading={isPending}
-          >
-            Register
-          </LoadingButton>
+          <div>
+            <LoadingButton className="w-full" type="submit" loading={isPending}>
+              Register
+            </LoadingButton>
+          </div>
         </form>
       </div>
     </div>

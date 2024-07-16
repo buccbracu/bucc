@@ -18,22 +18,27 @@ export default function EvaluationForm() {
   const [isRegistered, setIsRegistered] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const checkPreregistered = async (studentID: string) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/evaluation?studentID=${studentID}`,
       );
-      if (!response.ok) {
-        setIsRegistered(false);
-      } else {
+      console.log(response);
+      if (response.status === 200) {
         setIsRegistered(true);
+        setShowForm(true);
+        setLoading(false);
       }
-      setShowForm(true);
+      if (response.status === 400) {
+        toast.error("Evaluation already submitted.");
+        setLoading(false);
+      }
     } catch (error) {
       console.error("Failed to check student ID:", error);
+      toast.error("Failed to check registration status.");
     }
   };
-
   const handleSubmit = () => {
     if (studentID) {
       setLoading(true);

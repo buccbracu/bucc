@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
+
     const url = new URL(request.url);
     const studentID = url.searchParams.get("studentID");
     const evaluationID = url.searchParams.get("evaluationID");
@@ -86,21 +87,34 @@ export async function GET(request: NextRequest) {
         studentId: studentID,
       });
 
-      if (preregMemberInfo) {
-        return NextResponse.json(preregMemberInfo, { status: 200 });
-      } else {
+      const evaluationData = await MemberEBAssessment.findOne({
+        studentId: studentID,
+      });
+
+      if (evaluationData) {
         return NextResponse.json(
-          { error: "Student ID not found" },
-          { status: 404 },
+          { message: "Evaluation already submitted" },
+          { status: 400 },
         );
       }
-    } else {
-      return NextResponse.json(
-        { error: "Student ID is required" },
-        { status: 400 },
-      );
+
+      if (preregMemberInfo) {
+        return NextResponse.json(
+          { message: "Preregistration already done" },
+          { status: 200 },
+        );
+      }
     }
+
+    return NextResponse.json(
+      { error: "Invalid request parameters" },
+      { status: 400 },
+    );
   } catch (error) {
-    return NextResponse.json({ status: 500 });
+    console.error("Error fetching data:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

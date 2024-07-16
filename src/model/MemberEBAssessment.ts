@@ -9,7 +9,7 @@ const MemberEBAssessmentSchema = new mongoose.Schema({
   },
 
   studentId: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   },

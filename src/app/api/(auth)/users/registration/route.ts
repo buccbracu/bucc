@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { studentId, name, joinedBracu, departmentBracu, email } = body;
+    const { studentId, name, semester, year, departmentBracu, email } = body;
 
     await dbConnect();
 
@@ -14,15 +14,21 @@ export async function POST(request: NextRequest) {
 
     if (member) {
       return NextResponse.json(
-        { message: "User already exists" },
+        { error: "User already exists" },
         { status: 400 },
       );
     }
 
+    // Convert the name to title case
+    const nameArray = name.split(" ");
+    const titleCaseName = nameArray
+      .map((name: string) => name.charAt(0).toUpperCase() + name.slice(1))
+      .join(" ");
+
     const newMember = new PreregMemberInfo({
       studentId,
-      name,
-      joinedBracu,
+      name: titleCaseName,
+      joinedBracu: `${semester} ${year}`, // joinedBracu should be formatted like "Semester Year"
       departmentBracu,
       email,
     });
@@ -48,7 +54,15 @@ export async function POST(request: NextRequest) {
       range: "Preregs!A1:E1",
       valueInputOption: "USER_ENTERED",
       requestBody: {
-        values: [[studentId, name, email, joinedBracu, departmentBracu]],
+        values: [
+          [
+            studentId,
+            titleCaseName,
+            email,
+            `${semester} ${year}`,
+            departmentBracu,
+          ],
+        ],
       },
     });
 
