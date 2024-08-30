@@ -169,3 +169,7 @@
 //     </Suspense>
 //   );
 // }
+
+export default function resetPassword() {
+  return <div>Reset Password</div>;
+}
