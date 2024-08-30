@@ -40,3 +40,5 @@ next-env.d.ts
 TODO.md
 
 .env.local.rnd
+
+.env.test
