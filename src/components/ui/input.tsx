@@ -11,7 +11,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400">
+          <div
+            className={`absolute left-3 -translate-y-1/2 transform text-gray-400 ${error ? "top-5" : "top-1/2"}`}
+          >
             {icon}
           </div>
         )}

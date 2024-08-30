@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
-import { CldImage, CldUploadButton } from "next-cloudinary";
+import { CldUploadButton } from "next-cloudinary";
+import Image from "next/image";
 import { toast } from "sonner";
 
 export default function UpdateProfilePhoto() {
@@ -56,12 +57,11 @@ export default function UpdateProfilePhoto() {
       <div className="flex flex-col items-center justify-center">
         <div className="relative mb-4 h-24 w-24">
           {profilePhoto ? (
-            <CldImage
-              width="960"
-              height="600"
+            <Image
               src={profilePhoto}
-              sizes="100vw"
               alt={`Profile Image of ${name}`}
+              width={96}
+              height={96}
               className="h-full w-full rounded-full object-cover"
             />
           ) : (
