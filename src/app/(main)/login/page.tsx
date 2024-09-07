@@ -10,17 +10,17 @@ import { MailIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function Login() {
   const router = useRouter();
-  const session = useSession();
+  const { data: session, status } = useSession();
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
+  // Always call the hook at the top level
   const {
     register,
     handleSubmit,
@@ -28,6 +28,20 @@ export default function Login() {
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
   });
+
+  // Handle session status after hooks
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (status === "authenticated") {
+    router.push("/dashboard");
+    return null; // Prevent further rendering
+  }
 
   const onSubmit = async (data: LoginSchema) => {
     try {
@@ -49,21 +63,37 @@ export default function Login() {
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Enter your g-suite email and password to sign in.
+            Enter your G-Suite email and password to sign in.
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          {/* Email Field */}
           <div className="relative">
             <Input
               className="rounded-md pl-10 shadow-sm sm:text-sm"
-              error={errors.email?.message}
               placeholder="Email address"
               type="email"
-              icon={<MailIcon className="h-4 w-4" />}
               {...register("email")}
+              error={errors.email?.message} // Display error message if available
+              icon={<MailIcon className="h-4 w-4" />}
             />
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email.message}</p>
+            )}
           </div>
-          <PasswordField register={register} errors={errors} />
+
+          {/* Password Field */}
+          <PasswordField
+            name="password" // Pass the name prop for password field
+            register={register}
+            errors={errors}
+            placeholder="Password"
+            isVisible={passwordVisible} // Use passwordVisible here
+            toggleVisibility={() => {
+              setPasswordVisible(!passwordVisible); // This toggles the state properly
+            }}
+          />
+
           <div className="flex items-center justify-between">
             <Link
               className="text-sm font-medium text-gray-900 underline transition-colors hover:text-gray-800 dark:text-gray-50 dark:hover:text-gray-200"
@@ -72,7 +102,7 @@ export default function Login() {
               Forgot your password?
             </Link>
             <Link
-              className="f text-sm font-medium text-gray-900 underline transition-colors hover:text-gray-800 dark:text-gray-50 dark:hover:text-gray-200"
+              className="text-sm font-medium text-gray-900 underline transition-colors hover:text-gray-800 dark:text-gray-50 dark:hover:text-gray-200"
               href="/registration"
             >
               Not a member? Register
