@@ -90,6 +90,8 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const { newPassword, token } = body;
 
+    console.log(newPassword);
+
     await dbConnect();
 
     const user = await UserAuth.findOne({ verifyToken: token });
@@ -101,6 +103,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     const isTokenExpired = new Date() > new Date(user.expiresIn);
+
+    console.log(isTokenExpired);
 
     if (isTokenExpired) {
       return NextResponse.json({
@@ -118,7 +122,7 @@ export async function PATCH(request: NextRequest) {
 
     const hashPass = await hash(newPassword, 10);
 
-    const updatedUser = await UserAuth.findByIdAndUpdate(user.id, {
+    const updatedUser = await UserAuth.findByIdAndUpdate(user._id, {
       password: hashPass,
       verifyToken: null,
       expiresIn: null,
