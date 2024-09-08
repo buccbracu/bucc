@@ -1,3 +1,4 @@
+import RealTimeInterviewee from "@/components/interviewee/RealTimeInterviewee";
 import {
   Card,
   CardContent,
@@ -17,10 +18,11 @@ export default function EvaluationStats({ evaluationsStats }: any) {
 
   return (
     <div className="mb-6 space-y-4">
+      <RealTimeInterviewee />
       {["Accepted", "Pending"].map((status) => (
         <Card
           key={status}
-          className={`${status === "Accepted" ? "bg-green-200 dark:bg-green-900/40" : "bg-yellow-200 dark:bg-yellow-700/40"} ${status === "Accepted" ? "text-green-900 dark:text-green-200/80" : "text-yellow-900 dark:text-yellow-200/80"}`}
+          className={`${status === "Accepted" ? "bg-green-200 dark:bg-green-900/40" : "bg-yellow-200 dark:bg-yellow-700/40"} ${status === "Accepted" ? "text-green-900 dark:text-green-200/80" : "text-yellow-900 dark:text-yellow-200/80"} min-w-72`}
         >
           <CardHeader className="text-xl font-semibold">{status}</CardHeader>
           <CardContent>
@@ -43,7 +45,7 @@ export default function EvaluationStats({ evaluationsStats }: any) {
           </CardFooter>
         </Card>
       ))}
-      <Card className="bg-red-200 text-red-900 dark:bg-red-900/40 dark:text-red-200/80">
+      <Card className="min-w-72 bg-red-200 text-red-900 dark:bg-red-900/40 dark:text-red-200/80">
         <CardHeader className="text-xl font-semibold">Rejected</CardHeader>
         <CardFooter>
           <div className="flex w-full justify-between">
