@@ -65,6 +65,19 @@ export async function GET(request: NextRequest) {
 
     const url = new URL(request.url);
     const studentID = url.searchParams.get("studentID");
+    const evaluationID = url.searchParams.get("evaluationID");
+
+    if (evaluationID) {
+      // Check if the evaluation ID exists
+      const evaluationData = await MemberEBAssessment.findById(evaluationID);
+
+      if (evaluationData) {
+        return NextResponse.json(
+          { message: "Evaluation found", data: evaluationData },
+          { status: 200 },
+        );
+      }
+    }
 
     if (studentID) {
       // Check if the user has already submitted the evaluation
