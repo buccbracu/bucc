@@ -65,45 +65,39 @@ export async function GET(request: NextRequest) {
 
     const url = new URL(request.url);
     const studentID = url.searchParams.get("studentID");
-    const evaluationID = url.searchParams.get("evaluationID");
-
-    if (evaluationID) {
-      const evaluationData = await MemberEBAssessment.findOne({
-        _id: evaluationID,
-      });
-
-      if (evaluationData) {
-        return NextResponse.json(evaluationData, { status: 200 });
-      } else {
-        return NextResponse.json(
-          { error: "Evaluation Data not found" },
-          { status: 404 },
-        );
-      }
-    }
 
     if (studentID) {
-      const preregMemberInfo = await PreregMemberInfo.findOne({
-        studentId: studentID,
-      });
-
+      // Check if the user has already submitted the evaluation
       const evaluationData = await MemberEBAssessment.findOne({
         studentId: studentID,
       });
 
       if (evaluationData) {
+        // Return 400 if evaluation is already submitted
         return NextResponse.json(
           { message: "Evaluation already submitted" },
           { status: 400 },
         );
       }
 
+      // If the evaluation is not submitted, check if the user is pre-registered
+      const preregMemberInfo = await PreregMemberInfo.findOne({
+        studentId: studentID,
+      });
+
       if (preregMemberInfo) {
+        // Return 200 if preregistration is done but no evaluation is submitted yet
         return NextResponse.json(
-          { message: "Preregistration already done" },
+          { message: "Preregistration completed, proceed to evaluation" },
           { status: 200 },
         );
       }
+
+      // If no preregistration, return appropriate message
+      return NextResponse.json(
+        { message: "You are not preregistered." },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(

@@ -21,29 +21,43 @@ export default function EvaluationForm() {
 
   const checkPreregistered = async (studentID: string) => {
     try {
+      setLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/evaluation?studentID=${studentID}`,
       );
-      console.log(response);
+
       if (response.status === 200) {
-        setIsRegistered(true);
-        setShowForm(true);
+        const data = await response.json();
+        if (
+          data.message === "Preregistration completed, proceed to evaluation"
+        ) {
+          setIsRegistered(true);
+          setShowForm(true);
+        }
         setLoading(false);
-      }
-      if (response.status === 400) {
+      } else if (response.status === 400) {
         toast.error("Evaluation already submitted.");
+        setLoading(false);
+      } else if (response.status === 404) {
+        setIsRegistered(false);
+        setShowForm(true); // Ensure form is shown even if not preregistered
+        toast.error("You are not preregistered.");
+        setLoading(false);
+      } else {
+        toast.error("Failed to check registration status.");
         setLoading(false);
       }
     } catch (error) {
       console.error("Failed to check student ID:", error);
       toast.error("Failed to check registration status.");
+      setLoading(false);
     }
   };
+
   const handleSubmit = () => {
     if (studentID) {
       setLoading(true);
-      router.push(`/evaluation?studentID=${studentID}`);
-      checkPreregistered(studentID);
+      checkPreregistered(studentID); // Changed order to only push when status is known
     } else {
       toast.error("Please enter your student ID.");
     }
@@ -72,9 +86,10 @@ export default function EvaluationForm() {
             <p className="mb-4 text-center text-lg">
               Please complete the pre-registration process before proceeding.
             </p>
-            <Button>
-              <Link href="/registration"> Go to pre-registration</Link>
-            </Button>
+            {/* Wrap Link around Button */}
+            <Link href="/registration">
+              <Button> Go to pre-registration</Button>
+            </Link>
           </div>
         )
       ) : (
