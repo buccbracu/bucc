@@ -259,10 +259,13 @@ const IntervieweeAttendance = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-160px)] overflow-scroll p-6 text-center md:w-full">
+    <div className="w-[calc(100vw-160px)] overflow-scroll p-2 text-center md:w-full">
       <h2 className="mb-4 text-2xl font-bold">{`Interviewee Attendance Sheet ${intakeInfo.intakeName} for Volunteers`}</h2>
-      <div className="flex gap-4">
-        <div className="flex flex-grow">
+
+      {/* Responsive layout */}
+      <div className="flex flex-col-reverse gap-4 md:flex-row">
+        {/* Table Section */}
+        <div className="flex-grow md:order-1">
           <div className="w-full">
             <Input
               type="text"
@@ -270,7 +273,6 @@ const IntervieweeAttendance = () => {
               onBlur={(e) => handleCreateStudent(e.target.value)}
               className="mb-2"
             />
-
             <Table className="border">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -306,7 +308,11 @@ const IntervieweeAttendance = () => {
             </Table>
           </div>
         </div>
-        <RealTimeInterviewee />
+
+        {/* RealTimeInterviewee Section */}
+        <div className="md:order-2">
+          <RealTimeInterviewee />
+        </div>
       </div>
     </div>
   );
