@@ -72,10 +72,7 @@ export async function GET(request: NextRequest) {
       const evaluationData = await MemberEBAssessment.findById(evaluationID);
 
       if (evaluationData) {
-        return NextResponse.json(
-          { message: "Evaluation found", data: evaluationData },
-          { status: 200 },
-        );
+        return NextResponse.json(evaluationData, { status: 200 });
       }
     }
 
