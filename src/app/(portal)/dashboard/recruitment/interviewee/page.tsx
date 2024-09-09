@@ -2,6 +2,7 @@
 
 import RealTimeInterviewee from "@/components/interviewee/RealTimeInterviewee";
 import SpinnerComponent from "@/components/SpinnerComponent";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -24,6 +25,7 @@ import {
 } from "@tanstack/react-table";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // Extend the TableMeta interface
 declare module "@tanstack/react-table" {
@@ -87,13 +89,6 @@ const EditableCell = ({
   );
 };
 
-// Spinner Component
-const Spinner = () => (
-  <div className="flex items-center justify-center">
-    <div className="spinner-border inline-block h-8 w-8 animate-spin rounded-full border-4"></div>
-  </div>
-);
-
 const IntervieweeAttendance = () => {
   const [data, setData] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -150,10 +145,11 @@ const IntervieweeAttendance = () => {
   const table = useReactTable({
     data,
     columns,
-    defaultColumn: { cell: EditableCell }, // Use custom EditableCell as the default cell
+    defaultColumn: { cell: EditableCell },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 300 } },
     meta: {
       // Meta function to update data
       updateData: async (
@@ -182,9 +178,19 @@ const IntervieweeAttendance = () => {
   });
 
   // Function to handle new student creation via POST
+
   const handleCreateStudent = async (studentId: string) => {
     if (!studentId.trim()) {
       console.error("Student ID cannot be empty");
+      return;
+    }
+
+    // Check if studentId already exists in the data array
+    const studentExists = data.some(
+      (student) => student.studentId === studentId,
+    );
+    if (studentExists) {
+      toast.error("Student ID already exists in the table!");
       return;
     }
 
@@ -195,7 +201,7 @@ const IntervieweeAttendance = () => {
       );
 
       if (!studentDataResponse.ok) {
-        console.error("Student not found");
+        toast.error("Student not found");
         return;
       }
 
@@ -223,6 +229,7 @@ const IntervieweeAttendance = () => {
       setData((prev) => [...prev, newRecord.record]);
     } catch (error) {
       console.error("Failed to create new student:", error);
+      toast.error("Failed to create new student");
     }
   };
 
@@ -270,7 +277,11 @@ const IntervieweeAttendance = () => {
             <Input
               type="text"
               placeholder="Enter Student ID"
-              onBlur={(e) => handleCreateStudent(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCreateStudent(e.currentTarget.value); // Call the function on Enter key press
+                }
+              }}
               className="mb-2"
             />
             <Table className="border">
@@ -289,23 +300,64 @@ const IntervieweeAttendance = () => {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className={getRowClassName(row.original)} // Apply conditional row styling
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell className="p-0" key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                {table
+                  .getRowModel()
+                  .rows.slice()
+                  .reverse()
+                  .map((row) => (
+                    <TableRow
+                      key={row.id}
+                      className={getRowClassName(row.original)} // Apply conditional row styling
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell className="p-0" key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+          </div>
+          {/* Pagination Controls */}
+          <div className="mt-4 flex items-center justify-between">
+            <Button
+              variant="link"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+              className="hidden sm:block"
+            >
+              ⟪ First page
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              ⟨ Previous page
+            </Button>
+            <span className="text-sm">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </span>
+            <Button
+              variant="link"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next page ⟩
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+              className="hidden sm:block"
+            >
+              Last page ⟫
+            </Button>
           </div>
         </div>
 
