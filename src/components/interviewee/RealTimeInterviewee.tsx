@@ -42,37 +42,15 @@ export default function RealTimeInterviewee() {
     fetchData();
   }, []);
 
-  // Function to map firstChoice to department
-  const getDepartmentFromFirstChoice = (firstChoice: string): string => {
-    switch (firstChoice.toLowerCase()) {
-      case "communication and marketing":
-        return "C&M";
-      case "human resources":
-        return "HR";
-      case "event management":
-        return "EM";
-      case "finance":
-        return "Finance";
-      case "creative":
-        return "Creative";
-      case "public relations":
-        return "PR";
-      case "research and development":
-        return "R&D";
-      default:
-        return "Other"; // For any unrecognized department
-    }
-  };
-
   // Initialize department counts
   const departmentCounts: { [key: string]: number } = {
-    "C&M": 0,
-    HR: 0,
-    EM: 0,
-    Finance: 0,
+    "Communication and Marketing": 0,
     Creative: 0,
-    PR: 0,
-    "R&D": 0,
+    "Event Management": 0,
+    Finance: 0,
+    "Human Resources": 0,
+    "Press Release and Publications": 0,
+    "Research and Development": 0,
     Hold: 0,
     Other: 0, // For any unrecognized department
   };
@@ -87,7 +65,7 @@ export default function RealTimeInterviewee() {
       departmentCounts["Hold"] += 1;
     } else if (!student.sent) {
       // If hold is false and sent is false, count in the department and add to total queue
-      const department = getDepartmentFromFirstChoice(student.firstChoice);
+      const department = student.firstChoice;
       departmentCounts[department] += 1;
       totalInQueue += 1; // Increment total queue
     }
