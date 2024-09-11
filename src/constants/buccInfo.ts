@@ -3,8 +3,8 @@ const intakeInfo = {
   intakeName: "Summer 2024",
   intakeStartDate: "2024-06-10",
   intakeEndDate: "2024-09-11",
-  isIntakeActive: true,
-  isEvaluationActive: true,
+  isIntakeActive: false,
+  isEvaluationActive: false,
 };
 
 const buccSocials = {
