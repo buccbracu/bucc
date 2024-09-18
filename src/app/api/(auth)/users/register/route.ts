@@ -3,12 +3,12 @@ import generatePassword from "@/helpers/generatePassword";
 import { singleWelcomeMail } from "@/helpers/mailer";
 import dbConnect from "@/lib/dbConnect";
 
-import MemberEBAssessment from "@/model/MemberEBAssessment";
+// import MemberEBAssessment from "@/model/MemberEBAssessment";
 import MemberInfo from "@/model/MemberInfo";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
-import { google } from "googleapis";
+// import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -29,7 +29,11 @@ export async function POST(request: NextRequest) {
     }
 
     const user = await MemberInfo.findOne({ email: gSuiteEmail }).exec();
-    if (user) {
+    const userAuth = await UserAuth.findOne({
+      email: gSuiteEmail,
+    }).exec();
+
+    if (user || userAuth) {
       return NextResponse.json(
         { message: "User already exists" },
         { status: 400 },
@@ -70,53 +74,53 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = {
-      name: createdMember.name,
-      studentId: createdMember.studentId,
-      email: createdMember.email,
-      buccDepartment: createdMember.buccDepartment,
-      designation: createdMember.designation,
-      joinedBucc: createdMember.joinedBracu,
-      lastPromotion: createdMember.lastPromotion || "Never Promoted",
-    };
+    // const data = {
+    //   name: createdMember.name,
+    //   studentId: createdMember.studentId,
+    //   email: createdMember.email,
+    //   buccDepartment: createdMember.buccDepartment,
+    //   designation: createdMember.designation,
+    //   joinedBucc: createdMember.joinedBracu,
+    //   lastPromotion: createdMember.lastPromotion || "Never Promoted",
+    // };
 
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-      },
-      scopes: [
-        "https://www.googleapis.com/auth/drive",
-        "https://www.googleapis.com/auth/drive.file",
-        "https://www.googleapis.com/auth/spreadsheets",
-      ],
-    });
+    // const auth = new google.auth.GoogleAuth({
+    //   credentials: {
+    //     client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    //     private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    //   },
+    //   scopes: [
+    //     "https://www.googleapis.com/auth/drive",
+    //     "https://www.googleapis.com/auth/drive.file",
+    //     "https://www.googleapis.com/auth/spreadsheets",
+    //   ],
+    // });
 
-    const sheets = google.sheets({ version: "v4", auth });
+    // const sheets = google.sheets({ version: "v4", auth });
 
-    const response = await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "SelectedMembers!A1:E1",
-      valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [
-          [
-            data.name,
-            data.studentId,
-            data.email,
-            data.buccDepartment,
-            data.designation,
-            data.joinedBucc,
-            data.lastPromotion,
-          ],
-        ],
-      },
-    });
+    // const response = await sheets.spreadsheets.values.append({
+    //   spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    //   range: "SelectedMembers!A1:E1",
+    //   valueInputOption: "USER_ENTERED",
+    //   requestBody: {
+    //     values: [
+    //       [
+    //         data.name,
+    //         data.studentId,
+    //         data.email,
+    //         data.buccDepartment,
+    //         data.designation,
+    //         data.joinedBucc,
+    //         data.lastPromotion,
+    //       ],
+    //     ],
+    //   },
+    // });
 
     await singleWelcomeMail(userID.id.toString(), name, gSuiteEmail, password);
 
-    await PreregMemberInfo.findOneAndDelete({ studentId }).exec();
-    await MemberEBAssessment.findOneAndDelete({ studentId }).exec();
+    // await PreregMemberInfo.findOneAndDelete({ studentId }).exec();
+    // await MemberEBAssessment.findOneAndDelete({ studentId }).exec();
 
     return NextResponse.json(
       { message: "Register Successful" },
