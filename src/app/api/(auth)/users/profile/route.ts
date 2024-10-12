@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextRequest, NextResponse } from "next/server";
+import { hasAuth } from "@/helpers/hasAuth";
 
 const permittedFields = [
   "personalEmail",
