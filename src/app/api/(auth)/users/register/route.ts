@@ -1,5 +1,6 @@
 const saltRounds = 10;
 import generatePassword from "@/helpers/generatePassword";
+import { hasAuth } from "@/helpers/hasAuth";
 import { singleWelcomeMail } from "@/helpers/mailer";
 import dbConnect from "@/lib/dbConnect";
 
@@ -13,7 +14,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
+    
+    const { session, isPermitted } = await hasAuth();
 
     const body = await request.json();
     const { name, studentId, gSuiteEmail, buccDepartment, status } = body;

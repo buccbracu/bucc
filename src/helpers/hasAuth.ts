@@ -1,7 +1,10 @@
 import { auth } from "@/auth";
+import dbConnect from "@/lib/dbConnect";
+
 
 export async function hasAuth(permittedDesignations: string[] = [], permittedDepartments: string[] = []) {
 
+    await dbConnect();
 
     let isPermitted = true;
 
