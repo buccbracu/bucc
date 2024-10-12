@@ -3,13 +3,13 @@ import { auth } from "@/auth";
 export async function hasAuth(permittedDesignations: string[] = [], permittedDepartments: string[] = []) {
 
 
-    let isPermitted = false;
+    let isPermitted = true;
 
     const session = await auth();
     
     if (!session) {
         isPermitted = false;
-        return isPermitted;
+        return { session: null, isPermitted: false };
     }
     
     // If Permitted Designations is an empty array, then all designations are allowed or else check if the user's designation is in the permittedDesignations array
