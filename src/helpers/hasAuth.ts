@@ -40,7 +40,7 @@ export async function hasAuth(permittedDesignations: string[] = [], permittedDep
 
 
 
-    return isPermitted;
+    return {session, isPermitted};
 
     
 
