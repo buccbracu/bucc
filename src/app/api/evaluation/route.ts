@@ -1,5 +1,4 @@
 import { hasAuth } from "@/helpers/hasAuth";
-import dbConnect from "@/lib/dbConnect";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { google } from "googleapis";
@@ -22,9 +21,10 @@ export async function POST(request: NextRequest) {
     const { session, isPermitted } = await hasAuth(permittedDesignations);
 
     if (!session || !isPermitted) {
-      return NextResponse.json({
-        message: "You are not authorized to view this page",
-      });
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
     }
 
     const memberEB = await MemberEBAssessment.findOne({
@@ -83,9 +83,10 @@ export async function GET(request: NextRequest) {
     const { session, isPermitted } = await hasAuth(permittedDesignations);
 
     if (!session || !isPermitted) {
-      return NextResponse.json({
-        message: "You are not authorized to view this page",
-      });
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
     }
 
     const url = new URL(request.url);

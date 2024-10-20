@@ -17,9 +17,10 @@ export async function GET() {
     const { session, isPermitted } = await hasAuth(permittedDesignations);
   
     if (!session || !isPermitted) {
-      return NextResponse.json({
-        message: "You are not authorized to view this page",
-      });
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
     }
   
   
