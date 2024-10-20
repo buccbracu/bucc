@@ -48,7 +48,7 @@ const footer_menu = [
     title: "Legal",
     childrens: [
       { title: "Terms of Use", path: "/tou" },
-      { title: "Privacy Policy", path: "/privacy-policy" },
+      { title: "Privacy Policy", path: "/about/privacy-policy" },
       { title: "Cookie Policy", path: "/cookie-policy" },
     ],
   },
