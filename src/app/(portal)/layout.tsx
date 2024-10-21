@@ -3,6 +3,8 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import ThemeToggler from "@/components/theme-toggler";
 import Providers from "@/util/Providers";
 import type { Metadata } from "next";
+import "@/app/prosemirror.css";
+
 import { Outfit } from "next/font/google";
 
 const font = Outfit({ subsets: ["latin"] });
