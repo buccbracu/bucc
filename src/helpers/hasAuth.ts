@@ -18,7 +18,8 @@ export async function hasAuth(permittedDesignations: string[] = [], permittedDep
     // If Permitted Designations is an empty array, then all designations are allowed or else check if the user's designation is in the permittedDesignations array
 
     if (permittedDesignations.length > 0) {
-        if (permittedDesignations.includes(session.user.designation)) {
+        permittedDesignations = permittedDesignations.map(designation => designation.toLowerCase());
+        if (permittedDesignations.includes(session.user.designation.toLowerCase())) {
             isPermitted = true;
         }
         else {
@@ -31,7 +32,8 @@ export async function hasAuth(permittedDesignations: string[] = [], permittedDep
     // If Permitted Departments is an empty array, then all departments are allowed or else check if the user's department is in the permittedDepartments array
 
     if (permittedDepartments.length > 0) {
-        if (permittedDepartments.includes(session.user.buccDepartment)) {
+        permittedDepartments = permittedDepartments.map(department => department.toLowerCase());
+        if (permittedDepartments.includes(session.user.buccDepartment.toLowerCase())) {
             isPermitted = true;
         }
         else {
