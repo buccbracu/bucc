@@ -78,6 +78,7 @@ export default function UpdateProfilePhoto() {
             options={{
               multiple: false,
               sources: ["local", "url", "google_drive"],
+              maxFileSize: 102400,
             }}
             onUpload={(result: any) => {
               handleProfilePhoto(result.info?.secure_url, "update");

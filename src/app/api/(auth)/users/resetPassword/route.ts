@@ -1,5 +1,5 @@
+import { hasAuth } from "@/helpers/hasAuth";
 import { singleResetMail } from "@/helpers/mailer";
-import dbConnect from "@/lib/dbConnect";
 import UserAuth from "@/model/UserAuth";
 import { compare, hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
@@ -7,7 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function GET(request: NextRequest, response: NextResponse) {
   try {
-    await dbConnect();
+
+    const { session, isPermitted } = await hasAuth();
 
     const token = request.nextUrl.searchParams.get("token");
 
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email } = body;
 
-    await dbConnect();
+    const { session, isPermitted } = await hasAuth();
 
     const user = await UserAuth.findOne({ email: email });
 
@@ -92,7 +93,7 @@ export async function PATCH(request: NextRequest) {
 
     console.log(newPassword);
 
-    await dbConnect();
+    const { session, isPermitted } = await hasAuth();
 
     const user = await UserAuth.findOne({ verifyToken: token });
 

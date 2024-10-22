@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import dbConnect from "@/lib/dbConnect";
+import { hasAuth } from "@/helpers/hasAuth";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { NextResponse } from "next/server";
 
@@ -14,12 +14,15 @@ const permittedDesignations = [
 ];
 
 export async function GET() {
-  await dbConnect();
-  const user = await auth();
-  if (!user) {
-    return NextResponse.json({
-      message: "You are not authorized to view this page",
-    });
+  
+  const {session, isPermitted} = await hasAuth(permittedDesignations, permittedDepartments);
+  
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "You are not authorized to view this page" },
+      { status: 401 },
+    );
   }
   //   if (
   //     !permittedDepartments.includes(user?.user.buccDepartment) ||

@@ -1,9 +1,10 @@
 import { auth } from "@/auth";
+import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import { NextRequest, NextResponse } from "next/server";
 
-const accessDesignation = [
+const permittedDesignations = [
   "President",
   "Vice President",
   "General Secretary",
@@ -13,18 +14,17 @@ const accessDesignation = [
 ];
 
 export async function GET(request: NextRequest) {
-  const session = await auth();
-  const designation = session?.user?.designation;
-
-  if (designation && !accessDesignation.includes(designation)) {
-    return NextResponse.json(
-      { error: "You are not authorized to view this page" },
-      { status: 401 },
-    );
-  }
 
   try {
-    await dbConnect();
+
+    const { session, isPermitted } = await hasAuth(permittedDesignations);
+
+    if (!session || !isPermitted) {
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
 
     const allMemberEBAssessment = await MemberEBAssessment.find();
     return NextResponse.json(allMemberEBAssessment, { status: 200 });
