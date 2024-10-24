@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
+import AnnouncementBar from "@/components/navbar/announcement-bar";
 import Navbar from "@/components/navbar/Navbar";
 import Providers from "@/util/Providers";
 import type { Metadata } from "next";
@@ -36,6 +37,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={font.className}>
         <Providers>
+          <AnnouncementBar />
           <Navbar />
           <main className="relative min-h-[calc(100vh-140px)] overflow-auto">
             {children}
