@@ -10,6 +10,11 @@ const getEvaluation = async ({ evaluationID }: { evaluationID: string }) => {
   return res.json();
 };
 
+const getPreRegMembers = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/preregmembers`);
+  return res.json();
+};
+
 const getDepartmentMembers = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/members`);
   return res.json();
@@ -44,6 +49,7 @@ export {
   getEvaluations,
   getMember,
   getMemberData,
+  getPreRegMembers,
   getProfileData,
 };
 

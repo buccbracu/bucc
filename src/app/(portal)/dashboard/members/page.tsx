@@ -6,9 +6,11 @@ import FilterComponent from "@/components/table/FilterComponent";
 import TableComponent from "@/components/table/TableComponent";
 import departments from "@/constants/departments";
 import designations from "@/constants/designations";
+import generateSemesters from "@/helpers/generateSemesters";
 import { getDepartmentMembers } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const permittedDepartments = [
@@ -24,11 +26,34 @@ const permittedDesignations = [
 ];
 
 const columns = [
+  { header: "Student ID", accessorKey: "studentId" },
   { header: "Name", accessorKey: "name" },
   { header: "Designation", accessorKey: "designation" },
   { header: "Joined BRACU", accessorKey: "joinedBracu" },
   { header: "Joined BUCC", accessorKey: "joinedBucc" },
   { header: "Last Promotion", accessorKey: "lastPromotion" },
+  {
+    header: "Facebook",
+    accessorKey: "memberSocials.Facebook",
+    cell: ({ getValue }: any) => {
+      const value = getValue();
+      const facebookUrl =
+        value && !value.startsWith("http") ? `https://${value}` : value;
+
+      return facebookUrl ? (
+        <Link
+          href={facebookUrl}
+          passHref
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View Profile
+        </Link>
+      ) : (
+        "N/A"
+      );
+    },
+  },
 ];
 
 const filterOptions = [
@@ -43,6 +68,12 @@ const filterOptions = [
     placeholder: "Filter by designation",
     options: designations.slice(6).map((designation) => designation.title),
   },
+  {
+    type: "select",
+    name: "joinedBucc",
+    placeholder: "Filter by joining semester",
+    options: generateSemesters(),
+  },
 ];
 
 export default function Members() {
@@ -51,6 +82,7 @@ export default function Members() {
   const [filters, setFilters] = useState({
     search: "",
     designation: "",
+    joinedBucc: "",
   });
 
   const { data, isLoading, isError } = useQuery({
@@ -74,7 +106,9 @@ export default function Members() {
             studentId.includes(search)) &&
           (!filters.designation ||
             item.designation.toLowerCase() ===
-              filters.designation.toLowerCase())
+              filters.designation.toLowerCase()) &&
+          (!filters.joinedBucc || // Add this line
+            item.joinedBucc === filters.joinedBucc) // Check if joinedBucc matches
         );
       });
 
@@ -87,7 +121,7 @@ export default function Members() {
   };
 
   const handleResetFilters = () => {
-    setFilters({ search: "", designation: "" });
+    setFilters({ search: "", designation: "", joinedBucc: "" });
   };
 
   if (isLoading || session.status === "loading") {

@@ -41,4 +41,6 @@ TODO.md
 
 .env.local.rnd
 
+.env.local
+
 .env.test
