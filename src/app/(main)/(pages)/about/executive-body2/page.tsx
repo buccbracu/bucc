@@ -4,7 +4,7 @@ import PageHeader from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import allExecutiveBodyData from "@/constants/all-executive-body/data";
-import { Facebook, Linkedin } from "lucide-react";
+import { Facebook, Github, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -134,6 +134,15 @@ const ExecutiveCard = ({ executive }: { executive: any }) => (
             className="text-gray-500 hover:text-[#1f4864]"
           >
             <Linkedin size={24} />
+          </Link>
+        )}
+        {executive.gitHubURL && (
+          <Link
+            href={executive.gitHubURL}
+            prefetch={false}
+            className="text-gray-500 hover:text-[#1f4864]"
+          >
+            <Github size={24} />
           </Link>
         )}
       </div>

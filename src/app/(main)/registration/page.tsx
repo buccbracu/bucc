@@ -22,7 +22,10 @@ import { z } from "zod";
 type FormData = z.infer<typeof registrationSchema>;
 
 export default function Registration() {
-  const registrationActive = intakeInfo.isIntakeActive;
+  const registrationActive =
+    intakeInfo.isIntakeActive &&
+    intakeInfo.intakeStartDate <= new Date().toISOString().split("T")[0];
+
   const [isPending, startTransition] = useTransition();
   const [isRegistered, setIsRegistered] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -94,7 +97,12 @@ export default function Registration() {
   };
 
   if (!registrationActive) {
-    return <IntakeInactive endDate={intakeInfo.intakeEndDate} />;
+    return (
+      <IntakeInactive
+        startDate={intakeInfo.intakeStartDate}
+        endDate={intakeInfo.intakeEndDate}
+      />
+    );
   }
 
   return isRegistered ? (

@@ -38,6 +38,7 @@ const ExecutiveBody2024 = [
     image: NiloyImage,
     facebookURL: "https://www.facebook.com/nafissadiqueniloy.nafis",
     linkedinURL: "https://linkedin.com/in/nafissn",
+    gitHubURL: "https://www.github.com/Nafis588",
   },
   {
     fullName: "Udoy Saha",
@@ -47,6 +48,7 @@ const ExecutiveBody2024 = [
     image: UdoyImage,
     facebookURL: "https://www.facebook.com/udoysahaI03/",
     linkedinURL: "https://www.linkedin.com/in/udoysaha103/",
+    gitHubURL: "https://www.github.com/udoysaha103",
   },
   {
     fullName: "Tahmim Hassan",
@@ -155,6 +157,7 @@ const ExecutiveBody2024 = [
     image: SiamImage,
     facebookURL: "https://www.facebook.com/MdAbuHanifSiam",
     linkedinURL: "https://www.linkedin.com/in/md-abu-hanif-siam-02b695249",
+    gitHubURL: "https://www.github.com/AbuHanifSiam",
   },
   {
     fullName: "Md Nafiz Fuad Sharkar",
@@ -227,6 +230,7 @@ const ExecutiveBody2024 = [
     image: WasimaImage,
     facebookURL: "https://www.facebook.com/WasimaAnnan",
     linkedinURL: "https://www.linkedin.com/in/wasima-annan-55a767292",
+    gitHubURL: "https://www.github.com/wasimaannan",
   },
   {
     fullName: "Yeamin Hossain Shihab",
@@ -236,6 +240,7 @@ const ExecutiveBody2024 = [
     image: YeaminImage,
     facebookURL: "https://www.facebook.com/yeaminhossainshihab",
     linkedinURL: "https://www.linkedin.com/in/yeamin-hossain-shihab-a77831250",
+    gitHubURL: "https://www.github.com/Yeamin-HS",
   },
   {
     fullName: "Jannatul Ferdous Sayeema",
@@ -282,6 +287,7 @@ const ExecutiveBody2024 = [
     image: SabbirImage,
     facebookURL: "https://www.facebook.com/sabbirosa",
     linkedinURL: "https://www.linkedin.com/in/sabbirosa",
+    gitHubURL: "https://www.github.com/sabbirosa",
   },
   {
     fullName: "Md. Reshad Romim Khan",
@@ -291,6 +297,7 @@ const ExecutiveBody2024 = [
     image: ReshadImage,
     facebookURL: "https://www.facebook.com/blaezing.reshad",
     linkedinURL: "https://www.linkedin.com/in/reshadromimkhan",
+    gitHubURL: "https://www.github.com/b14z31ng",
   },
   {
     fullName: "Md. Amir Ul Islam",
@@ -300,6 +307,7 @@ const ExecutiveBody2024 = [
     image: AmirImage,
     facebookURL: "https://www.facebook.com/azazel.x369",
     linkedinURL: "https://www.linkedin.com/in/md-amir-ul-islam-47b408245",
+    gitHubURL: "https://www.github.com/aaditx23/",
   },
 ];
 
