@@ -97,12 +97,7 @@ export default function Registration() {
   };
 
   if (!registrationActive) {
-    return (
-      <IntakeInactive
-        startDate={intakeInfo.intakeStartDate}
-        endDate={intakeInfo.intakeEndDate}
-      />
-    );
+    return <IntakeInactive />;
   }
 
   return isRegistered ? (

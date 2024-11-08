@@ -1,6 +1,6 @@
 "use client";
 
-import { buccSocials } from "@/constants/buccInfo";
+import intakeInfo, { buccSocials } from "@/constants/buccInfo";
 import { TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,11 +30,10 @@ const calculateTimeLeft = (targetDate: string): TimeLeft => {
   };
 };
 
-export default function IntakeInactive({
-  startDate,
-  endDate,
-}: IntakeInactiveProps) {
+export default function IntakeInactive() {
   const router = useRouter();
+  const startDate = intakeInfo.intakeStartDate;
+  const endDate = intakeInfo.intakeEndDate;
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,

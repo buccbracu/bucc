@@ -64,7 +64,7 @@ export default function EvaluationForm() {
   };
 
   if (!intakeInfo.isEvaluationActive) {
-    return <IntakeInactive endDate={intakeInfo.intakeEndDate} />;
+    return <IntakeInactive />;
   }
 
   return (
