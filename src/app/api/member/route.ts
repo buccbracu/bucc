@@ -1,5 +1,4 @@
-import { auth } from "@/auth";
-import dbConnect from "@/lib/dbConnect";
+import { hasAuth } from "@/helpers/hasAuth";
 import MemberInfo from "@/model/MemberInfo";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,19 +35,31 @@ const permittedFields = [
 ];
 
 export async function GET(request: NextRequest) {
-  await dbConnect();
+
 
   const url = new URL(request.url);
   const MemberID = url.searchParams.get("id");
 
-  const user = await auth();
-  if (!user) {
-    return NextResponse.json({
-      message: "You are not authorized to view this page",
-    });
-  }
 
   try {
+
+    const { session, isPermitted } = await hasAuth(permittedDesignations, permittedDepartments);
+
+ 
+    if (!session) {
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
+  
+    if (!isPermitted) {
+      return NextResponse.json(
+        { error: `${session?.user.designation}S of ${session?.user.buccDepartment} don't have the permission to view this page.` },
+        { status: 401 },
+      );
+    }
+
     const users = await MemberInfo.findById(MemberID);
 
     if (!users) {
@@ -64,27 +75,28 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  await dbConnect();
+  
 
   const url = new URL(request.url);
   const memberID = url.searchParams.get("id");
 
-  const session = await auth();
+  const { session, isPermitted } = await hasAuth(permittedDesignations, permittedDepartments);
 
+ 
   if (!session) {
-    return NextResponse.json({
-      message: "You are not authorized to view this page",
-    });
+    return NextResponse.json(
+      { error: "You are not authorized to view this page" },
+      { status: 401 },
+    );
   }
 
-  if (
-    !permittedDesignations.includes(session.user.designation) ||
-    !permittedDepartments.includes(session.user.buccDepartment)
-  ) {
-    return NextResponse.json({
-      message: "You are not authorized to update this user",
-    });
+  if (!isPermitted) {
+    return NextResponse.json(
+      { error: `${session?.user.designation}S of ${session?.user.buccDepartment} don't have authotization to update this user.` },
+      { status: 401 },
+    );
   }
+
 
   const body = await request.json();
 

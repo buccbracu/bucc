@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextRequest, NextResponse } from "next/server";
+import { hasAuth } from "@/helpers/hasAuth";
 
 const permittedFields = [
   "personalEmail",
@@ -16,17 +17,19 @@ const permittedFields = [
 ];
 
 export async function GET() {
-  await dbConnect();
-  const user = await auth();
 
-  if (!user) {
-    return NextResponse.json({
-      message: "You are not authorized to view this page",
-    });
+
+  const { session, isPermitted} = await hasAuth();
+
+  if (!session || !isPermitted) {
+    return NextResponse.json(
+      { error: "You are not authorized to view this page" },
+      { status: 401 },
+    );
   }
 
   try {
-    const users = await MemberInfo.findByIdAndUpdate(user?.user.id);
+    const users = await MemberInfo.findByIdAndUpdate(session?.user.id);
     return NextResponse.json({ user: users });
   } catch (error) {
     return NextResponse.json({ error: error });
@@ -34,9 +37,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
-  await dbConnect();
-
-  const session = await auth();
+  
+  const { session, isPermitted} = await hasAuth();
   const userID = session?.user.id;
 
   if (!session) {

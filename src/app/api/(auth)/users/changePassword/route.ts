@@ -3,11 +3,14 @@ import dbConnect from "@/lib/dbConnect";
 import UserAuth from "@/model/UserAuth";
 import { compare, hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
+import { hasAuth } from "@/helpers/hasAuth";
 
 export async function PATCH(request: NextRequest) {
   try {
-    await dbConnect();
-    const session = await auth();
+
+    const { session, isPermitted } = await hasAuth();
+
+
     const userID = session?.user?.id;
 
     if (!userID) {

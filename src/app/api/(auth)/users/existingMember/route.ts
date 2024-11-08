@@ -10,6 +10,7 @@ import PreregMemberInfo from "@/model/PreregMemberInfo";
 import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
+import { hasAuth } from "@/helpers/hasAuth";
 
 const permittedDepartments = ["Governing Body", "Human Resources"];
 const permittedDesignations = [
@@ -45,13 +46,9 @@ const permittedFields = [
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
+    const {session,isPermitted} = await hasAuth(permittedDepartments, permittedDesignations);
 
-    if (
-      !session ||
-      !permittedDesignations.includes(session.user.designation) ||
-      !permittedDepartments.includes(session.user.buccDepartment)
-    ) {
+    if (!session || !isPermitted) {
       return NextResponse.json(
         { message: "You are not authorized to view this page" },
         { status: 401 },

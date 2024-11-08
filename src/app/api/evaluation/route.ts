@@ -1,14 +1,32 @@
-import dbConnect from "@/lib/dbConnect";
+import { hasAuth } from "@/helpers/hasAuth";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
+const permittedDesignations = [
+  "President",
+  "Vice President",
+  "General Secretary",
+  "Treasurer",
+  "Director",
+  "Assistant Director",
+]
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { studentId, gSuiteEmail, name, responseObject, firstChoice } = body;
-    await dbConnect();
+
+    const { session, isPermitted } = await hasAuth(permittedDesignations);
+
+    if (!session || !isPermitted) {
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
+
     const memberEB = await MemberEBAssessment.findOne({
       studentId: studentId,
     });
@@ -61,7 +79,15 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    await dbConnect();
+    
+    const { session, isPermitted } = await hasAuth(permittedDesignations);
+
+    if (!session || !isPermitted) {
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
 
     const url = new URL(request.url);
     const studentID = url.searchParams.get("studentID");

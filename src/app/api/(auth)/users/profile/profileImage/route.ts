@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { hasAuth } from "@/helpers/hasAuth";
 import cloudinary from "@/lib/cloudinary";
 import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
@@ -7,15 +8,15 @@ import { NextRequest, NextResponse } from "next/server";
 const permittedFields = ["profileImage"];
 
 export async function PATCH(request: NextRequest) {
-  await dbConnect();
+  const { session, isPermitted} = await hasAuth();
 
-  const session = await auth();
   const userID = session?.user.id;
 
-  if (!session) {
-    return NextResponse.json({
-      message: "You are not authorized to view this page",
-    });
+  if (!session || !isPermitted) {
+    return NextResponse.json(
+      { error: "You are not authorized to view this page" },
+      { status: 401 },
+    );
   }
 
   const body = await request.json();

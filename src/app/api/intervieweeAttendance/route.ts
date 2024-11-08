@@ -1,13 +1,42 @@
+import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import IntervieweeAttendance from "@/model/intervieweeAttendance";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import { NextResponse } from "next/server";
 
-// Connect to the database before handling any requests
-dbConnect();
+const permittedDepartments = ["Governing Body", "Human Resources"];
+const permittedDesignations = [
+  "President",
+  "Vice President",
+  "General Secretary",
+  "Treasurer",
+  "Director",
+  "Assistant Director",
+  "Senior Executive",
+];
+
 
 // GET Request
 export async function GET(request: Request) {
+
+  const { session, isPermitted } = await hasAuth(permittedDesignations, permittedDepartments);
+
+ 
+  if (!session) {
+    return NextResponse.json(
+      { error: "You are not authorized to view this page" },
+      { status: 401 },
+    );
+  }
+
+  if (!isPermitted) {
+    return NextResponse.json(
+      { error: `${session?.user.designation}S of ${session?.user.buccDepartment} don't have the permission to view this page.` },
+      { status: 401 },
+    );
+  }
+
+
   const { searchParams } = new URL(request.url);
   const studentId = searchParams.get("studentId");
 
@@ -52,6 +81,24 @@ export async function POST(request: Request) {
   }
 
   try {
+
+    const { session, isPermitted } = await hasAuth(permittedDesignations, permittedDepartments);
+
+ 
+    if (!session) {
+      return NextResponse.json(
+        { error: "You are not authorized to view this page" },
+        { status: 401 },
+      );
+    }
+  
+    if (!isPermitted) {
+      return NextResponse.json(
+        { error: `${session?.user.designation}S of ${session?.user.buccDepartment} don't have the permission to view this page.` },
+        { status: 401 },
+      );
+    }
+
     const newRecord = new IntervieweeAttendance({
       studentId,
       name,

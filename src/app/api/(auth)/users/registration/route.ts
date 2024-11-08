@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnect";
+import { hasAuth } from "@/helpers/hasAuth";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { studentId, name, semester, year, departmentBracu, email } = body;
 
-    await dbConnect();
+    const { session, isPermitted } = await hasAuth();
+
 
     const member = await PreregMemberInfo.findOne({ email: email });
 
