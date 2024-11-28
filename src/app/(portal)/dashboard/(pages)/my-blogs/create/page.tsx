@@ -6,8 +6,33 @@ import { defaultValue } from "./default-value";
 
 export default function Home() {
   const [value, setValue] = useState<JSONContent>(defaultValue || null);
-  const handleClick = () => {
-    console.log(JSON.stringify(value));
+  const handleClick = async () => {
+    const data = {
+      title: "Manually Added Title",
+      description: "This description was added manually.",
+      content: value.content,
+      category: "Programming",
+      tags: ["Manual", "Example", "Post"],
+      author: "Manual Author",
+    };
+    try {
+      const res = await fetch("http://localhost:3000/api/bucc/blogs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      alert();
+    }
+    console.log(value);
   };
   return (
     <main className="w-100 flex min-h-screen flex-col items-center justify-between p-24">
