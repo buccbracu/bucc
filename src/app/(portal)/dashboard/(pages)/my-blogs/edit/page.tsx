@@ -2,8 +2,8 @@
 import Editor from "@/components/editor-c/editor/advanced-editor";
 import { useSearchParams } from "next/navigation";
 import { JSONContent } from "novel";
-import { defaultValue } from "./create/default-value";
 import { useEffect, useState } from "react";
+import { defaultValue } from "../create/default-value";
 
 export default function MyBlogs() {
   const [error, setError] = useState(false);
@@ -22,7 +22,6 @@ export default function MyBlogs() {
           setError(true);
         }
         const result = await response.json();
-        console.log(result.content);
         setValue({
           type: "doc",
           content: result.content,
@@ -52,7 +51,7 @@ export default function MyBlogs() {
           <h1 className="text-4xl font-semibold">Novel Editor Testing Site</h1>
         </div>
 
-        <Editor editable={false} initialValue={value} onChange={setValue} />
+        <Editor editable={true} initialValue={value} onChange={setValue} />
       </div>
     </main>
   );
