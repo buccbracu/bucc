@@ -9,13 +9,17 @@ const BlogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  featuredImage: {
+    type: String,
+    required: true,
+  },
   content: {
     type: mongoose.Schema.Types.Mixed,
     required: true,
   },
   category: {
     type: String,
-    required: true,
+    required: false,
   },
   tags: {
     type: [String],
@@ -28,6 +32,10 @@ const BlogSchema = new mongoose.Schema({
   createdDate: {
     type: Date,
     default: Date.now,
+  },
+  status: {
+    type: String,
+    default: "draft",
   },
   lastUpdate: {
     type: Date,
