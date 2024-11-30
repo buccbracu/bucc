@@ -1,6 +1,7 @@
 "use client";
 
 import Editor from "@/components/editor-c/editor/advanced-editor";
+import Heading from "@/components/portal/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MultipleSelector from "@/components/ui/multiple-selector"; // Multi-Select Component
@@ -15,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { blogCategories, blogTags } from "@/constants/blog-data";
 import { uploadImage } from "@/lib/client-cloudinary";
 import { extractPublicId } from "@/lib/cloudinary-utils";
+import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { JSONContent } from "novel";
 import { useState } from "react";
@@ -105,106 +107,111 @@ export default function CreateBlog() {
   };
 
   return (
-    <main className="flex min-h-screen w-full flex-row items-start justify-center gap-6 p-6">
-      {/* Left Panel */}
-      <div className="flex w-2/3 flex-col gap-6">
-        <h1 className="text-4xl font-semibold">Create Blog</h1>
-        <Input
-          type="text"
-          placeholder="Blog Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded border p-2"
-        />
-        <Textarea
-          placeholder="Short Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full rounded border p-2"
-        ></Textarea>
-        <Editor editable={true} initialValue={value} onChange={setValue} />
-      </div>
-
-      {/* Right Panel */}
-      <div className="flex w-1/3 flex-col gap-6 rounded-md border p-4">
-        <h2 className="text-lg font-semibold">Featured Image</h2>
-        {featuredImage ? (
-          <div className="relative w-full">
-            <Image
-              src={featuredImage}
-              alt="Featured"
-              width={400}
-              height={300}
-              className="w-full rounded-md object-cover" // Ensures the image spans the full width and maintains aspect ratio
-            />
-            <Button
-              variant="destructive"
-              onClick={handleImageDelete}
-              className="absolute right-2 top-2"
-            >
-              Delete
-            </Button>
-          </div>
-        ) : (
-          <>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="mt-2"
-            />
-            {isUploading && <p>Uploading...</p>}
-          </>
-        )}
-        <div>
-          <h2 className="text-lg font-semibold">Category</h2>
-          <Select
-            value={category}
-            onValueChange={(value) => setCategory(value)}
-          >
-            <SelectTrigger className="w-full rounded border p-2">
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {
-                // Render your category options here
-                blogCategories.map((category) => (
-                  <SelectItem key={category.id} value={category.name}>
-                    {category.name}
-                  </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold">Tags</h2>
-          <MultipleSelector
-            options={blogTags.map((tag) => ({
-              value: tag.slug,
-              label: tag.name,
-            }))}
-            value={tags}
-            onChange={(options) => setTags(options)}
-            placeholder="Add tags..."
-            creatable
-            maxSelected={10}
+    <main>
+      <Heading
+        headingText="Create Blog"
+        subHeadingText="Write and publish your blog post"
+      />
+      <div className="flex min-h-screen w-full flex-row items-start justify-center gap-6">
+        {/* Left Panel */}
+        <div className="flex w-2/3 flex-col gap-6">
+          <Input
+            type="text"
+            placeholder="Blog Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded border p-2"
           />
+          <Textarea
+            placeholder="Short Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full rounded border p-2"
+          ></Textarea>
+          <Editor editable={true} initialValue={value} onChange={setValue} />
         </div>
-        <div>
-          <h2 className="text-lg font-semibold">Status</h2>
-          <Select value={status} onValueChange={(value) => setStatus(value)}>
-            <SelectTrigger className="w-full rounded border p-2">
-              <SelectValue placeholder="Select Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
+
+        {/* Right Panel */}
+        <div className="flex w-1/3 flex-col gap-6 rounded-md border p-4">
+          <h2 className="text-lg font-semibold">Featured Image</h2>
+          {featuredImage ? (
+            <div className="relative w-full">
+              <Image
+                src={featuredImage}
+                alt="Featured"
+                width={400}
+                height={300}
+                className="w-full rounded-md object-cover" // Ensures the image spans the full width and maintains aspect ratio
+              />
+              <Button
+                variant="destructive"
+                onClick={handleImageDelete}
+                className="absolute right-2 top-2"
+              >
+                <Trash2Icon size={20} />
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="mt-2"
+              />
+              {isUploading && <p>Uploading...</p>}
+            </>
+          )}
+          <div>
+            <h2 className="text-lg font-semibold">Category</h2>
+            <Select
+              value={category}
+              onValueChange={(value) => setCategory(value)}
+            >
+              <SelectTrigger className="w-full rounded border p-2">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {
+                  // Render your category options here
+                  blogCategories.map((category) => (
+                    <SelectItem key={category.id} value={category.name}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                }
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Tags</h2>
+            <MultipleSelector
+              options={blogTags.map((tag) => ({
+                value: tag.slug,
+                label: tag.name,
+              }))}
+              value={tags}
+              onChange={(options) => setTags(options)}
+              placeholder="Add tags..."
+              creatable
+              maxSelected={10}
+            />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Status</h2>
+            <Select value={status} onValueChange={(value) => setStatus(value)}>
+              <SelectTrigger className="w-full rounded border p-2">
+                <SelectValue placeholder="Select Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={handleSubmit}>Publish Blog</Button>
         </div>
-        <Button onClick={handleSubmit}>Publish Blog</Button>
       </div>
     </main>
   );
