@@ -50,7 +50,7 @@ export default function EditBlog() {
 
       setValue({
         type: "doc",
-        content: data.content || [],
+        content: data.content,
       });
 
       setStatus(data.status || "draft");
@@ -116,8 +116,8 @@ export default function EditBlog() {
     };
 
     try {
-      const res = await fetch(`/api/blog`, {
-        method: "PUT",
+      const res = await fetch(`/api/blog/${blogId}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -157,7 +157,12 @@ export default function EditBlog() {
           className="w-full rounded border p-2"
         ></Textarea>
 
-        <Editor editable={true} initialValue={value} onChange={setValue} />
+        <Editor
+          key={JSON.stringify(value)}
+          editable={true}
+          initialValue={value}
+          onChange={setValue}
+        />
       </div>
 
       {/* Right Panel */}
@@ -193,12 +198,9 @@ export default function EditBlog() {
         )}
         <div>
           <h2 className="text-lg font-semibold">Category</h2>
-          <Select
-            value={category}
-            onValueChange={(value) => setCategory(value)}
-          >
+          <Select onValueChange={(value) => setCategory(value)}>
             <SelectTrigger className="w-full rounded border p-2">
-              <SelectValue placeholder="Select Category" />
+              <SelectValue placeholder={category} />
             </SelectTrigger>
             <SelectContent>
               {blogCategories.map((category) => (

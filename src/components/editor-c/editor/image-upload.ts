@@ -4,13 +4,13 @@ import { toast } from "sonner";
 const onUpload = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "test-editor");
+  formData.append("upload_preset", "bucc_blog_pr");
   const promise = fetch(
-    "https://api.cloudinary.com/v1_1/dlfcuq8f4/image/upload",
+    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
     {
       method: "POST",
       body: formData,
-    }
+    },
   );
 
   return new Promise((resolve) => {
@@ -30,12 +30,12 @@ const onUpload = (file: File) => {
         } else if (res.status === 401) {
           resolve(file);
           throw new Error(
-            "`BLOB_READ_WRITE_TOKEN` environment variable not found, reading image locally instead."
+            "`BLOB_READ_WRITE_TOKEN` environment variable not found, reading image locally instead.",
           );
           // Unknown error
         } else {
           throw new Error(
-            `Error uploading image. Please try again or contact support team`
+            `Error uploading image. Please try again or contact support team`,
           );
         }
       }),
@@ -43,7 +43,7 @@ const onUpload = (file: File) => {
         loading: "Uploading image...",
         success: "Image uploaded successfully.",
         error: (e) => e.message,
-      }
+      },
     );
   });
 };
