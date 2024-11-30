@@ -7,7 +7,7 @@
 export async function uploadImage(file: File, folder: string): Promise<string> {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "bucc_members_profile_photo"); // Replace with your Cloudinary preset
+  formData.append("upload_preset", "bucc_blog_pr"); // Replace with your Cloudinary preset
   formData.append("folder", folder);
 
   const response = await fetch(
