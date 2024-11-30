@@ -1,5 +1,6 @@
 "use client";
 
+import { Separator } from "@/components/ui/separator";
 import {
   EditorBubble,
   EditorCommand,
@@ -13,7 +14,6 @@ import {
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
 import { useState } from "react";
-import { Separator } from "../ui/separator";
 import { defaultExtensions } from "./extensions";
 import { uploadFn } from "./image-upload";
 import { ColorSelector } from "./selectors/color-selector";

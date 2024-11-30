@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from "@/components/themeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { UserProvider } from "@/context/UserContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
@@ -19,7 +20,9 @@ export default function Providers({ children }: { children: ReactNode }) {
       <TooltipProvider>
         <Toaster closeButton richColors />
         <QueryClientProvider client={queryClient}>
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+            <UserProvider>{children}</UserProvider>
+          </SessionProvider>
         </QueryClientProvider>
       </TooltipProvider>
     </ThemeProvider>

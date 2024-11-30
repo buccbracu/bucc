@@ -4,23 +4,16 @@ import generatePassword from "@/helpers/generatePassword";
 import { singleWelcomeMail } from "@/helpers/mailer";
 import dbConnect from "@/lib/dbConnect";
 
+import { hasAuth } from "@/helpers/hasAuth";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import MemberInfo from "@/model/MemberInfo";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
-import { hasAuth } from "@/helpers/hasAuth";
 
-const permittedDepartments = ["Governing Body", "Human Resources"];
-const permittedDesignations = [
-  "President",
-  "Vice President",
-  "General Secretary",
-  "Treasurer",
-  "Director",
-  "Assistant Director",
-];
+const permittedDepartments = ["Human Resources"];
+const permittedDesignations = ["Director", "Assistant Director"];
 const permittedFields = [
   "name",
   "studentId",
@@ -46,7 +39,10 @@ const permittedFields = [
 
 export async function POST(request: NextRequest) {
   try {
-    const {session,isPermitted} = await hasAuth(permittedDepartments, permittedDesignations);
+    const { session, isPermitted } = await hasAuth(
+      permittedDepartments,
+      permittedDesignations,
+    );
 
     if (!session || !isPermitted) {
       return NextResponse.json(

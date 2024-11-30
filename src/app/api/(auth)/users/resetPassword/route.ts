@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function GET(request: NextRequest, response: NextResponse) {
   try {
-
     const { session, isPermitted } = await hasAuth();
 
     const token = request.nextUrl.searchParams.get("token");

@@ -4,14 +4,7 @@ import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
-const permittedDesignations = [
-  "President",
-  "Vice President",
-  "General Secretary",
-  "Treasurer",
-  "Director",
-  "Assistant Director",
-]
+const permittedDesignations = ["Director", "Assistant Director"];
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,7 +72,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    
     const { session, isPermitted } = await hasAuth(permittedDesignations);
 
     if (!session || !isPermitted) {

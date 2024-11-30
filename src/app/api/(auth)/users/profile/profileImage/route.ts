@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 const permittedFields = ["profileImage"];
 
 export async function PATCH(request: NextRequest) {
-  const { session, isPermitted} = await hasAuth();
+  const { session, isPermitted } = await hasAuth();
 
   const userID = session?.user.id;
 

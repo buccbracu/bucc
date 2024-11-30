@@ -1,8 +1,6 @@
-import { auth } from "@/auth";
-import dbConnect from "@/lib/dbConnect";
+import { hasAuth } from "@/helpers/hasAuth";
 import MemberInfo from "@/model/MemberInfo";
 import { NextRequest, NextResponse } from "next/server";
-import { hasAuth } from "@/helpers/hasAuth";
 
 const permittedFields = [
   "personalEmail",
@@ -17,9 +15,7 @@ const permittedFields = [
 ];
 
 export async function GET() {
-
-
-  const { session, isPermitted} = await hasAuth();
+  const { session, isPermitted } = await hasAuth();
 
   if (!session || !isPermitted) {
     return NextResponse.json(
@@ -37,8 +33,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
-  
-  const { session, isPermitted} = await hasAuth();
+  const { session, isPermitted } = await hasAuth();
   const userID = session?.user.id;
 
   if (!session) {

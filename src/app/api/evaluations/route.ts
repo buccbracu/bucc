@@ -1,22 +1,11 @@
-import { auth } from "@/auth";
 import { hasAuth } from "@/helpers/hasAuth";
-import dbConnect from "@/lib/dbConnect";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import { NextRequest, NextResponse } from "next/server";
 
-const permittedDesignations = [
-  "President",
-  "Vice President",
-  "General Secretary",
-  "Treasurer",
-  "Director",
-  "Assistant Director",
-];
+const permittedDesignations = ["Director", "Assistant Director"];
 
 export async function GET(request: NextRequest) {
-
   try {
-
     const { session, isPermitted } = await hasAuth(permittedDesignations);
 
     if (!session || !isPermitted) {

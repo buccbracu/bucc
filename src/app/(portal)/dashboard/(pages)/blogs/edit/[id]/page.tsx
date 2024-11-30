@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { blogCategories, blogTags } from "@/constants/blog-data";
+import { useUser } from "@/context/UserContext";
 import { uploadImage } from "@/lib/client-cloudinary";
 import { extractPublicId } from "@/lib/cloudinary-utils";
 import { getBlog } from "@/server/actions";
@@ -27,8 +28,23 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import defaultValue from "../../default-value";
 
+const permittedDepartments = [
+  "Governing Body",
+  "Press Release and Publications",
+  "Research and Development",
+];
+const permittedDesignations = [
+  "President",
+  "Vice President",
+  "General Secretary",
+  "Treasurer",
+  "Director",
+  "Assistant Director",
+];
+
 export default function EditBlog() {
   const { id: blogId } = useParams();
+  const { user } = useUser();
 
   const [value, setValue] = useState<JSONContent>(defaultValue);
   const [title, setTitle] = useState("");
@@ -140,6 +156,14 @@ export default function EditBlog() {
   if (isLoading) return <SpinnerComponent />;
   if (isError) return <p>Error loading blog data.</p>;
 
+  let availableStatuses = ["draft", "archived"];
+  if (
+    permittedDepartments.includes(user!.buccDepartment) &&
+    permittedDesignations.includes(user!.designation)
+  ) {
+    availableStatuses = ["draft", "published", "archived"];
+  }
+
   return (
     <main>
       <Heading
@@ -238,9 +262,11 @@ export default function EditBlog() {
                 <SelectValue placeholder="Select Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
+                {availableStatuses.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

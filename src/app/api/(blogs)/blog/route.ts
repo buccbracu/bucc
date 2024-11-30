@@ -1,13 +1,27 @@
-import { auth } from "@/auth";
+import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
 
+const permittedDesignations = ["Director", "Assistant Director"];
+const permittedDepartments = ["Press Release and Publications"];
+
 export async function POST(request: NextRequest) {
   await dbConnect();
-  // Get the author from the session
-  const session = await auth();
-  const author = session?.user?.name;
+
+  const { session, isPermitted } = await hasAuth(
+    permittedDesignations,
+    permittedDepartments,
+  );
+
+  if (!session) {
+    return NextResponse.json(
+      { message: "You are not authorized to publish blogs" },
+      { status: 401 },
+    );
+  }
+
+  const author = session.user.name;
 
   try {
     const {
@@ -17,7 +31,6 @@ export async function POST(request: NextRequest) {
       content,
       category,
       tags,
-      // author,
       status,
     } = await request.json();
 
@@ -35,6 +48,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const blogStatus = isPermitted ? status || "draft" : "draft";
+
     const newBlog = new Blog({
       title,
       description,
@@ -42,8 +57,8 @@ export async function POST(request: NextRequest) {
       content,
       category,
       tags,
-      author: author || "", // Default to empty string if not provided
-      status: status || "draft", // Default to "draft" if not provided
+      author,
+      status: blogStatus,
       createdDate: new Date(),
       lastUpdate: new Date(),
     });
@@ -55,11 +70,32 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
-  try {
-    await dbConnect();
+export async function GET(request: NextRequest) {
+  const { session, isPermitted } = await hasAuth(
+    permittedDesignations,
+    permittedDepartments,
+  );
 
-    const blogs = await Blog.find().sort({ createdDate: -1 }); // Sort by newest first
+  if (!session) {
+    return NextResponse.json(
+      { message: "You are not authorized to view this page" },
+      { status: 401 },
+    );
+  }
+
+  await dbConnect();
+
+  const userName = session.user.name;
+
+  try {
+    let blogs;
+
+    if (isPermitted) {
+      blogs = await Blog.find().sort({ createdDate: -1 });
+    } else {
+      blogs = await Blog.find({ author: userName }).sort({ createdDate: -1 });
+    }
+
     return NextResponse.json(blogs, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -48,7 +48,11 @@ const menus = [
     path: "/dashboard/all-members",
     icon: BookUser,
     variant: "ghost",
-    access_department: ["Governing Body", "Human Resources"],
+    access_department: [
+      "Governing Body",
+      "Human Resources",
+      "Research and Development",
+    ],
     access_designation: [
       "President",
       "Vice President",
@@ -197,7 +201,11 @@ const menus = [
     path: "/dashboard/create-event",
     icon: Calendar,
     variant: "ghost",
-    access_department: ["Governing Body", "Event Management"],
+    access_department: [
+      "Governing Body",
+      "Event Management",
+      "Research and Development",
+    ],
     access_designation: [
       "President",
       "Vice President",
@@ -212,7 +220,11 @@ const menus = [
     path: "/dashboard/presss-resleases",
     icon: Newspaper,
     variant: "ghost",
-    access_department: ["Governing Body", "Press Release and Publications"],
+    access_department: [
+      "Governing Body",
+      "Press Release and Publications",
+      "Research and Development",
+    ],
     access_designation: [
       "President",
       "Vice President",

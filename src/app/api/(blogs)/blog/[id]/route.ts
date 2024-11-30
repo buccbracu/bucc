@@ -1,3 +1,4 @@
+import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,6 +7,15 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { session, isPermitted } = await hasAuth();
+
+  if (!session || !isPermitted) {
+    return NextResponse.json(
+      { message: "You are not authorized to view this page" },
+      { status: 401 },
+    );
+  }
+
   try {
     await dbConnect();
     const { id } = params;
@@ -25,14 +35,23 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { session, isPermitted } = await hasAuth();
+
+  if (!session || !isPermitted) {
+    return NextResponse.json(
+      { message: "You are not authorized to view this page" },
+      { status: 401 },
+    );
+  }
+
   try {
     await dbConnect();
     const { id } = params;
     const updateData = await request.json();
 
     const blog = await Blog.findByIdAndUpdate(id, updateData, {
-      new: true, // Return the updated document
-      runValidators: true, // Validate before updating
+      new: true,
+      runValidators: true,
     });
 
     if (!blog) {
@@ -49,6 +68,15 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { session, isPermitted } = await hasAuth();
+
+  if (!session || !isPermitted) {
+    return NextResponse.json(
+      { message: "You are not authorized to view this page" },
+      { status: 401 },
+    );
+  }
+
   try {
     await dbConnect();
     const { id } = params;

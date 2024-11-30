@@ -23,24 +23,21 @@ import {
 
 import { logout } from "@/actions/logout";
 import ThemeToggler from "@/components/theme-toggler";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/context/UserContext"; // Use the UserContext
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
 import { menus } from "./menus";
 
 export default function ActionButtons() {
-  const session = useSession();
+  const { user, isLoading } = useUser();
   const router = useRouter();
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const userSingedIn = session.data?.user;
-  const { name, email, image, designation, buccDepartment } =
-    session.data?.user || {};
-
-  const usernameFallback = name ? name[0].toUpperCase() : "U";
+  const usernameFallback = user?.name ? user.name[0].toUpperCase() : "U";
 
   const handleUserLogOut = async () => {
     await logout();
@@ -51,6 +48,10 @@ export default function ActionButtons() {
   const handleSheetClose = () => {
     setIsSheetOpen(false);
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -101,7 +102,7 @@ export default function ActionButtons() {
                       ),
                     )}
                   </div>
-                  {userSingedIn ? null : (
+                  {!user ? (
                     <div className="mb-12 flex w-full flex-row items-center justify-center gap-2 text-lg font-semibold md:hidden">
                       <Button className="text-md w-full" variant="secondary">
                         <Link
@@ -124,19 +125,23 @@ export default function ActionButtons() {
                         </Link>
                       </Button>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </SheetDescription>
             </SheetHeader>
           </SheetContent>
         </Sheet>
       </div>
-      {userSingedIn ? (
+      {user ? (
         <div className="flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="h-[36px] w-[36px] border shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                <AvatarImage alt={name} src={image} className="object-cover" />
+                <AvatarImage
+                  alt={user.name}
+                  src={user.image}
+                  className="object-cover"
+                />
                 <AvatarFallback>{usernameFallback}</AvatarFallback>
                 <span className="sr-only">Toggle user menu</span>
               </Avatar>
@@ -144,7 +149,7 @@ export default function ActionButtons() {
             <DropdownMenuContent className="mr-3 w-fit">
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <span className="my-1 font-bold">{name}</span>
+                  <span className="my-1 font-bold">{user.name}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>

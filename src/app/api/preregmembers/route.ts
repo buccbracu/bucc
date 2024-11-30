@@ -1,22 +1,15 @@
-import { auth } from "@/auth";
 import { hasAuth } from "@/helpers/hasAuth";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { NextResponse } from "next/server";
 
-const permittedDepartments = ["GOVERNING BODY", "HUMAN RESOURCES"];
-const permittedDesignations = [
-  "PRESIDENT",
-  "VICE PRESIDENT",
-  "GENERAL SECRETARY",
-  "TREASURER",
-  "DIRECTOR",
-  "ASSISTANT DIRECTOR",
-];
+const permittedDepartments = ["Human Resources"];
+const permittedDesignations = ["Director", "Assistant Director"];
 
 export async function GET() {
-  
-  const {session, isPermitted} = await hasAuth(permittedDesignations, permittedDepartments);
-  
+  const { session, isPermitted } = await hasAuth(
+    permittedDesignations,
+    permittedDepartments,
+  );
 
   if (!session) {
     return NextResponse.json(

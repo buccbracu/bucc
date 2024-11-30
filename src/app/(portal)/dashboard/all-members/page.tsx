@@ -1,25 +1,15 @@
 "use client";
 
-import SpinnerComponent from "@/components/SpinnerComponent";
 import Heading from "@/components/portal/heading";
+import SpinnerComponent from "@/components/SpinnerComponent";
 import FilterComponent from "@/components/table/FilterComponent";
 import TableComponent from "@/components/table/TableComponent";
 import departments from "@/constants/departments";
 import designations from "@/constants/designations";
 import { getAllMembers } from "@/server/actions";
+import withAuthorization from "@/util/withAuthorization";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-
-const permittedDepartments = ["Governing Body", "Human Resources"];
-const permittedDesignations = [
-  "President",
-  "Vice President",
-  "General Secretary",
-  "Treasurer",
-  "Director",
-  "Assistant Director",
-];
 
 const columns = [
   { header: "Name", accessorKey: "name" },
@@ -49,8 +39,7 @@ const filterOptions = [
   },
 ];
 
-export default function Members() {
-  const session = useSession();
+function Members() {
   const [filteredData, setFilteredData] = useState([]);
   const [filters, setFilters] = useState({
     search: "",
@@ -99,21 +88,12 @@ export default function Members() {
     setFilters({ search: "", department: "", designation: "" });
   };
 
-  if (isLoading || session.status === "loading") {
+  if (isLoading) {
     return <SpinnerComponent />;
   }
 
   if (isError) {
     return <div>Error fetching members</div>;
-  }
-
-  const { designation, buccDepartment }: any = session?.data?.user;
-
-  if (
-    !permittedDepartments.includes(buccDepartment) ||
-    !permittedDesignations.includes(designation)
-  ) {
-    return <div>You are not authorized to visit this page!</div>;
   }
 
   return (
@@ -139,3 +119,12 @@ export default function Members() {
     </div>
   );
 }
+
+// Wrap with Authorization HOC
+const permittedDepartment = "Human Resources";
+const permittedDesignations = ["Director", "Assistant Director"];
+
+export default withAuthorization(Members, {
+  permittedDepartment,
+  permittedDesignations,
+});

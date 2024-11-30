@@ -15,6 +15,13 @@ const getPreRegMembers = async () => {
   return res.json();
 };
 
+const getPreRegMember = async (id: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/preregmembers/${id}`,
+  );
+  return res.json();
+};
+
 const getDepartmentMembers = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/members`);
   return res.json();
@@ -71,6 +78,7 @@ export {
   getEvaluations,
   getMember,
   getMemberData,
+  getPreRegMember,
   getPreRegMembers,
   getProfileData,
 };

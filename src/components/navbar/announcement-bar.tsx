@@ -7,30 +7,25 @@ import { useEffect, useState } from "react";
 import { announcementData } from "@/constants/publicAnnouncement";
 
 const AnnouncementBar = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const currentDate = new Date();
     const startDate = new Date(announcementData.dateOfFirstAppearance);
     const endDate = new Date(announcementData.dateOfLastAppearance);
 
-    if (currentDate < startDate || currentDate > endDate) {
-      setIsVisible(false);
-      return;
+    if (currentDate >= startDate && currentDate <= endDate) {
+      const isDismissed = sessionStorage.getItem("announcementDismissed");
+      if (!isDismissed) {
+        setIsVisible(true);
+      }
     }
 
-    const isDismissed = sessionStorage.getItem("announcementDismissed");
-    if (isDismissed) {
-      setIsVisible(false);
-    }
-
-    // Add a listener for window close or refresh to reset dismissal
     const resetDismissalOnClose = () => {
       sessionStorage.setItem("announcementDismissed", "false");
     };
     window.addEventListener("beforeunload", resetDismissalOnClose);
 
-    // Cleanup listener when the component is unmounted
     return () => {
       window.removeEventListener("beforeunload", resetDismissalOnClose);
     };
@@ -49,7 +44,7 @@ const AnnouncementBar = () => {
     <div
       className={`flex w-full items-center justify-center ${announcementData.color} px-6 py-3 ${announcementData.textColor} relative`}
     >
-      <div className="flex items-center gap-2 text-center font-medium">
+      <div className="flex flex-col items-center gap-2 text-center font-medium md:flex-row">
         {announcementData.message}{" "}
         {announcementData.buttonText && (
           <div className="flex justify-center">
@@ -65,7 +60,7 @@ const AnnouncementBar = () => {
       </div>
       <button
         onClick={handleClose}
-        className={`${announcementData.closeButtonColor} absolute right-6`}
+        className={`${announcementData.closeButtonColor} absolute right-4 top-4`}
       >
         {announcementData.closeButton}
       </button>

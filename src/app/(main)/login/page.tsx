@@ -1,13 +1,14 @@
 "use client";
 
 import { login } from "@/actions/login";
+import SpinnerComponent from "@/components/SpinnerComponent";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import PasswordField from "@/components/ui/password-field";
+import { useUser } from "@/context/UserContext"; // Import UserContext
 import { loginSchema, LoginSchema } from "@/schemas/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,11 +17,9 @@ import { toast } from "sonner";
 
 export default function Login() {
   const router = useRouter();
-  const { data: session, status } = useSession();
-
+  const { user, isLoading } = useUser();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  // Always call the hook at the top level
   const {
     register,
     handleSubmit,
@@ -29,16 +28,16 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  // Handle session status after hooks
-  if (status === "loading") {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
+        <SpinnerComponent />
       </div>
     );
   }
 
-  if (status === "authenticated") {
+  // Redirect authenticated user
+  if (user) {
     router.push("/dashboard");
     return null; // Prevent further rendering
   }
@@ -84,14 +83,12 @@ export default function Login() {
 
           {/* Password Field */}
           <PasswordField
-            name="password" // Pass the name prop for password field
+            name="password"
             register={register}
             errors={errors}
             placeholder="Password"
-            isVisible={passwordVisible} // Use passwordVisible here
-            toggleVisibility={() => {
-              setPasswordVisible(!passwordVisible); // This toggles the state properly
-            }}
+            isVisible={passwordVisible}
+            toggleVisibility={() => setPasswordVisible(!passwordVisible)}
           />
 
           <div className="flex items-center justify-between">

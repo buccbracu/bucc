@@ -1,8 +1,6 @@
-import { auth } from "@/auth";
 import departments from "@/constants/departments";
 import designations from "@/constants/designations";
 import { hasAuth } from "@/helpers/hasAuth";
-import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import { NextResponse } from "next/server";
 
@@ -20,8 +18,10 @@ const permittedDesignations = [
 ];
 
 export async function GET() {
-
-  const { session, isPermitted } = await hasAuth(permittedDesignations, permittedDepartments);
+  const { session, isPermitted } = await hasAuth(
+    permittedDesignations,
+    permittedDepartments,
+  );
 
   if (!session) {
     return NextResponse.json(
@@ -31,7 +31,7 @@ export async function GET() {
   }
   if (!isPermitted) {
     return NextResponse.json({
-      message: `${session?.user.designation}S of ${session?.user.buccDepartment} don't have the permission to view this page.`,
+      message: `${session?.user.designation}s of ${session?.user.buccDepartment} don't have the permission to view this page.`,
     });
   }
 

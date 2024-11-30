@@ -31,9 +31,11 @@ interface Evaluation {
 export default function TableComponent({
   data,
   columns,
+  onRowClick,
 }: {
   data: Evaluation[];
   columns: any;
+  onRowClick?: (row: any) => void; // Define the optional function type
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filtering, setFiltering] = useState("");
@@ -62,7 +64,11 @@ export default function TableComponent({
   });
 
   const handleRowClick = (row: any) => {
-    if (row.original.url) {
+    if (onRowClick) {
+      // If the parent component provided an `onRowClick` function, call it
+      onRowClick(row);
+    } else if (row.original.url) {
+      // Fallback to default behavior
       router.push(row.original.url);
     }
   };
@@ -111,7 +117,7 @@ export default function TableComponent({
             <TableRow
               key={row.id}
               onClick={() => handleRowClick(row)}
-              className={row.original.url ? "cursor-pointer" : ""}
+              className={row.original.url || onRowClick ? "cursor-pointer" : ""}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>

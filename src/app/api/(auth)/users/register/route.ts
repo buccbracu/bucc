@@ -13,7 +13,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    
     const { session, isPermitted } = await hasAuth();
 
     const body = await request.json();
