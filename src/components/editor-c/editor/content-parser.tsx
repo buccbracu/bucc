@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export default function ContentParser({ content }: { content: any }) {
@@ -24,7 +25,7 @@ export default function ContentParser({ content }: { content: any }) {
         );
       case "image":
         return (
-          <img
+          <Image
             key={index}
             src={node.attrs?.src}
             alt={node.attrs?.alt || ""}
