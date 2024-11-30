@@ -61,7 +61,7 @@ const withAuthorization = (
       return (
         <div>
           {sessionData?.user.designation}s of {sessionData?.user.buccDepartment}{" "}
-          don't have the permission to view this page.
+          don&apos;t have the permission to view this page.
         </div>
       );
     }
