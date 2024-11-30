@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 const config = {
   darkMode: ["class"],
@@ -9,9 +10,6 @@ const config = {
     "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
-
-  //...
-
   theme: {
     container: {
       center: true,
@@ -21,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -62,10 +63,6 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "loop-scroll": {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(-100%)" },
-        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -74,30 +71,14 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        dash: {
-          "0%": { strokeDasharray: "0, 200", strokeDashoffset: "200" },
-          "100%": { strokeDasharray: "200, 0", strokeDashoffset: "0" },
-        },
-        check: {
-          "0%": { strokeDasharray: "0, 50", strokeDashoffset: "50" },
-          "100%": { strokeDasharray: "50, 0", strokeDashoffset: "0" },
-        },
-        "caret-blink": {
-          "0%,70%,100%": { opacity: "1" },
-          "20%,50%": { opacity: "0" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        dash: "dash 1.5s ease-in-out forwards",
-        check: "check 1s ease-in-out forwards",
-        "caret-blink": "caret-blink 1.25s ease-out infinite",
-        "loop-scroll": "loop-scroll 150s linear infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;
 
 export default config;

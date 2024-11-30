@@ -5,7 +5,6 @@ import {
   CalendarClock,
   FileDown,
   LayoutDashboard,
-  Library,
   Newspaper,
   Settings,
   SquarePen,
@@ -226,21 +225,6 @@ const menus = [
   {
     title: "Blogs",
     path: "/dashboard/blogs",
-    icon: Library,
-    variant: "ghost",
-    access_department: ["Governing Body", "Press Release and Publications"],
-    access_designation: [
-      "President",
-      "Vice President",
-      "General Secretary",
-      "Treasurer",
-      "Director",
-      "Assistant Director",
-    ],
-  },
-  {
-    title: "My Blogs",
-    path: "/dashboard/my-blogs",
     icon: SquarePen,
     variant: "ghost",
     access_department: [

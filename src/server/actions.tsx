@@ -42,8 +42,30 @@ const getMemberData = async (memberId: string) => {
   return res.json();
 };
 
+const getBlog = async (blogId: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog/${blogId}`);
+
+  return res.json();
+};
+
+const getBlogs = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog`);
+  return res.json();
+};
+
+const deleteBlog = async (blogId: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog/${blogId}`, {
+    method: "DELETE",
+  });
+
+  return res.json();
+};
+
 export {
+  deleteBlog,
   getAllMembers,
+  getBlog,
+  getBlogs,
   getDepartmentMembers,
   getEvaluation,
   getEvaluations,
