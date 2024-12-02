@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({
         message:
-          "If this email is registered, a password reset link will be sent to your email",
+          "We couldn’t find an account with this email. Please check and try again or contact with your EBs.",
       });
     }
 

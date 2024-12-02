@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     if (member) {
       return NextResponse.json(
-        { error: "User already exists" },
+        { error: "Preregistration for this user already exists" },
         { status: 400 },
       );
     }
@@ -66,7 +66,10 @@ export async function POST(request: NextRequest) {
     // });
 
     return NextResponse.json(
-      { message: "Registration Successful" },
+      {
+        message:
+          "Preregistration Successful. Please wait for the interview call!",
+      },
       { status: 200 },
     );
   } catch (error: any) {

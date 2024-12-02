@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const author = session.user.name;
+  const user = session.user;
 
   try {
     const {
@@ -34,14 +34,7 @@ export async function POST(request: NextRequest) {
       status,
     } = await request.json();
 
-    if (
-      !title ||
-      !description ||
-      !featuredImage ||
-      !content ||
-      !category ||
-      !author
-    ) {
+    if (!title || !description || !featuredImage || !content || !category) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
@@ -57,7 +50,13 @@ export async function POST(request: NextRequest) {
       content,
       category,
       tags,
-      author,
+      author: {
+        authorId: user.id,
+        authorName: user.name,
+        authorEmail: user.email,
+        authorDesignation: user.designation,
+        authorDepartment: user.buccDepartment,
+      },
       status: blogStatus,
       createdDate: new Date(),
       lastUpdate: new Date(),
@@ -71,6 +70,23 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const publicView = searchParams.get("publicView");
+
+  // If `publicView` query param is present, fetch all blogs and skip session/auth checks
+  if (publicView) {
+    try {
+      await dbConnect();
+      const blogs = await Blog.find({ status: "published" }).sort({
+        createdDate: -1,
+      });
+      return NextResponse.json(blogs, { status: 200 });
+    } catch (error: any) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
+
+  // Otherwise, proceed with session/auth checks
   const { session, isPermitted } = await hasAuth(
     permittedDesignations,
     permittedDepartments,
@@ -85,15 +101,19 @@ export async function GET(request: NextRequest) {
 
   await dbConnect();
 
-  const userName = session.user.name;
+  const userId = session!.user.id;
 
   try {
     let blogs;
 
     if (isPermitted) {
+      // Admin/Permitted users can view all blogs
       blogs = await Blog.find().sort({ createdDate: -1 });
     } else {
-      blogs = await Blog.find({ author: userName }).sort({ createdDate: -1 });
+      // Regular users can only view their own blogs
+      blogs = await Blog.find({ "author.authorId": userId }).sort({
+        createdDate: -1,
+      });
     }
 
     return NextResponse.json(blogs, { status: 200 });

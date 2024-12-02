@@ -56,7 +56,9 @@ const getBlog = async (blogId: string) => {
 };
 
 const getBlogs = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/blog?publicView=true`,
+  );
   return res.json();
 };
 

@@ -86,7 +86,7 @@ export default function MyBlogs() {
     return (
       (!filters.search ||
         blog.title.toLowerCase().includes(search) ||
-        blog.author.toLowerCase().includes(search)) &&
+        blog.author.authorName.toLowerCase().includes(search)) &&
       (!filters.category ||
         blog.category.toLowerCase() === filters.category.toLowerCase()) &&
       (!filters.status || blog.status.toLowerCase() === status)
@@ -103,7 +103,11 @@ export default function MyBlogs() {
 
   const columns = [
     { header: "Title", accessorKey: "title" },
-    { header: "Author", accessorKey: "author" },
+    {
+      header: "Author",
+      accessorKey: "author",
+      cell: ({ row }: any) => row.original.author?.authorName || "Unknown",
+    },
     { header: "Category", accessorKey: "category" },
     {
       header: "Status",

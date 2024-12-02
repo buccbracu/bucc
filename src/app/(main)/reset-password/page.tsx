@@ -164,13 +164,16 @@ function RequestResetLink({
           body: JSON.stringify({ email: data.email }),
         },
       );
+
+      const result = await response.json();
+
       if (response.ok) {
-        toast.success("Reset link sent to your email");
+        toast.info(result.message || "Reset link sent to your email");
       } else {
-        toast.error("Failed to send reset link");
+        toast.error(result.message || "Failed to send reset link");
       }
     } catch (error) {
-      toast.error("An error occurred");
+      toast.error("An unexpected error occurred. Please try again later.");
     } finally {
       setLoading(false);
     }

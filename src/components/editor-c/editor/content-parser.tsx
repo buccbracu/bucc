@@ -14,9 +14,17 @@ export default function ContentParser({ content }: { content: any }) {
 
     switch (node.type) {
       case "doc":
-        return <div key={index}>{node.content?.map(renderNode)}</div>; // Wrap with div for semantic meaning
+        return (
+          <div key={index} className="text-justify">
+            {node.content?.map(renderNode)}
+          </div>
+        );
       case "paragraph":
-        return <p key={index}>{node.content?.map(renderNode)}</p>;
+        return (
+          <p key={index} className="text-justify">
+            {node.content?.map(renderNode)}
+          </p>
+        );
       case "text":
         return node.marks ? (
           renderTextWithMarks(node.text, node.marks)
@@ -25,22 +33,37 @@ export default function ContentParser({ content }: { content: any }) {
         );
       case "image":
         return (
-          <Image
+          <div
             key={index}
-            src={node.attrs?.src}
-            alt={node.attrs?.alt || ""}
-            style={{ maxWidth: "100%", height: "auto" }}
-          />
+            className="relative mx-auto h-auto w-full max-w-[600px]"
+            style={{ marginBottom: "1rem" }} // Adjust margin to reduce spacing
+          >
+            <Image
+              src={node.attrs?.src}
+              alt={node.attrs?.alt || "Image"}
+              width={600} // Replace fill with fixed width and height
+              height={400} // Ensure the aspect ratio matches the image
+              className="rounded-md object-contain" // Add styles for a polished look
+            />
+          </div>
         );
+
       case "heading":
         const HeadingTag =
           `h${node.attrs?.level || 1}` as keyof JSX.IntrinsicElements;
         return (
-          <HeadingTag key={index}>{node.content?.map(renderNode)}</HeadingTag>
+          <HeadingTag key={index} className="mb-2 mt-4 text-justify font-bold">
+            {node.content?.map(renderNode)}
+          </HeadingTag>
         );
       case "blockquote":
         return (
-          <blockquote key={index}>{node.content?.map(renderNode)}</blockquote>
+          <blockquote
+            key={index}
+            className="border-l-4 border-gray-400 pl-4 text-justify italic"
+          >
+            {node.content?.map(renderNode)}
+          </blockquote>
         );
       case "youtube":
         const videoUrl = node.attrs?.src;
@@ -60,6 +83,7 @@ export default function ContentParser({ content }: { content: any }) {
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              className="mx-auto my-4"
             ></iframe>
           );
         } else {
