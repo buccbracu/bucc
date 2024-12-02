@@ -55,10 +55,15 @@ const getBlog = async (blogId: string) => {
   return res.json();
 };
 
-const getBlogs = async () => {
+const getPublicBlogs = async () => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/blog?publicView=true`,
   );
+  return res.json();
+};
+
+const getBlogs = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog`);
   return res.json();
 };
 
@@ -83,6 +88,7 @@ export {
   getPreRegMember,
   getPreRegMembers,
   getProfileData,
+  getPublicBlogs,
 };
 
 export default getEvaluations;

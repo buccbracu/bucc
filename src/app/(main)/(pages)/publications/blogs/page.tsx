@@ -3,7 +3,7 @@
 import PageHeader from "@/components/page-header";
 import SpinnerComponent from "@/components/SpinnerComponent";
 import { Badge } from "@/components/ui/badge";
-import { getBlogs } from "@/server/actions";
+import { getPublicBlogs } from "@/server/actions";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +19,7 @@ export default function Blogs() {
     error,
   } = useQuery({
     queryKey: ["blogs"],
-    queryFn: getBlogs,
+    queryFn: getPublicBlogs,
     retry: 2, // Retry twice on failure
   });
 
