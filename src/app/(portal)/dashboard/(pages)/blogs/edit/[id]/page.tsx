@@ -44,7 +44,7 @@ const permittedDesignations = [
 
 export default function EditBlog() {
   const { id: blogId } = useParams();
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
 
   const [value, setValue] = useState<JSONContent>(defaultValue);
   const [title, setTitle] = useState("");
@@ -153,10 +153,16 @@ export default function EditBlog() {
     }
   };
 
-  if (isLoading) return <SpinnerComponent />;
+  if (isLoading || isUserLoading) return <SpinnerComponent />;
+
+  if (!user) {
+    return <p>Error: User data is unavailable</p>;
+  }
+
   if (isError) return <p>Error loading blog data.</p>;
 
   let availableStatuses = ["draft", "archived"];
+
   if (
     permittedDepartments.includes(user!.buccDepartment) &&
     permittedDesignations.includes(user!.designation)
