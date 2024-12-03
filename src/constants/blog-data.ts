@@ -29,6 +29,12 @@ const blogCategories = [
   { id: 28, name: "Digital Marketing", slug: "digital-marketing" },
   { id: 29, name: "Education", slug: "education" },
   { id: 30, name: "Tech Reviews", slug: "tech-reviews" },
+  { id: 31, name: "Productivity", slug: "productivity" },
+  { id: 32, name: "Campus life", slug: "campus-life" },
+  { id: 33, name: "Games", slug: "games" },
+  { id: 34, name: "Entertainment", slug: "entertainment" },
+  { id: 35, name: "Anime", slug: "anime" },
+  { id: 36, name: "Psychology", slug: "psychology" },
 ];
 
 const blogTags = [
