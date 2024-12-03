@@ -44,25 +44,22 @@ export async function GET() {
       alwaysPermittedDesignations.includes(userDesignation)
     ) {
       // Admins see all tasks
-      tasks = await Task.find()
-        .sort({ deadline: 1 })
-        .select("taskTitle deadline status toDept toDesignation");
+      tasks = await Task.find().sort({ deadline: 1 });
     } else if (
       userDesignation === "director" ||
       userDesignation === "assistant director"
     ) {
       // Directors and Assistant Directors see department tasks
-      tasks = await Task.find({ toDept: userDepartment })
-        .sort({ deadline: 1 })
-        .select("taskTitle deadline status toDept toDesignation");
+      tasks = await Task.find({
+        toDept: userDepartment,
+        fromDept: userDepartment,
+      }).sort({ deadline: 1 });
     } else if (userDesignation === "senior executive") {
       // Senior Executives see tasks assigned to them
       tasks = await Task.find({
         toDept: userDepartment,
         toDesignation: "senior executive",
-      })
-        .sort({ deadline: 1 })
-        .select("taskTitle deadline status toDept toDesignation");
+      }).sort({ deadline: 1 });
     } else {
       tasks = [];
     }
