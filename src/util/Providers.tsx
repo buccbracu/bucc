@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
+import SyncSessionWithUserProvider from "./SyncSession";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient({});
@@ -21,7 +22,10 @@ export default function Providers({ children }: { children: ReactNode }) {
         <Toaster closeButton richColors />
         <QueryClientProvider client={queryClient}>
           <SessionProvider>
-            <UserProvider>{children}</UserProvider>
+            <UserProvider>
+              <SyncSessionWithUserProvider />
+              {children}
+            </UserProvider>
           </SessionProvider>
         </QueryClientProvider>
       </TooltipProvider>

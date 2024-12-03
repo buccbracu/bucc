@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
 
-interface User {
+export interface User {
   name: string;
   id: number;
   email: string;
@@ -15,11 +15,13 @@ interface User {
 interface UserContextProps {
   user: User | null;
   isLoading: boolean;
+  setUser: (user: User | null) => void;
 }
 
 const UserContext = createContext<UserContextProps>({
   user: null,
   isLoading: true,
+  setUser: () => {},
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,7 +39,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, [session, status]);
 
   return (
-    <UserContext.Provider value={{ user, isLoading }}>
+    <UserContext.Provider value={{ user, isLoading, setUser }}>
       {children}
     </UserContext.Provider>
   );

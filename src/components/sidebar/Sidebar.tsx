@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useWindowWidth } from "@react-hook/window-size";
+import Link from "next/link";
 import menus from "./menus";
 import UserInfo from "./user-info";
 
@@ -33,7 +34,7 @@ export default function SideNavbar({}: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center min-w-fit border-r p-3 h-screen sticky top-0">
+    <div className="sticky top-0 flex h-screen min-w-fit flex-col items-center border-r p-3">
       <UserInfo isCollapsed={mobileWidth ? true : isCollapsed} />
 
       {!mobileWidth && (
@@ -41,7 +42,7 @@ export default function SideNavbar({}: Props) {
           <Button
             onClick={toggleSidebar}
             variant="secondary"
-            className=" rounded-full p-2"
+            className="rounded-full p-2"
           >
             {isCollapsed ? (
               <ChevronRight size={24} />
@@ -55,10 +56,10 @@ export default function SideNavbar({}: Props) {
         <SideNav isCollapsed={mobileWidth ? true : isCollapsed} menus={menus} />
       </div>
       {!isCollapsed && (
-        <div className="hidden md:block text-sm text-gray-400 dark:text-gray-600 text-center ">
-          <a href="/" className="text-blue-400 dark:text-blue-600/60">
+        <div className="hidden text-center text-sm text-gray-400 dark:text-gray-600 md:block">
+          <Link href="/" className="text-blue-400 dark:text-blue-600/60">
             BUCC
-          </a>{" "}
+          </Link>{" "}
           &copy; {new Date().getFullYear()} | All rights reserved.
         </div>
       )}
