@@ -55,46 +55,6 @@ const allExecutiveBodyData = [
     data: ExecutiveBody2023,
     executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
   },
-  {
-    panelYear: "Executive Body 2022",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2021",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2020",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2019",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2018",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2017",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2016",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
-  {
-    panelYear: "Executive Body 2015",
-    data: ExecutiveBody2023,
-    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2023),
-  },
 ];
 
 export default allExecutiveBodyData;

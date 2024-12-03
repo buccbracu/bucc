@@ -1,6 +1,21 @@
 import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 
+// Define designations that always have permission
+export const alwaysPermittedDesignations = [
+  "director",
+  "assistant director",
+  "president",
+  "vice president",
+  "general secretary",
+  "treasurer",
+];
+
+export const alwaysPermittedDepartments = [
+  "research and development",
+  "governing body",
+];
+
 export async function hasAuth(
   permittedDesignations: string[] = [],
   permittedDepartments: string[] = [],
@@ -15,21 +30,6 @@ export async function hasAuth(
     isPermitted = false;
     return { session: null, isPermitted: false };
   }
-
-  // Define designations that always have permission
-  const alwaysPermittedDesignations = [
-    "director",
-    "assistant director",
-    "president",
-    "vice president",
-    "general secretary",
-    "treasurer",
-  ];
-
-  const alwaysPermittedDepartments = [
-    "research and development",
-    "governing body",
-  ];
 
   const userDesignation = session.user.designation.toLowerCase();
   const userDepartment = session.user.buccDepartment.toLowerCase();

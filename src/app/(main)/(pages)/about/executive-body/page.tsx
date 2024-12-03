@@ -1,203 +1,151 @@
+"use client";
+
 import PageHeader from "@/components/page-header";
-import { EBsByDepartment } from "@/constants/ebs";
-import { Facebook, Linkedin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import allExecutiveBodyData from "@/constants/all-executive-body/data";
+import { Facebook, Github, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
-export default async function ExecutiveBody() {
-  const EBs = EBsByDepartment;
+export default function ExecutiveBody() {
+  // State to track the currently selected panel
+  const [selectedPanelIndex, setSelectedPanelIndex] = useState(0);
+  const selectedPanel =
+    allExecutiveBodyData && allExecutiveBodyData.length > 0
+      ? allExecutiveBodyData[selectedPanelIndex]
+      : null;
+
   return (
     <div className="w-full">
       <PageHeader
-        title="Executive Body 2024"
+        title={`Executive Body ${selectedPanel?.panelYear}`}
         description="The Executive Body of the BRAC University Computer Club (BUCC) is the heart and soul of the club's operations. Composed of enthusiastic and committed members, this team is the engine driving all club activities and initiatives. They excel in planning events, managing projects, and ensuring that everything runs smoothly within the club. Their primary goal is to nurture a dynamic and collaborative environment that encourages personal and professional development for all members. Through their vision and dedication, the Executive Body continually elevates BUCC, creating a lasting positive impact on its members and the broader community."
       />
-      <section className="py-6">
-        {EBs.map((department) => (
-          <div key={department.departmentName} className="mb-8">
-            <h2 className="mb-4 mt-4 text-center text-3xl font-bold">
-              {department.departmentName}
-            </h2>
-            <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
-              {/* President and Vice President Row */}
-              {department.presidentAndVicePresident?.map(
-                (presidentAndVicePresident) => (
-                  <div
-                    key={presidentAndVicePresident.fullName}
-                    className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
-                  >
-                    <Image
-                      src={presidentAndVicePresident.image.src}
-                      height={540}
-                      width={960}
-                      placeholder="blur"
-                      blurDataURL={presidentAndVicePresident.image.blurDataURL}
-                      alt={presidentAndVicePresident.fullName}
-                      className="rounded-t-lg object-cover"
-                    />
-                    <div className="mt-4 text-center">
-                      <h3 className="text-xl font-semibold">
-                        {presidentAndVicePresident.fullName}
-                      </h3>
-                      <p className="text-gray-500">
-                        {presidentAndVicePresident.designation}
-                      </p>
 
-                      <div className="mt-2 flex justify-center gap-4">
-                        <Link
-                          href={presidentAndVicePresident.facebookURL}
-                          prefetch={false}
-                          className="text-gray-500 hover:text-[#1f4864]"
-                        >
-                          <Facebook size={24} />
-                        </Link>
-                        <Link
-                          href={presidentAndVicePresident.linkedinURL}
-                          prefetch={false}
-                          className="text-gray-500 hover:text-[#1f4864]"
-                        >
-                          <Linkedin size={24} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                ),
-              )}
-            </div>
-            <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
-              {/* General Secretary and Treasurer Row */}
-              {department.generalSecretaryAndTreasurer?.map(
-                (generalSecretaryAndTreasurer) => (
-                  <div
-                    key={generalSecretaryAndTreasurer.fullName}
-                    className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
-                  >
-                    <Image
-                      src={generalSecretaryAndTreasurer.image.src}
-                      height={540}
-                      width={960}
-                      placeholder="blur"
-                      blurDataURL={
-                        generalSecretaryAndTreasurer.image.blurDataURL
-                      }
-                      alt={generalSecretaryAndTreasurer.fullName}
-                      className="rounded-t-lg object-cover"
-                    />
-                    <div className="mt-4 text-center">
-                      <h3 className="text-xl font-semibold">
-                        {generalSecretaryAndTreasurer.fullName}
-                      </h3>
-                      <p className="text-gray-500">
-                        {generalSecretaryAndTreasurer.designation}
-                      </p>
-                      <div className="mt-2 flex justify-center gap-4">
-                        <Link
-                          href={generalSecretaryAndTreasurer.facebookURL}
-                          prefetch={false}
-                          className="text-gray-500 hover:text-[#1f4864]"
-                        >
-                          <Facebook size={24} />
-                        </Link>
-                        <Link
-                          href={generalSecretaryAndTreasurer.linkedinURL}
-                          prefetch={false}
-                          className="text-gray-500 hover:text-[#1f4864]"
-                        >
-                          <Linkedin size={24} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                ),
-              )}
-            </div>
-            <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
-              {/* Directors Row */}
-              {department.directors?.map((director) => (
-                <div
-                  key={director.fullName}
-                  className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
-                >
-                  <Image
-                    src={director.image.src}
-                    height={540}
-                    width={960}
-                    placeholder="blur"
-                    blurDataURL={director.image.blurDataURL}
-                    alt={director.fullName}
-                    className="rounded-t-lg object-cover"
-                  />
-                  <div className="mt-4 text-center">
-                    <h3 className="text-xl font-semibold">
-                      {director.fullName}
-                    </h3>
-                    <p className="text-gray-500">{director.designation}</p>
-                    <div className="mt-2 flex justify-center gap-4">
-                      <Link
-                        href={director.facebookURL}
-                        prefetch={false}
-                        className="text-gray-500 hover:text-[#1f4864]"
-                      >
-                        <Facebook size={24} />
-                      </Link>
-                      <Link
-                        href={director.linkedinURL}
-                        prefetch={false}
-                        className="text-gray-500 hover:text-[#1f4864]"
-                      >
-                        <Linkedin size={24} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
-              {/* Assistant Directors Row */}
-              {department.assistantDirectors?.map((assistantDirector) => (
-                <div
-                  key={assistantDirector.fullName}
-                  className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800"
-                >
-                  <Image
-                    src={assistantDirector.image.src}
-                    height={540}
-                    width={960}
-                    placeholder="blur"
-                    blurDataURL={assistantDirector.image.blurDataURL}
-                    alt={assistantDirector.fullName}
-                    className="rounded-t-lg object-cover"
-                  />
-                  <div className="mt-4 text-center">
-                    <h3 className="text-xl font-semibold">
-                      {assistantDirector.fullName}
-                    </h3>
-                    <p className="text-gray-500">
-                      {assistantDirector.designation}
-                    </p>
-                    <div className="mt-2 flex justify-center gap-4">
-                      <Link
-                        href={assistantDirector.facebookURL}
-                        prefetch={false}
-                        className="text-gray-500 hover:text-[#1f4864]"
-                      >
-                        <Facebook size={24} />
-                      </Link>
-                      <Link
-                        href={assistantDirector.linkedinURL}
-                        prefetch={false}
-                        className="text-gray-500 hover:text-[#1f4864]"
-                      >
-                        <Linkedin size={24} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Panel Year Selection Buttons */}
+      <div className="relative mt-8 flex flex-wrap justify-center gap-2 px-10">
+        {allExecutiveBodyData.map((panel, index) => (
+          <div key={index} className="relative">
+            <Button
+              onClick={() => setSelectedPanelIndex(index)}
+              className={`rounded-md border px-4 py-2 font-semibold transition-colors ${
+                selectedPanelIndex === index
+                  ? "bg-[#1f4864] text-white"
+                  : "bg-white text-[#1f4864] dark:bg-gray-800 dark:text-white"
+              } hover:bg-[#1f4864] hover:text-white`}
+            >
+              {panel.panelYear}
+            </Button>
+            {index === 0 && (
+              <Badge className="absolute left-0 top-0 -ml-6 -mt-3 inline-flex items-center justify-center rounded-full bg-green-700 px-2 py-1 text-xs font-bold leading-none text-white">
+                Current
+              </Badge>
+            )}
           </div>
         ))}
+      </div>
+
+      {/* Executive Members Section */}
+      <section className="flex-1 py-6">
+        {selectedPanel &&
+          selectedPanel.executiveMembersByDepartment.map((department) => (
+            <div key={department.departmentName} className="mb-8">
+              <h2 className="mb-4 mt-4 text-center text-3xl font-bold">
+                {department.departmentName}
+              </h2>
+
+              {/* President and Vice President */}
+              <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
+                {department.presidentAndVicePresident?.map((executive) => (
+                  <ExecutiveCard
+                    key={executive.fullName}
+                    executive={executive}
+                  />
+                ))}
+              </div>
+
+              {/* General Secretary and Treasurer */}
+              <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
+                {department.generalSecretaryAndTreasurer?.map((executive) => (
+                  <ExecutiveCard
+                    key={executive.fullName}
+                    executive={executive}
+                  />
+                ))}
+              </div>
+
+              {/* Directors */}
+              <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
+                {department.directors?.map((executive) => (
+                  <ExecutiveCard
+                    key={executive.fullName}
+                    executive={executive}
+                  />
+                ))}
+              </div>
+
+              {/* Assistant Directors */}
+              <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
+                {department.assistantDirectors?.map((executive) => (
+                  <ExecutiveCard
+                    key={executive.fullName}
+                    executive={executive}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
       </section>
     </div>
   );
 }
+
+// Reusable Component for Executives
+const ExecutiveCard = ({ executive }: { executive: any }) => (
+  <div className="flex w-96 flex-col items-center rounded-lg bg-white p-4 shadow-lg dark:bg-gray-800">
+    <Image
+      src={executive.image.src}
+      height={540}
+      width={960}
+      placeholder="blur"
+      blurDataURL={executive.image.blurDataURL}
+      alt={executive.fullName}
+      className="rounded-t-lg object-cover"
+    />
+    <div className="mt-4 text-center">
+      <h3 className="text-xl font-semibold">{executive.fullName}</h3>
+      <p className="text-gray-500">{executive.designation}</p>
+      <div className="mt-2 flex justify-center gap-4">
+        {executive.facebookURL && (
+          <Link
+            href={executive.facebookURL}
+            prefetch={false}
+            className="text-gray-500 hover:text-[#1f4864]"
+          >
+            <Facebook size={24} />
+          </Link>
+        )}
+        {executive.linkedinURL && (
+          <Link
+            href={executive.linkedinURL}
+            prefetch={false}
+            className="text-gray-500 hover:text-[#1f4864]"
+          >
+            <Linkedin size={24} />
+          </Link>
+        )}
+        {executive.gitHubURL && (
+          <Link
+            href={executive.gitHubURL}
+            prefetch={false}
+            className="text-gray-500 hover:text-[#1f4864]"
+          >
+            <Github size={24} />
+          </Link>
+        )}
+      </div>
+    </div>
+  </div>
+);
