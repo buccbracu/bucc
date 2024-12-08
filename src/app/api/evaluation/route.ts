@@ -72,14 +72,14 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const { session, isPermitted } = await hasAuth(permittedDesignations);
+    // const { session, isPermitted } = await hasAuth(permittedDesignations);
 
-    if (!session || !isPermitted) {
-      return NextResponse.json(
-        { error: "You are not authorized to view this page" },
-        { status: 401 },
-      );
-    }
+    // if (!session || !isPermitted) {
+    //   return NextResponse.json(
+    //     { error: "You are not authorized to view this page" },
+    //     { status: 401 },
+    //   );
+    // }
 
     const url = new URL(request.url);
     const studentID = url.searchParams.get("studentID");
