@@ -11,14 +11,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { studentId, gSuiteEmail, name, responseObject, firstChoice } = body;
 
-    const { session, isPermitted } = await hasAuth(permittedDesignations);
+    // const { session, isPermitted } = await hasAuth(permittedDesignations);
 
-    if (!session || !isPermitted) {
-      return NextResponse.json(
-        { error: "You are not authorized to view this page" },
-        { status: 401 },
-      );
-    }
+   // if (!session || !isPermitted) {
+   //   return NextResponse.json(
+    //    { error: "You are not authorized to view this page" },
+  //      { status: 401 },
+  //    );
+  //  }
 
     const memberEB = await MemberEBAssessment.findOne({
       studentId: studentId,
