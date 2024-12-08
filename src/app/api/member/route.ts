@@ -1,5 +1,6 @@
 import { hasAuth } from "@/helpers/hasAuth";
 import MemberInfo from "@/model/MemberInfo";
+import UserAuth from "@/model/UserAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDepartments = ["Human Resources"];
@@ -116,6 +117,22 @@ export async function PATCH(request: NextRequest) {
     }
 
     const { memberSkills, memberSocials, ...otherFields } = body;
+
+    if (otherFields.email) {
+      const userAuth = await UserAuth.findOne({ email: user.email }).select(
+        "email",
+      );
+
+      if (!userAuth) {
+        return NextResponse.json({
+          message: "User in Auth not found",
+        });
+      }
+
+      userAuth.email = otherFields.email;
+
+      await userAuth.save();
+    }
 
     let updateObject: any = {};
 

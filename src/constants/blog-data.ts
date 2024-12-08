@@ -35,6 +35,17 @@ const blogCategories = [
   { id: 34, name: "Entertainment", slug: "entertainment" },
   { id: 35, name: "Anime", slug: "anime" },
   { id: 36, name: "Psychology", slug: "psychology" },
+  { id: 37, name: "Mobile", slug: "mobile" },
+  { id: 38, name: "PC Building", slug: "pc-building" },
+  { id: 39, name: "GPU", slug: "gpu" },
+  { id: 40, name: "CPU", slug: "cpu" },
+  { id: 41, name: "Vehicles", slug: "vehicles" },
+  { id: 42, name: "Ammunation", slug: "ammunation" },
+  { id: 43, name: "Social Media", slug: "social-media" },
+  { id: 44, name: "HCI", slug: "hci" },
+  { id: 45, name: "BUCC", slug: "bucc" },
+  { id: 46, name: "Extra Curricular", slug: "extra-curricular" },
+  { id: 47, name: "Others", slug: "others" },
 ];
 
 const blogTags = [

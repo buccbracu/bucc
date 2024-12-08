@@ -16,44 +16,55 @@ export default function ContentParser({ content }: { content: any }) {
       case "doc":
         return (
           <div key={index} className="text-justify">
-            {node.content?.map(renderNode)}
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
           </div>
         );
       case "paragraph":
         return (
           <p key={index} className="text-justify">
-            {node.content?.map(renderNode)}
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
           </p>
         );
       case "text":
-        return node.marks ? (
-          renderTextWithMarks(node.text, node.marks)
-        ) : (
-          <span key={index}>{node.text}</span>
-        );
+        return node.marks
+          ? renderTextWithMarks(node.text, node.marks)
+          : node.text;
       case "image":
         return (
           <div
             key={index}
-            className="relative mx-auto h-auto w-full max-w-[600px]"
-            style={{ marginBottom: "1rem" }} // Adjust margin to reduce spacing
+            className="relative mx-auto mb-4 h-auto w-full max-w-[600px]"
           >
             <Image
               src={node.attrs?.src}
               alt={node.attrs?.alt || "Image"}
-              width={600} // Replace fill with fixed width and height
-              height={400} // Ensure the aspect ratio matches the image
-              className="rounded-md object-contain" // Add styles for a polished look
+              width={600}
+              height={400}
+              className="rounded-md object-contain"
             />
           </div>
         );
-
       case "heading":
         const HeadingTag =
           `h${node.attrs?.level || 1}` as keyof JSX.IntrinsicElements;
         return (
-          <HeadingTag key={index} className="mb-2 mt-4 text-justify font-bold">
-            {node.content?.map(renderNode)}
+          <HeadingTag
+            key={index}
+            className={`mb-2 mt-4 text-justify font-bold ${
+              node.attrs?.level === 1
+                ? "text-2xl"
+                : node.attrs?.level === 2
+                  ? "text-xl"
+                  : "text-lg"
+            }`}
+          >
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
           </HeadingTag>
         );
       case "blockquote":
@@ -62,12 +73,50 @@ export default function ContentParser({ content }: { content: any }) {
             key={index}
             className="border-l-4 border-gray-400 pl-4 text-justify italic"
           >
-            {node.content?.map(renderNode)}
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
           </blockquote>
         );
+      case "bulletList":
+        return (
+          <ul key={index} className="list-disc pl-5">
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
+          </ul>
+        );
+      case "orderedList":
+        return (
+          <ol key={index} className="list-decimal pl-5">
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
+          </ol>
+        );
+      case "listItem":
+        return (
+          <li key={index}>
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
+          </li>
+        );
+      case "codeBlock":
+        return (
+          <pre
+            key={index}
+            className="overflow-x-auto rounded bg-gray-100 p-2 text-gray-800"
+          >
+            <code>
+              {node.content?.map((child: any, childIndex: number) =>
+                renderNode(child, childIndex),
+              )}
+            </code>
+          </pre>
+        );
       case "youtube":
-        const videoUrl = node.attrs?.src;
-        const videoIdMatch = videoUrl.match(
+        const videoIdMatch = node.attrs?.src.match(
           /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
         );
         const videoId = videoIdMatch ? videoIdMatch[1] : null;
@@ -76,8 +125,8 @@ export default function ContentParser({ content }: { content: any }) {
           return (
             <iframe
               key={index}
-              width={node.attrs?.width || "560"}
-              height={node.attrs?.height || "315"}
+              width="560"
+              height="315"
               src={`https://www.youtube.com/embed/${videoId}`}
               title="YouTube video player"
               frameBorder="0"
@@ -89,6 +138,28 @@ export default function ContentParser({ content }: { content: any }) {
         } else {
           return <p key={index}>Invalid YouTube URL</p>;
         }
+      case "taskList":
+        return (
+          <ul key={index} className="list-none pl-0">
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
+          </ul>
+        );
+      case "taskItem":
+        return (
+          <li key={index} className="flex items-center">
+            <input
+              type="checkbox"
+              checked={node.attrs?.checked}
+              readOnly
+              className="mr-2"
+            />
+            {node.content?.map((child: any, childIndex: number) =>
+              renderNode(child, childIndex),
+            )}
+          </li>
+        );
       default:
         console.warn("Unknown node type:", node.type);
         return null;
