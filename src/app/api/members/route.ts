@@ -27,6 +27,7 @@ export async function GET() {
   try {
     const users = await MemberInfo.find({
       buccDepartment: user?.user.buccDepartment,
+      studentId: { $ne: "00000000" },
     });
 
     users.sort((a, b) => {
