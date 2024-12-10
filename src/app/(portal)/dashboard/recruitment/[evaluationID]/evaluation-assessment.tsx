@@ -121,6 +121,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
             Interview Taken By
           </Label>
           <MultipleSelector
+            creatable
             value={selectedEBs}
             onChange={setSelectedEBs}
             defaultOptions={OPTIONS}
