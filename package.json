@@ -31,6 +31,8 @@
     "embla-carousel-autoplay": "^8.1.6",
     "embla-carousel-react": "^8.1.6",
     "export-from-json": "^1.7.4",
+    "firebase": "^11.0.2",
+    "firebase-admin": "^13.0.1",
     "googleapis": "^140.0.0",
     "gsap": "^3.12.5",
     "input-otp": "^1.2.4",

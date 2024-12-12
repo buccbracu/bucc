@@ -2,6 +2,7 @@ import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
+import { sendTopicNotification } from "@/lib/firebase/notification"
 
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
@@ -115,6 +116,13 @@ export async function GET(request: NextRequest) {
         createdDate: -1,
       });
     }
+
+    // Send a broadcast notification to the "task" topic
+    const notificationResponse = await sendTopicNotification({
+      title: "BLOGS FETCHED",
+      body: "Blogs are fetched",
+      topic: "task",
+    });
 
     return NextResponse.json(blogs, { status: 200 });
   } catch (error: any) {

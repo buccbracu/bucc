@@ -6,6 +6,7 @@ import {
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/model/Task";
 import { NextResponse } from "next/server";
+import { sendTopicNotification } from "@/lib/firebase/notification"
 
 const permittedDesignations = [
   "director",
@@ -66,6 +67,7 @@ export async function GET() {
 
     return NextResponse.json(tasks, { status: 200 });
   } catch (error: any) {
+    console.log(error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -121,6 +123,21 @@ export async function POST(request: Request) {
     taskData.fromDesignation = session.user.designation;
 
     const newTask = await Task.create(taskData);
+
+    // send notification
+
+    const notificationTitle = `New Task for ${toDept} - ${toDesignation}`;
+    const notificationBody = `New Task Assigned: ${taskTitle}`;
+
+    // Send a broadcast notification to the "task" topic
+    const notificationResponse = await sendTopicNotification({
+      title: notificationTitle,
+      body: notificationBody,
+      topic: "task",
+    });
+
+    console.log("Notification Response:", notificationResponse);
+
 
     return NextResponse.json(newTask, { status: 201 });
   } catch (error: any) {

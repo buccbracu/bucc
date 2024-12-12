@@ -44,3 +44,8 @@ TODO.md
 .env.local
 
 .env.test
+
+firebase-service-key.json
+src/lib/firebase/firebase-service-key.json
+
+certificates
