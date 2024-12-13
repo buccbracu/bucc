@@ -49,6 +49,7 @@ export async function GET() {
     } else if (
       userDesignation === "director" ||
       userDesignation === "assistant director"
+
     ) {
       // Directors and Assistant Directors see department tasks
       tasks = await Task.find({
@@ -59,7 +60,7 @@ export async function GET() {
       // Senior Executives see tasks assigned to them
       tasks = await Task.find({
         toDept: userDepartment,
-        toDesignation: "senior executive",
+        toDesignation: "Senior Executive",
       }).sort({ deadline: 1 });
     } else {
       tasks = [];
@@ -77,6 +78,7 @@ export async function POST(request: Request) {
   const { session, isPermitted } = await hasAuth([
     "director",
     "assistant director",
+    "senior executive"
   ]);
 
   if (!session) {
