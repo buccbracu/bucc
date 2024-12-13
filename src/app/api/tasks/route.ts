@@ -53,14 +53,16 @@ export async function GET() {
     ) {
       // Directors and Assistant Directors see department tasks
       tasks = await Task.find({
-        toDept: userDepartment,
-        fromDept: userDepartment,
+        $or: [
+          { toDept: session.user.buccDepartment },
+          { fromDept: session.user.buccDepartment }
+      ]
       }).sort({ deadline: 1 });
     } else if (userDesignation === "senior executive") {
       // Senior Executives see tasks assigned to them
       tasks = await Task.find({
-        toDept: userDepartment,
-        toDesignation: "Senior Executive",
+        toDept: session.user.buccDepartment,
+        toDesignation: session.user.designation,
       }).sort({ deadline: 1 });
     } else {
       tasks = [];
