@@ -18,7 +18,9 @@ export async function GET() {
   }
   if (
     user?.user.designation !== "Director" &&
-    user?.user.designation !== "Assistant Director"
+    user?.user.designation !== "Assistant Director" &&
+    user?.user.designation !== "Senior Executive"
+
   ) {
     return NextResponse.json({
       message: `Designation: ${user?.user.designation} don't have the permission to view this page.`,

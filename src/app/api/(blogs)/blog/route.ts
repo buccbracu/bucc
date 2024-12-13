@@ -117,13 +117,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Send a broadcast notification to the "task" topic
-    const notificationResponse = await sendTopicNotification({
-      title: "BLOGS FETCHED",
-      body: "Blogs are fetched",
-      topic: "task",
-    });
-
     return NextResponse.json(blogs, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
