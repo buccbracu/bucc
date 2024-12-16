@@ -61,13 +61,21 @@ export async function GET() {
     } else if (userDesignation === "senior executive") {
       // Senior Executives see tasks assigned to them
       tasks = await Task.find({
-        $or: [
-          { toDept: session.user.buccDepartment },
-          { fromDept: session.user.buccDepartment },
-          { toDesignation: session.user.designation},
-          { fromDesignation: session.user.designation }
-      ]
-      }).sort({ deadline: 1 });
+        $and: [
+            { 
+                $or: [
+                    { toDept: session.user.buccDepartment },
+                    { fromDept: session.user.buccDepartment }
+                ]
+            },
+            {
+                $or: [
+                    { toDesignation: session.user.designation },
+                    { fromDesignation: session.user.designation }
+                ]
+            }
+        ]
+    }).sort({ deadline: 1 });
     } else {
       tasks = [];
     }
