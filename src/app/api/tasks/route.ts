@@ -61,16 +61,16 @@ export async function GET() {
     } else if (userDesignation === "senior executive") {
       // Senior Executives see tasks assigned to them
       tasks = await Task.find({
-        $and: [
+        $or: [
             { 
-                $or: [
+                $and: [
                     { toDept: session.user.buccDepartment },
-                    { fromDept: session.user.buccDepartment }
+                    { toDesignation: session.user.designation }
                 ]
             },
             {
-                $or: [
-                    { toDesignation: session.user.designation },
+                $and: [
+                    { fromDept: session.user.buccDepartment },
                     { fromDesignation: session.user.designation }
                 ]
             }
