@@ -1,13 +1,3 @@
-import { auth } from "@/auth";
-import departments from "@/constants/departments";
-import designations from "@/constants/designations";
-import dbConnect from "@/lib/dbConnect";
-import MemberInfo from "@/model/MemberInfo";
-import { NextResponse } from "next/server";
-
-const departmentsName = departments.map((department) => department.title);
-const designationsName = designations.map((designation) => designation.title);
-
 export async function GET() {
   await dbConnect();
   const user = await auth();
@@ -33,6 +23,11 @@ export async function GET() {
       buccDepartment: user?.user.buccDepartment,
       studentId: { $ne: "00000000" },
     };
+
+    // If user is a Senior Executive, filter by department and allow only certain designations
+    if (user?.user.designation === "Senior Executive") {
+      filter.designation = { $in: ["Director", "Assistant Director", "Senior Executive"] };
+    }
 
     // Set fields to fetch based on designation
     const selectFields =
