@@ -37,7 +37,7 @@ export async function GET() {
     // Set fields to fetch based on designation
     const selectFields =
       user?.user.designation === "Senior Executive"
-        ? "email contactNumber emergencyContact name designation buccDepartment memberSocials profileImage"
+        ? "email contactNumber emergencyContact name designation buccDepartment profileImage"
         : "";
 
     // Query members with appropriate fields
