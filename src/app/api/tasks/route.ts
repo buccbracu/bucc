@@ -90,6 +90,10 @@ export async function GET() {
 // POST: Create a new task
 export async function POST(request: Request) {
   const { session, isPermitted } = await hasAuth([
+    "president",
+    "vice president",
+    "general secretary",
+    "treasurer",
     "director",
     "assistant director",
     "senior executive"
@@ -141,15 +145,20 @@ export async function POST(request: Request) {
     const newTask = await Task.create(taskData);
 
     // send notification
+    const normalizedDept = toDept.toLowerCase().replace(/ /g, "_");
+    const normalizedDes = toDesignation.toLowerCase().replace(/ /g, "_");
+    const formattedDeadline = deadline.slice(0, 10);
 
-    const notificationTitle = `New Task for ${toDept} - ${toDesignation}`;
-    const notificationBody = `New Task Assigned: ${taskTitle}`;
+    const topic = `task_${normalizedDept}_${normalizedDes}`
+
+    const notificationTitle = taskTitle;
+    const notificationBody = `New Task Assigned for ${toDept} - ${toDesignation}. Deadline: ${formattedDeadline}`;
 
     // Send a broadcast notification to the "task" topic
     const notificationResponse = await sendTopicNotification({
       title: notificationTitle,
       body: notificationBody,
-      topic: "task",
+      topic: topic,
     });
 
     console.log("Notification Response:", notificationResponse);
