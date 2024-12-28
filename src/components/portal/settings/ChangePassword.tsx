@@ -20,6 +20,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
 import PasswordField from "@/components/ui/password-field";
+import { resetPasswordSchema } from "@/schemas/resetPasswordSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -45,7 +47,10 @@ export default function ChangePassword() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<ChangePasswordForm>();
+  } = useForm<ChangePasswordForm>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: "onChange",
+  });
 
   const newPassword = watch("newPassword");
   const confirmPassword = watch("confirmPassword");

@@ -30,6 +30,7 @@ import TanjimImage from "./board-members-images/Tanjim-Reza-Creative.png";
 const ExecutiveBody2023 = [
   {
     fullName: "Kazi Shahed Mamun",
+    nickName: "Ananda",
     department: "Governing Body",
     designation: "President",
     image: MamunImage,
@@ -38,6 +39,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Saiyeda Sabiha",
+    nickName: "Sabiha",
     department: "Governing Body",
     designation: "Vice President",
     image: SabihaImage,
@@ -46,6 +48,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Mahdi Hossain",
+    nickName: "Mahdi",
     department: "Governing Body",
     designation: "General Secretary",
     image: MahdiImage,
@@ -54,6 +57,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Raihanul Islam Bhuiyan",
+    nickName: "Raihan",
     department: "Governing Body",
     designation: "Financial Secretary",
     image: RaihanImage,
@@ -62,7 +66,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Aditi Saha Ria",
-
+    nickName: "Aditi",
     department: "Communication and Marketing",
     designation: "Director",
     image: AditiImage,
@@ -71,6 +75,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Jobeda Khanam",
+    nickName: "Jobeda",
     department: "Communication and Marketing",
     designation: "Director",
     image: JobedaImage,
@@ -79,6 +84,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Niloy Farhan",
+    nickName: "Niloy",
     department: "Communication and Marketing",
     designation: "Assistant Director",
     image: NiloyImage,
@@ -87,6 +93,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Tanjim Reza",
+    nickName: "Tanjim",
     department: "Creative",
     designation: "Director",
     image: TanjimImage,
@@ -95,7 +102,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Mukrrama Tun Fabia",
-    nickName: "Ahnaf",
+    nickName: "Fabia",
     department: "Creative",
     designation: "Director",
     image: FabiaImage,
@@ -104,6 +111,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Nizbath Ahsan",
+    nickName: "Nizbath",
     department: "Creative",
     designation: "Assistant Director",
     image: NizbathImage,
@@ -112,6 +120,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Fahad Khan Raj",
+    nickName: "Raj",
     department: "Creative",
     designation: "Assistant Director",
     image: RajImage,
@@ -120,6 +129,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Md. Anonto Shuvo",
+    nickName: "Shuvo",
     department: "Creative",
     designation: "Assistant Director",
     image: ShuvoImage,
@@ -128,6 +138,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Taimoor Fahim",
+    nickName: "Taimoor",
     department: "Event Management",
     designation: "Director",
     image: TaimoorImage,
@@ -136,6 +147,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Maruf Morshed",
+    nickName: "Maruf",
     department: "Event Management",
     designation: "Director",
     image: MarufImage,
@@ -144,7 +156,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Mahin Shahriar Efaz",
-    nickName: "Nowshin",
+    nickName: "Efaz",
     department: "Event Management",
     designation: "Assistant Director",
     image: EfazImage,
@@ -153,6 +165,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Jannatus Sakira Khondaker",
+    nickName: "Sakira",
     department: "Event Management",
     designation: "Assistant Director",
     image: SakiraImage,
@@ -162,6 +175,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Sheikh Yasir Hossain Katib",
+    nickName: "Katib",
     department: "Event Management",
     designation: "Assistant Director",
     image: KatibImage,
@@ -170,6 +184,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Ramisa Fariha Prova",
+    nickName: "Prova",
     department: "Event Management",
     designation: "Assistant Director",
     image: ProvaImage,
@@ -178,6 +193,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Md. Danial Islam",
+    nickName: "Danial",
     department: "Finance",
     designation: "Director",
     image: DanialImage,
@@ -186,6 +202,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "S.M. Atahar Istiaque",
+    nickName: "Ahnaf",
     department: "Finance",
     designation: "Director",
     image: AhnafImage,
@@ -194,6 +211,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Swapnil Sarkar",
+    nickName: "Swapnil",
     department: "Finance",
     designation: "Assistant Director",
     image: SwapnilImage,
@@ -202,6 +220,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Amir Abdullah",
+    nickName: "Amir",
     department: "Finance",
     designation: "Assistant Director",
     image: AmirImage,
@@ -210,6 +229,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Md. Sifat Kamal",
+    nickName: "Sifat",
     department: "Human Resources",
     designation: "Director",
     image: SifatImage,
@@ -218,6 +238,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Faiaz Mohammad Tiham",
+    nickName: "Tiham",
     department: "Human Resources",
     designation: "Director",
     image: TihamImage,
@@ -226,6 +247,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Shuria Akter Ethuna",
+    nickName: "Ethuna",
     department: "Human Resources",
     designation: "Assistant Director",
     image: EthunaImage,
@@ -234,6 +256,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Sajid Imam Mahir",
+    nickName: "Mahir",
     department: "Press Release and Publications",
     designation: "Director",
     image: MahirImage,
@@ -242,7 +265,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Jawad Ibn Mamoon",
-    nickName: "Alve",
+    nickName: "Mamoon",
     department: "Press Release and Publications",
     designation: "Director",
     image: JawadImage,
@@ -251,7 +274,7 @@ const ExecutiveBody2023 = [
   },
   {
     fullName: "Showmick Kar",
-    nickName: "Imtela",
+    nickName: "Showmick",
     department: "Press Release and Publications",
     designation: "Assistant Director",
     image: ShowmickImage,
