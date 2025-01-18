@@ -133,7 +133,7 @@ const Footer = () => {
               </div>
               <div className="my-4 text-center md:text-left">
                 <p className="mb-1">
-                  <strong>Contact Number:</strong> +8801717399105
+                  <strong>Contact Number:</strong> +8801756020067
                 </p>
                 <p className="mb-1">
                   <strong>Email:</strong> info@bracucc.org
