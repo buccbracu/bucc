@@ -2,6 +2,7 @@ import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
+import { sendTopicNotification } from "@/lib/firebase/notification"
 
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
@@ -63,6 +64,21 @@ export async function POST(request: NextRequest) {
     });
 
     const savedBlog = await newBlog.save();
+
+    // Send a broadcast notification to the "blog" topic
+    if(blogStatus === "published"){
+      const notificationTitle = `New Blog: ${title}`
+      const notificationBody = `By ${user.name} \n${description}`
+      
+    const notificationResponse = await sendTopicNotification({
+      title: notificationTitle,
+      body: notificationBody,
+      topic: "blog",
+    });
+    console.log("Notification Response:", notificationResponse);
+
+    }
+
     return NextResponse.json(savedBlog, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

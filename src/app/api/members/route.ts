@@ -11,25 +11,57 @@ const designationsName = designations.map((designation) => designation.title);
 export async function GET() {
   await dbConnect();
   const user = await auth();
+
   if (!user) {
     return NextResponse.json({
       message: "You are not authorized to view this page",
     });
   }
+
   if (
-    user?.user.designation !== "Director" &&
-    user?.user.designation !== "Assistant Director"
+    !["Director", "Assistant Director", "Senior Executive"].includes(
+      user?.user.designation
+    )
   ) {
     return NextResponse.json({
-      message: `Designation: ${user?.user.designation} don't have the permission to view this page.`,
+      message: `Designation: ${user?.user.designation} does not have the permission to view this page.`,
     });
   }
+  const seView = [
+    "Director", "Assistant Director", "Senior Executive"
+  ]
+  const ebView = [
+    "Director",
+    "Assistant Director",
+    "Senior Executive",
+    "Executive",
+    "General Member"
+  ]
+  var view = ebView
+  if (user?.user.designation === "Senior Executive") {
+    view = seView
+  }
+
+
   try {
-    const users = await MemberInfo.find({
+    const filter = {
       buccDepartment: user?.user.buccDepartment,
       studentId: { $ne: "00000000" },
-    });
+      designation: { $in: view}
+    };
 
+    // Set fields to fetch based on designation
+    const selectFields =
+      user?.user.designation === "Senior Executive"
+        ? "email contactNumber emergencyContact name designation buccDepartment profileImage"
+        : "";
+
+    // Query members with appropriate fields
+    const users = await MemberInfo.find(filter)
+      .select(selectFields)
+      .lean(); // Convert to plain objects for better performance
+
+    // Custom sorting logic
     users.sort((a, b) => {
       const departmentComparison =
         departmentsName.indexOf(a.buccDepartment) -
@@ -45,8 +77,24 @@ export async function GET() {
       );
     });
 
-    return NextResponse.json({ users: users });
+    // Format `memberSocials` for Senior Executives
+    if (user?.user.designation === "Senior Executive") {
+      users.forEach((user) => {
+        if (user.memberSocials) {
+          user.memberSocials = {
+            Github: user.memberSocials?.Github || null,
+            LinkedIn: user.memberSocials?.Linkedin || null,
+            Facebook: user.memberSocials?.Facebook || null,
+          };
+        }
+      });
+    }
+
+    return NextResponse.json({ users });
   } catch (error) {
-    return NextResponse.json({ error: error });
+    return NextResponse.json({
+      message: "An error occurred while fetching members.",
+      error: error,
+    });
   }
 }

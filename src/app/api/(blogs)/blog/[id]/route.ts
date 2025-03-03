@@ -2,6 +2,7 @@ import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
+import { sendTopicNotification } from "@/lib/firebase/notification"
 
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
@@ -66,6 +67,23 @@ export async function PATCH(
       new: true,
       runValidators: true,
     });
+
+    console.log(updatedBlog)
+    if(blog.status == "draft" && updatedBlog.status == "published"){
+      
+      const notificationTitle = `New Blog: ${blog.title}`
+      const notificationBody = `By ${blog.author.authorName} \n${blog.description}`
+        
+      const notificationResponse = await sendTopicNotification({
+        title: notificationTitle,
+        body: notificationBody,
+        topic: "blog",
+      });
+      console.log("Notification Response:", notificationResponse);
+  
+      
+
+    }
 
     return NextResponse.json(updatedBlog, { status: 200 });
   } catch (error: any) {

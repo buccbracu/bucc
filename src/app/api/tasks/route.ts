@@ -6,6 +6,7 @@ import {
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/model/Task";
 import { NextResponse } from "next/server";
+import { sendTopicNotification } from "@/lib/firebase/notification"
 
 const permittedDesignations = [
   "director",
@@ -48,24 +49,40 @@ export async function GET() {
     } else if (
       userDesignation === "director" ||
       userDesignation === "assistant director"
+
     ) {
       // Directors and Assistant Directors see department tasks
       tasks = await Task.find({
-        toDept: userDepartment,
-        fromDept: userDepartment,
+        $or: [
+          { toDept: session.user.buccDepartment },
+          { fromDept: session.user.buccDepartment }
+      ]
       }).sort({ deadline: 1 });
     } else if (userDesignation === "senior executive") {
       // Senior Executives see tasks assigned to them
       tasks = await Task.find({
-        toDept: userDepartment,
-        toDesignation: "senior executive",
-      }).sort({ deadline: 1 });
+        $or: [
+            { 
+                $and: [
+                    { toDept: session.user.buccDepartment },
+                    { toDesignation: session.user.designation }
+                ]
+            },
+            {
+                $and: [
+                    { fromDept: session.user.buccDepartment },
+                    { fromDesignation: session.user.designation }
+                ]
+            }
+        ]
+    }).sort({ deadline: 1 });
     } else {
       tasks = [];
     }
 
     return NextResponse.json(tasks, { status: 200 });
   } catch (error: any) {
+    console.log(error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -73,8 +90,13 @@ export async function GET() {
 // POST: Create a new task
 export async function POST(request: Request) {
   const { session, isPermitted } = await hasAuth([
+    "president",
+    "vice president",
+    "general secretary",
+    "treasurer",
     "director",
     "assistant director",
+    "senior executive"
   ]);
 
   if (!session) {
@@ -121,6 +143,26 @@ export async function POST(request: Request) {
     taskData.fromDesignation = session.user.designation;
 
     const newTask = await Task.create(taskData);
+
+    // send notification
+    const normalizedDept = toDept.toLowerCase().replace(/ /g, "_");
+    const normalizedDes = toDesignation.toLowerCase().replace(/ /g, "_");
+    const formattedDeadline = deadline.toDateString().slice(0, 10);
+
+    const topic = `task_${normalizedDept}_${normalizedDes}`
+
+    const notificationTitle = taskTitle;
+    const notificationBody = `New Task Assigned for ${toDept} - ${toDesignation}. Deadline: ${formattedDeadline}`;
+
+    // Send a broadcast notification to the "task" topic
+    const notificationResponse = await sendTopicNotification({
+      title: notificationTitle,
+      body: notificationBody,
+      topic: topic,
+    });
+
+    console.log("Notification Response:", notificationResponse);
+
 
     return NextResponse.json(newTask, { status: 201 });
   } catch (error: any) {
