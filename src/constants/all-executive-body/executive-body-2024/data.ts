@@ -15,7 +15,7 @@ import MaisaImage from "./board-members-images/Maisa-Kabir-Creative.png";
 import MalihaImage from "./board-members-images/Maliha-Binte-Masud-CnM.png";
 import NabanitaImage from "./board-members-images/Nabanita-Sarker-Creative.png";
 import NiloyImage from "./board-members-images/Nafis-Sadique-Niloy.png";
-import NafizImage from "./board-members-images/Nafiz-Fuad-Sharkar-EM.png";
+// import NafizImage from "./board-members-images/Nafiz-Fuad-Sharkar-EM.png";
 import AcholImage from "./board-members-images/Naima-Nawar-Achol-Finance.png";
 import FouziaImage from "./board-members-images/Noshin-Fouzia-Tasnim-EM.png";
 import NowshinImage from "./board-members-images/Nowshin-Sumaiya-EM.png";
@@ -159,15 +159,15 @@ const ExecutiveBody2024 = [
     linkedinURL: "https://www.linkedin.com/in/md-abu-hanif-siam-02b695249",
     gitHubURL: "https://www.github.com/AbuHanifSiam",
   },
-  {
-    fullName: "Md Nafiz Fuad Sharkar",
-    nickName: "Nafiz",
-    department: "Event Management",
-    designation: "Director",
-    image: NafizImage,
-    facebookURL: "https://www.facebook.com/nafizfuadsharkarishty",
-    linkedinURL: "https://www.linkedin.com/in/nafizfuadsharkar/",
-  },
+  // {
+  //   fullName: "Md Nafiz Fuad Sharkar",
+  //   nickName: "Nafiz",
+  //   department: "Event Management",
+  //   designation: "Director",
+  //   image: NafizImage,
+  //   facebookURL: "https://www.facebook.com/nafizfuadsharkarishty",
+  //   linkedinURL: "https://www.linkedin.com/in/nafizfuadsharkar/",
+  // },
   {
     fullName: "Nowshin Sumaiya",
     nickName: "Nowshin",

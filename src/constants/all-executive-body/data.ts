@@ -1,5 +1,6 @@
 import ExecutiveBody2023 from "./executive-body-2023/data";
 import ExecutiveBody2024 from "./executive-body-2024/data";
+import ExecutiveBody2025 from "./executive-body-2025/data";
 
 // Function to sort data by department and transform it into an array of objects with specific roles categorized
 function sortDataByDepartment(data: any[]): {
@@ -45,6 +46,11 @@ function sortDataByDepartment(data: any[]): {
 
 // Combine all executive body data
 const allExecutiveBodyData = [
+  {
+    panelYear: "Executive Body 2025",
+    data: ExecutiveBody2025,
+    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2025),
+  },
   {
     panelYear: "Executive Body 2024",
     data: ExecutiveBody2024,
