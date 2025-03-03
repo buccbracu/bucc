@@ -69,21 +69,19 @@ export async function PATCH(
     });
 
     console.log(updatedBlog)
-    if(blog.status == "draft" && updatedBlog.status == "published"){
+    // if(blog.status == "draft" && updatedBlog.status == "published"){
       
-      const notificationTitle = `New Blog: ${blog.title}`
-      const notificationBody = `By ${blog.author.authorName} \n${blog.description}`
+    //   const notificationTitle = `New Blog: ${blog.title}`
+    //   const notificationBody = `By ${blog.author.authorName} \n${blog.description}`
         
-      const notificationResponse = await sendTopicNotification({
-        title: notificationTitle,
-        body: notificationBody,
-        topic: "blog",
-      });
-      console.log("Notification Response:", notificationResponse);
-  
-      
+    //   const notificationResponse = await sendTopicNotification({
+    //     title: notificationTitle,
+    //     body: notificationBody,
+    //     topic: "blog",
+    //   });
+    //   console.log("Notification Response:", notificationResponse);
 
-    }
+    // }
 
     return NextResponse.json(updatedBlog, { status: 200 });
   } catch (error: any) {
