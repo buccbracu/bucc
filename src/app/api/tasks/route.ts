@@ -147,7 +147,7 @@ export async function POST(request: Request) {
     // send notification
     const normalizedDept = toDept.toLowerCase().replace(/ /g, "_");
     const normalizedDes = toDesignation.toLowerCase().replace(/ /g, "_");
-    const formattedDeadline = deadline.slice(0, 10);
+    const formattedDeadline = deadline.toDateString().slice(0, 10);
 
     const topic = `task_${normalizedDept}_${normalizedDes}`
 
