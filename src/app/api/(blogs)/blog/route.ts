@@ -64,6 +64,21 @@ export async function POST(request: NextRequest) {
     });
 
     const savedBlog = await newBlog.save();
+
+    // Send a broadcast notification to the "blog" topic
+    if(blogStatus === "published"){
+      const notificationTitle = `New Blog Published: ${title}`
+      const notificationBody = `By ${user.name} || ${user.designation} ${user.buccDepartment}`
+      
+    const notificationResponse = await sendTopicNotification({
+      title: notificationTitle,
+      body: notificationBody,
+      topic: "blog",
+    });
+    console.log("Notification Response:", notificationResponse);
+    
+    }
+
     return NextResponse.json(savedBlog, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
