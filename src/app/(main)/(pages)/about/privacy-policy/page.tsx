@@ -30,7 +30,7 @@ const privacyPolicy = [
   {
     title: "Contact Us",
     description:
-      "If you have any questions about our Privacy Policy, please contact us at  info@bracucc.org , +8801717399105, or  Kha 226, Bir Uttam Rafiqul Islam Ave, Badda, Dhaka 1212 . Thank you for trusting BUCC with your personal information. We are committed to keeping it secure and respecting your privacy.",
+      "If you have any questions about our Privacy Policy, please contact us at  info@bracucc.org , +8801756020067, or  Kha 226, Bir Uttam Rafiqul Islam Ave, Badda, Dhaka 1212 . Thank you for trusting BUCC with your personal information. We are committed to keeping it secure and respecting your privacy.",
   },
 ];
 
