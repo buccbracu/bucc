@@ -67,8 +67,8 @@ export async function POST(request: NextRequest) {
 
     // Send a broadcast notification to the "blog" topic
     if(blogStatus === "published"){
-      const notificationTitle = `New Blog Published: ${title}`
-      const notificationBody = `By ${user.name} \n ${description}`
+      const notificationTitle = `New Blog: ${title}`
+      const notificationBody = `By ${user.name} \n${description}`
       
     const notificationResponse = await sendTopicNotification({
       title: notificationTitle,
