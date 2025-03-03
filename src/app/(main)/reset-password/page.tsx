@@ -33,6 +33,7 @@ function ResetPassword() {
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
+    mode: "onChange",
   });
 
   const newPassword = watch("newPassword");

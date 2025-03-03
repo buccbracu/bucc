@@ -87,7 +87,7 @@ export default function ExecutiveBody() {
               </div>
 
               {/* Assistant Directors */}
-              <div className="mt-6 flex flex-col items-center justify-center gap-4 md:flex-row">
+              <div className="mt-6 flex flex-col items-center justify-center gap-4 px-4 md:flex-row">
                 {department.assistantDirectors?.map((executive) => (
                   <ExecutiveCard
                     key={executive.fullName}

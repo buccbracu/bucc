@@ -3,7 +3,15 @@ import IntervieweeAttendance from "@/model/intervieweeAttendance";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import { NextResponse } from "next/server";
 
-const permittedDepartments = ["Governing Body", "Communication and Marketing", "Creative", "Event Management", "Finance", "Human Resources", "Press Release and Publications"];
+const permittedDepartments = [
+  "Governing Body",
+  "Communication and Marketing",
+  "Creative",
+  "Event Management",
+  "Finance",
+  "Human Resources",
+  "Press Release and Publications",
+];
 const permittedDesignations = [
   "Director",
   "Assistant Director",
