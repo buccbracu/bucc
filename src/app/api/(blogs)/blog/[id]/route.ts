@@ -69,7 +69,7 @@ export async function PATCH(
     });
 
     console.log(updatedBlog)
-    if(blog.status == "draft" && updatedBlog.status == "published"){
+    if(blog.status === "draft" && updatedBlog.status === "published"){
       
       const notificationTitle = `New Blog: ${blog.title}`
       const notificationBody = `By ${blog.author.authorName} \n${blog.description}`
