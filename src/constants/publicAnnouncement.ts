@@ -1,6 +1,6 @@
 const announcementData = {
   message:
-    "🎉 Registration for Fall'24 has started in BUCC! Be part of the oldest and largest CSE community of BRAC University.",
+    "🎉 Registration for Spring '25 has started in BUCC! Be part of the oldest and largest CSE community of BRAC University.",
   buttonText: "Register now!",
   buttonLink: "https://bracucc.org/registration",
   buttonTextColor: "text-white",
@@ -12,8 +12,8 @@ const announcementData = {
   closeButton: "X",
   closeButtonColor:
     "text-white text-lg font-bold hover:text-purple-200 focus:outline-none",
-  dateOfFirstAppearance: "2024-11-29",
-  dateOfLastAppearance: "2024-12-03",
+  dateOfFirstAppearance: "2025-03-04",
+  dateOfLastAppearance: "2025-04-07",
 };
 
 export { announcementData };
