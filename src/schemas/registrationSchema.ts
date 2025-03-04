@@ -3,7 +3,7 @@ import { z } from "zod";
 export const registrationSchema = z.object({
   studentId: z
     .string()
-    .regex(/^[0-9]{8}$/, "Please enter a valid 8-digit student ID"),
+    .regex(/^[0-9]{8,10}$/, "Please enter a valid 8 or 10-digit student ID"),
   name: z.string().min(1, "Name is required"),
   semester: z.string().min(1, "Semester is required"),
   year: z
