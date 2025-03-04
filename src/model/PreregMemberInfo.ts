@@ -11,7 +11,7 @@ const PreregMemberInfoSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v: string) {
-        return /^[0-9]{8,10}$/.test(v);
+        return /^(?:[0-9]{8}|[0-9]{10})$/.test(v);
 
       },
       message: (props: { value: any }) =>
