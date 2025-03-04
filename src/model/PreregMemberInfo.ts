@@ -11,7 +11,8 @@ const PreregMemberInfoSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v: string) {
-        return /^[0-9]{8}$/.test(v);
+        return /^[0-9]{8,10}$/.test(v);
+
       },
       message: (props: { value: any }) =>
         `${props.value} is not a valid student ID!`,
