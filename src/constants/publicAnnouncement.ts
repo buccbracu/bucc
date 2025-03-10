@@ -13,7 +13,7 @@ const announcementData = {
   closeButtonColor:
     "text-white text-lg font-bold hover:text-purple-200 focus:outline-none",
   dateOfFirstAppearance: "2025-03-03",
-  dateOfLastAppearance: "2025-04-07",
+  dateOfLastAppearance: "2025-03-09",
 };
 
 export { announcementData };
