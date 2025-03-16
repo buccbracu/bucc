@@ -19,7 +19,7 @@ Welcome to the Brac University Computer Club website repository! We encourage op
 - Ensure that if there are fewer than 3 upcoming events, the page will show the latest completed event, sorted by date.
 
 4. General Improvements
-- Contributors' Ideas: Contributors are encouraged to suggest improvements to the existing design or functionality. If you believe an area of the website can be enhanced or made more user-friendly, feel free to propose a change or update.
+- Contributors' Ideas: Contributors are encouraged to suggest improvements to the existing design or functionality. If you believe an area of the website can be enhanced or made more user-friendly, feel free to propose a change or update. Do let us know if you have a better plan.
 - Open to Suggestions: We welcome any creative ideas or suggestions that you think will improve the website or the user experience.
 
 How to Contribute
