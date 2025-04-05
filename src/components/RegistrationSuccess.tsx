@@ -7,38 +7,28 @@ import Lottie from "lottie-react";
 import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 
 export default function RegistrationSuccess() {
   const router = useRouter();
-
-  useEffect(() => {
-    const confettiElement = document.getElementById("confetti");
-    if (confettiElement) {
-      const lottieConfetti = document.getElementById("confetti-lottie");
-      lottieConfetti?.addEventListener("complete", () => {
-        confettiElement.remove();
-      });
-    }
-  }, []);
+  const [showConfetti, setShowConfetti] = useState(true);
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
+      {showConfetti && (
         <div id="confetti">
           <Lottie
-            id="confetti-lottie" // Give the Lottie element an ID for event binding
             className="absolute left-0 top-0 h-full w-full"
             animationData={confettiData}
             loop={false}
             onComplete={() => {
-              // This part is already handled by useEffect now
+              setShowConfetti(false);
             }}
           />
         </div>
-      </div>
-      <Card className="w-full max-w-lg space-y-6 p-8">
+      )}
+      <Card className="z-10 w-full max-w-lg space-y-6 p-8">
         <CardHeader className="flex items-center justify-center">
           <div className="flex items-center justify-center rounded-full bg-green-500/20 p-6">
             <CircleCheckBig className="h-16 w-16 text-green-500" />
@@ -54,35 +44,32 @@ export default function RegistrationSuccess() {
               You have successfully registered for {intakeInfo.intakeName}.
               {intakeInfo.isEvaluationActive && (
                 <span>
-                  Please make sure to fill up the
+                  Please make sure to fill up the{" "}
                   <strong className="text-[#127cc1]">
-                    <Link href={"/evaluation"}> Written Evaluation Form</Link>
+                    <Link href="/evaluation">Written Evaluation Form</Link>
                   </strong>{" "}
                   before attending for interview.
                 </span>
               )}{" "}
-              Keep an eye on your email and our
+              Keep an eye on your email and our{" "}
               <strong className="text-[#127cc1]">
-                {" "}
                 <Link href={buccSocials.facebook}>Facebook page</Link>
               </strong>{" "}
               for further updates.
             </p>
           </div>
         </CardContent>
+
         <div className="flex gap-2">
           {intakeInfo.isEvaluationActive && (
             <Button
-              className="w-full rounded-md bg-[#127cc1] px-4 py-2 font-medium text-white transition-colors hover:bg-[#1f4864] dark:bg-[#127cc1] dark:text-white dark:hover:bg-[#1f4864]"
+              className="w-full bg-[#127cc1] text-white hover:bg-[#1f4864]"
               onClick={() => router.push("/evaluation")}
             >
               Fill Evaluation Form
             </Button>
           )}
-          <Button
-            className="w-full rounded-md px-4 py-2 font-medium"
-            onClick={() => router.push("/")}
-          >
+          <Button className="w-full" onClick={() => router.push("/")}>
             Go to Home
           </Button>
         </div>

@@ -3,7 +3,7 @@ const intakeInfo = {
   intakeName: "Spring 2025",
   intakeStartDate: "2025-03-03",
   intakeEndDate: "2025-03-09",
-  isIntakeActive: false,
+  isIntakeActive: true,
   isEvaluationActive: true,
 };
 
