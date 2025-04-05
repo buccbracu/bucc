@@ -2,45 +2,29 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { buccSocials, intakeInfo } from "@/constants/buccInfo";
-import confettiData from "@/lottie/confetti.json";
-import Lottie from "lottie-react";
+// import confettiData from "@/lottie/confetti.json";
+// import Lottie from "lottie-react";
 import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 
 export default function RegistrationSuccess() {
   const router = useRouter();
-  const confettiRef = useRef<HTMLDivElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-
-    // Cleanup function to remove the component on unmount if needed
-    return () => {
-      setIsMounted(false);
-    };
-  }, []);
-
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      {isMounted && (
-        <div id="confetti" ref={confettiRef}>
-          <Lottie
-            className="absolute left-0 top-0 h-full w-full"
-            animationData={confettiData}
-            loop={false}
-            onComplete={() => {
-              // Using the ref instead of document.getElementById
-              if (confettiRef.current) {
-                confettiRef.current.style.display = "none";
-              }
-            }}
-          />
-        </div>
-      )}
+      {/* Confetti animation removed
+      <div id="confetti">
+        <Lottie
+          className="absolute left-0 top-0 h-full w-full"
+          animationData={confettiData}
+          loop={false}
+          onComplete={() => {
+            document.getElementById("confetti")?.remove();
+          }}
+        />
+      </div>
+      */}
       <Card className="w-full max-w-lg space-y-6 p-8">
         <CardHeader className="flex items-center justify-center">
           <div className="flex items-center justify-center rounded-full bg-green-500/20 p-6">
