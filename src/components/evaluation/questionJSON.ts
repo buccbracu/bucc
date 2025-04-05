@@ -24,10 +24,10 @@ export const json = {
             {
               type: "regex",
               text: "Enter a valid Student ID",
-              regex: "^(?:\d{8}|\d{10})$",
+              regex: "^[0-9]{8}$|^[0-9]{10}$",
             },
           ],
-          placeholder: "2130XXXX or 2130XXXXXX",
+          placeholder: "2130XXXX",
         },
         {
           type: "text",
