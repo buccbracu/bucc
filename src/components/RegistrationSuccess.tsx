@@ -7,21 +7,36 @@ import Lottie from "lottie-react";
 import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Button } from "./ui/button";
 
 export default function RegistrationSuccess() {
   const router = useRouter();
+
+  useEffect(() => {
+    const confettiElement = document.getElementById("confetti");
+    if (confettiElement) {
+      const lottieConfetti = document.getElementById("confetti-lottie");
+      lottieConfetti?.addEventListener("complete", () => {
+        confettiElement.remove();
+      });
+    }
+  }, []);
+
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
-      <div id="confetti">
-        <Lottie
-          className="absolute left-0 top-0 h-full w-full"
-          animationData={confettiData}
-          loop={false}
-          onComplete={() => {
-            document.getElementById("confetti")?.remove();
-          }}
-        />
+      <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
+        <div id="confetti">
+          <Lottie
+            id="confetti-lottie" // Give the Lottie element an ID for event binding
+            className="absolute left-0 top-0 h-full w-full"
+            animationData={confettiData}
+            loop={false}
+            onComplete={() => {
+              // This part is already handled by useEffect now
+            }}
+          />
+        </div>
       </div>
       <Card className="w-full max-w-lg space-y-6 p-8">
         <CardHeader className="flex items-center justify-center">
