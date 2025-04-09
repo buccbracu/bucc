@@ -39,7 +39,7 @@ export default function RegistrationSuccess() {
             </h1>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               You have successfully registered for {intakeInfo.intakeName}.
-              {intakeInfo.isEvaluationActive && (
+              {/*intakeInfo.isEvaluationActive && (
                 <span>
                   Please make sure to fill up the
                   <strong className="text-[#127cc1]">
@@ -47,7 +47,7 @@ export default function RegistrationSuccess() {
                   </strong>{" "}
                   before attending for interview.
                 </span>
-              )}{" "}
+              )*/}{" "}
               Keep an eye on your email and our
               <strong className="text-[#127cc1]">
                 {" "}
