@@ -3,10 +3,10 @@
 import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import heroBanner from "/public/images/homepage/Executive Body 2024.jpeg";
+import heroBanner from "/public/images/homepage/Executive Body 2025.jpeg";
 
 export default function Hero() {
-  const videoId = "HFHzFeb-kHc";
+  const videoId = "UpPdA9WClQ4";
 
   return (
     <section className="w-full py-8 lg:py-12">
