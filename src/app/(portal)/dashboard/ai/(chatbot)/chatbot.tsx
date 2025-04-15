@@ -8,7 +8,7 @@ import ChatBotStatus from "./ChatBotStatus";
 
 export default function ChatBot() {
   return (
-    <Card className="col-span-2 flex h-[300px] flex-col justify-between bg-blue-100">
+    <Card className="col-span-2 flex h-auto flex-col justify-between bg-blue-100">
       <ChatBotHeader />
 
       <div className="flex flex-1">
@@ -16,9 +16,9 @@ export default function ChatBot() {
           <Image
             src={botIcon}
             alt="ChatBot"
-            width={100}
-            height={100}
-            className="object-contain"
+            width={150}
+            height={150}
+            className="object-fit"
           />
         </div>
 
