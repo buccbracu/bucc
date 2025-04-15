@@ -2,7 +2,7 @@ import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
-import { sendTopicNotification } from "@/lib/firebase/notification"
+import { sendTopicNotification } from "@/lib/firebase/notification";
 
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
@@ -42,18 +42,25 @@ export async function PATCH(
     );
   }
 
+  let updateData;
+  try {
+    updateData = await request.json();
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Invalid or missing JSON body" },
+      { status: 400 },
+    );
+  }
+
   try {
     await dbConnect();
     const { id } = params;
-    const updateData = await request.json();
 
-    // Check if the user is allowed to update this blog
     const blog = await Blog.findById(id);
     if (!blog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    // Allow updates only if the user is the author or has permissions
     const isAuthor =
       blog.author.authorId.toString() === session.user.id.toString();
     if (!isAuthor && !isPermitted) {
@@ -68,19 +75,18 @@ export async function PATCH(
       runValidators: true,
     });
 
-    console.log(updatedBlog)
-    if(blog.status === "draft" && updatedBlog.status === "published"){
-      
-      const notificationTitle = `New Blog: ${blog.title}`
-      const notificationBody = `By ${blog.author.authorName} \n${blog.description}`
-        
+    // Send notification if transitioning from draft to published
+    if (blog.status === "draft" && updatedBlog.status === "published") {
+      const notificationTitle = `New Blog: ${blog.title}`;
+      const notificationBody = `By ${blog.author.authorName}\n${blog.description}`;
+
       const notificationResponse = await sendTopicNotification({
         title: notificationTitle,
         body: notificationBody,
         topic: "blog",
       });
-      console.log("Notification Response:", notificationResponse);
 
+      console.log("Notification Response:", notificationResponse);
     }
 
     return NextResponse.json(updatedBlog, { status: 200 });
@@ -114,7 +120,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    // Allow deletions only if the user is the author or has permissions
     const isAuthor =
       blog.author.authorId.toString() === session.user.id.toString();
 
