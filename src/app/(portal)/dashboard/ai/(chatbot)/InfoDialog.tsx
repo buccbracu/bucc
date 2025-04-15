@@ -25,7 +25,7 @@ export default function InfoDialog({ title, trigger }: InfoDialogProps) {
             <p>
               The chatbot is using <strong> GPT-4o-mini</strong> for processing
               requests and
-              <strong> Text-ADA-002</strong> for embeddings. It is designed to
+              <strong> text-ada-002</strong> for embeddings. It is designed to
               provide an interactive and intelligent chat experience. You can
               interact with the bot, and it will respond based on the trained
               data.

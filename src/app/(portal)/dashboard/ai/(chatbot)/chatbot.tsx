@@ -11,7 +11,7 @@ export default function ChatBot() {
     <Card className="col-span-2 flex h-auto flex-col justify-between bg-blue-100">
       <ChatBotHeader />
 
-      <div className="flex flex-1 mb-3">
+      <div className="flex flex-1">
         <div className="flex w-1/2 items-center justify-center">
           <Image
             src={botIcon}

@@ -17,9 +17,6 @@ export default function ChatBotControls() {
       <Button variant="secondary" className="w-[120px]">
         Configure
       </Button>
-      <Button variant="secondary" className="w-[120px]">
-        Test
-      </Button>
       <FormDialogButton />
     </div>
   );
