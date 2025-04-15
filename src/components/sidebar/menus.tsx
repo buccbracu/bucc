@@ -11,6 +11,7 @@ import {
   UserSearch,
   UsersRound,
   Vault,
+  Brain,
 } from "lucide-react";
 
 const menus = [
@@ -259,6 +260,30 @@ const menus = [
       "Senior Executive",
       "Executive",
       "General Member",
+    ],
+  },
+  {
+    title: "Artifical Intelligence",
+    path: "/dashboard/ai",
+    icon: Brain,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Communication and Marketing",
+      "Creative",
+      "Event Management",
+      "Finance",
+      "Human Resources",
+      "Press Release and Publications",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
     ],
   },
   {
