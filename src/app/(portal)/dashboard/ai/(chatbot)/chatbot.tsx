@@ -10,49 +10,25 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import botIcon from "/public/images/ai/bot.png";
+import { getConfigValue, setConfigValue } from "@/client/appConfigClient";
 
 export default function ChatBotCard() {
   const [isPaused, setIsPaused] = useState<boolean | null>(null);
 
   const handleToggle = async () => {
     const newValue = !isPaused;
-    setIsPaused(newValue);
+    setIsPaused(newValue); // Optimistic UI
 
-    try {
-      const res = await fetch("/api/config", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          key: "is-paused",
-          value: newValue,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update config");
-      }
-    } catch (err) {
-      console.error("Error updating pause status:", err);
-      setIsPaused(!newValue);
+    const success = await setConfigValue("is-paused", newValue);
+    if (!success) {
+      setIsPaused(!newValue); // Rollback
     }
   };
 
   useEffect(() => {
     const fetchStatus = async () => {
-      try {
-        const res = await fetch("/api/config?key=is-paused");
-        const data = await res.json();
-
-        if (data.error) {
-          console.error("Error fetching config:", data.error);
-        } else {
-          setIsPaused(data.value);
-        }
-      } catch (error) {
-        console.error("Error fetching config:", error);
-      }
+      const value = await getConfigValue<boolean>("is-paused");
+      setIsPaused(value);
     };
 
     fetchStatus();
