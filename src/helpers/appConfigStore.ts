@@ -4,7 +4,8 @@ export async function getConfigValue<T = string>(
   key: string,
   defaultValue?: T,
 ): Promise<T> {
-  const raw = await redis.get(key);
+  const raw = (await redis.get(key)) as string | null; // 👈 Fix: explicitly annotate type
+
   if (raw === null || raw === undefined) {
     return defaultValue as T;
   }
@@ -12,7 +13,6 @@ export async function getConfigValue<T = string>(
   try {
     return JSON.parse(raw) as T;
   } catch {
-    // fallback for simple string/boolean values
     return raw as unknown as T;
   }
 }
