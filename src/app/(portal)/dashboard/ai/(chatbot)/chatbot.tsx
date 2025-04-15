@@ -6,7 +6,7 @@ import ChatBotHeader from "./ChatBotHeader";
 import ChatBotControls from "./ChatBotControls";
 import ChatBotStatus from "./ChatBotStatus";
 
-export default function ChatBotCard() {
+export default function ChatBot() {
   return (
     <Card className="col-span-2 flex h-[300px] flex-col justify-between bg-blue-100">
       <ChatBotHeader />
