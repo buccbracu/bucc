@@ -39,7 +39,7 @@ export default function RegistrationSuccess() {
             </h1>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               You have successfully registered for {intakeInfo.intakeName}.
-              {intakeInfo.isEvaluationActive && (
+              {/*intakeInfo.isEvaluationActive && (
                 <span>
                   Please make sure to fill up the
                   <strong className="text-[#127cc1]">
@@ -47,7 +47,7 @@ export default function RegistrationSuccess() {
                   </strong>{" "}
                   before attending for interview.
                 </span>
-              )}{" "}
+              )*/}{" "}
               Keep an eye on your email and our
               <strong className="text-[#127cc1]">
                 {" "}
@@ -58,14 +58,14 @@ export default function RegistrationSuccess() {
           </div>
         </CardContent>
         <div className="flex gap-2">
-          {intakeInfo.isEvaluationActive && (
+          {/*intakeInfo.isEvaluationActive && (
             <Button
               className="w-full rounded-md bg-[#127cc1] px-4 py-2 font-medium text-white transition-colors hover:bg-[#1f4864] dark:bg-[#127cc1] dark:text-white dark:hover:bg-[#1f4864]"
               onClick={() => router.push("/evaluation")}
             >
               Fill Evaluation Form
             </Button>
-          )}
+          )*/}
           <Button
             className="w-full rounded-md px-4 py-2 font-medium"
             onClick={() => router.push("/")}

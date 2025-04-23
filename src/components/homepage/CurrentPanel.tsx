@@ -71,7 +71,7 @@ export default function CurrentPanel() {
       {/* View Full Panel Button */}
       <div className="mt-8 flex justify-center">
         <Button className="inline-flex h-12 items-center justify-center rounded-md bg-[#127cc1] px-8 text-sm font-medium text-white shadow transition-colors hover:bg-[#1f4864] disabled:pointer-events-none disabled:opacity-50">
-          <Link href="/about/executive-body">Full Executive Body 2024</Link>
+          <Link href="/about/executive-body">Full Executive Body 2025</Link>
         </Button>
       </div>
     </div>
