@@ -57,15 +57,23 @@ function ResetPassword() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            token, // Send the token along with newPassword
+            token,
             newPassword: data.newPassword,
           }),
         },
       );
-      if (response.ok) {
-        toast.success("Password changed successfully");
+
+      const result = await response.json();
+
+      if (
+        response.ok &&
+        !result.message?.includes("failed") &&
+        !result.message?.includes("expired") &&
+        !result.message?.includes("same")
+      ) {
+        toast.success(result.message || "Password changed successfully");
       } else {
-        toast.error("Failed to change password");
+        toast.error(result.message || "Failed to change password");
       }
     } catch (error) {
       console.error(error);
