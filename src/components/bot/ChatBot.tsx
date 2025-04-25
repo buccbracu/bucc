@@ -6,10 +6,11 @@ import botIcon from "/public/images/bot.png";
 import { useChat } from "@ai-sdk/react";
 import Image from "next/image";
 import { Spinner } from "../ui/spinner";
-// import { Spinner } from "./spinner";
 
 const ChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [toolCall, setToolCall] = useState<string>();
+
   const {
     messages,
     input,
@@ -21,6 +22,9 @@ const ChatBot: React.FC = () => {
     stop,
   } = useChat({
     maxSteps: 3,
+    onToolCall({ toolCall }) {
+      setToolCall(toolCall.toolName);
+    },
     initialMessages: [
       {
         role: "assistant",
@@ -42,6 +46,11 @@ const ChatBot: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  useEffect(() => {
+    if (status === "streaming" || status === "ready") {
+      setToolCall(undefined);
+    }
+  }, [status]);
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
@@ -111,6 +120,16 @@ const ChatBot: React.FC = () => {
               >
                 <CircleStopIcon size={18} />
               </button>
+            </div>
+          )}
+          {toolCall && (
+            <div className="flex items-center justify-center space-x-2 px-3 py-2 text-sm text-blue-400">
+              <Spinner className="h-4 w-4" />
+              <span>
+                {toolCall === "getInformation"
+                  ? "Getting information..."
+                  : `Running ${toolCall}...`}
+              </span>
             </div>
           )}
           {error && (
