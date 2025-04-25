@@ -269,12 +269,6 @@ const menus = [
     variant: "ghost",
     access_department: [
       "Governing Body",
-      "Communication and Marketing",
-      "Creative",
-      "Event Management",
-      "Finance",
-      "Human Resources",
-      "Press Release and Publications",
       "Research and Development",
     ],
     access_designation: [

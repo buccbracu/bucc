@@ -98,8 +98,8 @@ const ChatBot: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
           {status == "submitted" && (
-            <div className="flex items-center space-x-2">
-              <h1>Loading</h1>
+            <div className="flex items-center justify-center space-x-2">
+              <h3>Loading</h3>
               <button
                 type="button"
                 onClick={() => stop()}
