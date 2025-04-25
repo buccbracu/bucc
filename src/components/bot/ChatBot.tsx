@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import botIcon from "/public/images/bot.png";
 import { useChat } from "@ai-sdk/react";
 import Image from "next/image";
+import { Spinner } from "../ui/spinner";
 // import { Spinner } from "./spinner";
 
 const ChatBot: React.FC = () => {
@@ -25,7 +26,7 @@ const ChatBot: React.FC = () => {
         role: "assistant",
         id: "1",
         content:
-          "Hey there! I’m Nebu, your go-to chatbot from the BRAC University Computer Club (BUCC)! 🤖✨ Got questions? I’ve got answers! Whether it’s about our club’s awesome events, juicy campus updates, or just random BUCC fun facts, hit me up! I’m here to make your life easier and a little more fun. 😎🎉 Ask away! 🚀",
+          "Hey there! I’m Nimbus, your go-to chatbot from the BRAC University Computer Club (BUCC)! 🤖✨ Got questions? I’ve got answers! Whether it’s about our club’s awesome events, juicy campus updates, or just random BUCC fun facts, hit me up! I’m here to make your life easier and a little more fun. 😎🎉 Ask away! 🚀",
       },
     ],
   });
@@ -60,7 +61,7 @@ const ChatBot: React.FC = () => {
           className="fixed bottom-0 left-0 right-0 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg bg-gray-900 text-white shadow-xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-96 sm:rounded-lg"
         >
           <div className="flex items-center justify-between border-b border-gray-700 p-3">
-            <h2 className="text-base font-medium">Nebu (ChatBot) 🤖</h2>
+            <h2 className="text-base font-medium">Nimbus (ChatBot) 🤖</h2>
             <button onClick={toggleChat} className="hover:text-gray-400">
               <X size={20} />
             </button>
@@ -97,15 +98,18 @@ const ChatBot: React.FC = () => {
             ))}
             <div ref={messagesEndRef} />
           </div>
-          {status == "submitted" && (
-            <div className="flex items-center justify-center space-x-2">
-              
+          {status === "submitted" && (
+            <div className="flex items-center justify-center space-x-3 px-3 py-2 text-sm text-gray-300">
+              <div className="flex items-center space-x-1">
+                <Spinner className="h-4 w-4" />
+                <span>Thinking...</span>
+              </div>
               <button
                 type="button"
                 onClick={() => stop()}
                 className="text-red-500 hover:text-red-700"
               >
-                <CircleStopIcon size={20} />
+                <CircleStopIcon size={18} />
               </button>
             </div>
           )}
