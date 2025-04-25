@@ -45,23 +45,16 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({
         message:
-          "We couldn’t find an account with this email. Please check and try again or contact with your EBs.",
-      });
-    }
-
-    if (user.verifyToken) {
-      await singleResetMail(user.name, user.email, user.verifyToken);
-      return NextResponse.json({
-        message:
           "If this email is registered, a password reset link will be sent to your email",
       });
     }
 
+    // Generate a new token and expiration date regardless of whether one exists
     const verifyToken = uuidv4();
-
     const expiresIn = new Date();
     expiresIn.setHours(expiresIn.getHours() + 1);
 
+    // Update the user with the new token and expiration
     const member = await UserAuth.findOneAndUpdate(
       { email: email },
       { verifyToken: verifyToken, expiresIn: expiresIn },
