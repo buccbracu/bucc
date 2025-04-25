@@ -4,18 +4,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import FormDialog from "@/components/FormDialog";
 import { insertToChatbot } from "@/client/insertToChatBot";
-import SuccessModal from "@/components/success-modal";
+import { toast } from "sonner";
 
 export default function FormDialogButton() {
   const [inputText, setInputText] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleInsert = async () => {
     const response = await insertToChatbot(inputText);
     if (response) {
-      console.log("Inserted successfully:", response);
       setInputText("");
-      setShowSuccess(true);
+      toast.success("Data inserted successfully!");
+    } else {
+      
+      toast.error("Failed to insert data");
     }
   };
 
@@ -39,12 +40,6 @@ export default function FormDialogButton() {
           className="w-full resize-none rounded-md border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring"
         />
       </FormDialog>
-      <SuccessModal
-        isOpen={showSuccess}
-        messageTitle="Data Inserted!"
-        messageBody="Your content has been successfully added to the chatbot."
-      />
     </>
   );
 }
-
