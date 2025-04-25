@@ -11,7 +11,7 @@ import { Open_Sans } from "next/font/google";
 
 const inter = Open_Sans({
   subsets: ["latin"],
-  weight: ["400", "600"], // Choose weights based on your needs
+  weight: ["400", "600"],
 });
 
 
@@ -40,7 +40,7 @@ const ChatBot: React.FC = () => {
         role: "assistant",
         id: "1",
         content:
-          "Hey there! I’m Nimbus, your go-to chatbot from the BRAC University Computer Club (BUCC)! 🤖✨ Got questions? I’ve got answers! Whether it’s about our club’s awesome events, juicy campus updates, or just random BUCC fun facts, hit me up! I’m here to make your life easier and a little more fun. 😎🎉 Ask away! 🚀",
+          "Hey there! I’m Nimbus, your go-to chatbot from the BRAC University Computer Club (BUCC)! 🤖✨ Got questions? I’ve got answers! Whether it’s about our club’s awesome events, real time campus updates, or just random BUCC fun facts, hit me up! I’m here to make your life easier and a little more fun. 😎🎉 Ask away! 🚀",
       },
     ],
   });
