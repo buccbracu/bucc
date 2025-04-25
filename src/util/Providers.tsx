@@ -25,6 +25,7 @@ export default function Providers({ children }: { children: ReactNode }) {
             <UserProvider>
               <SyncSessionWithUserProvider />
               {children}
+              
             </UserProvider>
           </SessionProvider>
         </QueryClientProvider>
