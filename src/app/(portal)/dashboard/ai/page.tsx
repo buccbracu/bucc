@@ -1,6 +1,6 @@
 
 import Heading from "@/components/portal/heading";
-import ChatBot from "./(chatbot)/chatbot";
+import ChatBotDashBoard from "./(chatbot)/ChatBotDashBoard";
 
 
 export default function AI() {
@@ -13,7 +13,7 @@ export default function AI() {
       />
       <section className="mx-auto">
         <div className="mb-6 grid h-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
-          <ChatBot />
+          <ChatBotDashBoard />
         </div>
       </section>
     </>

@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
-import botIcon from "/public/images/ai/bot.png";
+import botIcon from "/public/images/bot.png";
 import { Card } from "@/components/ui/card";
 import ChatBotHeader from "./ChatBotHeader";
 import ChatBotControls from "./ChatBotControls";
 import ChatBotStatus from "./ChatBotStatus";
 
-export default function ChatBot() {
+export default function ChatBotDashBoard() {
   return (
     <Card className="col-span-2 flex h-auto flex-col justify-between bg-blue-100">
       <ChatBotHeader />

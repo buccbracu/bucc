@@ -5,6 +5,7 @@ import CurrentPanel from "./homepage/CurrentPanel";
 import Departments from "./homepage/Departments";
 import Events from "./homepage/Events";
 import JoinCTA from "./homepage/JoinCTA";
+import ChatBot from "./bot/ChatBot";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <Departments />
       <Events />
       <JoinCTA />
+      <ChatBot />
     </div>
   );
 }

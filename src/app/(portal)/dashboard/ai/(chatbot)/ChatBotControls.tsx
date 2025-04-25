@@ -2,6 +2,8 @@
 import FormDialogButton from "./FormDialogButton";
 import { Button } from "@/components/ui/button";
 import InfoDialog from "./InfoDialog";
+import SuccessModal from "@/components/success-modal";
+
 
 export default function ChatBotControls() {
   return (

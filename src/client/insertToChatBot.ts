@@ -1,21 +1,20 @@
 // src/client/insertToChatbot.ts
 
-export async function insertToChatbot(inputText: string) {
+export async function insertToChatbot(content: string) {
   try {
-    const res = await fetch("/api/chatbot/insert", {
+    const response = await fetch("/api/bot", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ content: inputText }),
+      body: JSON.stringify({ content }),
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to insert chatbot data");
+    if (!response.ok) {
+      throw new Error("Failed to insert data");
     }
 
-    const data = await res.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Insert failed:", error);
     return null;
