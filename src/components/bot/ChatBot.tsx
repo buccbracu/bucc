@@ -6,8 +6,18 @@ import botIcon from "/public/images/bot.png";
 import { useChat } from "@ai-sdk/react";
 import Image from "next/image";
 import { Spinner } from "../ui/spinner";
+import ReactMarkdown from "react-markdown";
+import { Open_Sans } from "next/font/google";
+
+const inter = Open_Sans({
+  subsets: ["latin"],
+  weight: ["400", "600"], // Choose weights based on your needs
+});
+
+
 
 const ChatBot: React.FC = () => {
+
   const [isOpen, setIsOpen] = useState(false);
   const [toolCall, setToolCall] = useState<string>();
 
@@ -67,7 +77,7 @@ const ChatBot: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-0 left-0 right-0 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg bg-gray-900 text-white shadow-xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-96 sm:rounded-lg"
+          className={`${inter.className} fixed bottom-0 left-0 right-0 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg bg-gray-900 text-white shadow-xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-96 sm:rounded-lg`}
         >
           <div className="flex items-center justify-between border-b border-gray-700 p-3">
             <h2 className="text-base font-medium">Nimbus (ChatBot) 🤖</h2>
@@ -101,7 +111,11 @@ const ChatBot: React.FC = () => {
                       : "bg-gray-800 text-gray-300"
                   }`}
                 >
-                  {msg.content}
+                  {msg.role === "assistant" ? (
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             ))}
