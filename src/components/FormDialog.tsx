@@ -3,9 +3,10 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, Upload} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface LargeDialogProps {
   title?: string;
@@ -13,7 +14,10 @@ interface LargeDialogProps {
   onInsert?: () => void;
   onCancel?: () => void;
   children: ReactNode;
+  loading?: boolean;
+
 }
+
 
 export default function FormDialog({
   title = "Insert Data to Chatbot",
@@ -21,6 +25,7 @@ export default function FormDialog({
   onInsert,
   onCancel,
   children,
+  loading
 }: LargeDialogProps) {
   return (
     <Dialog.Root>
@@ -36,10 +41,23 @@ export default function FormDialog({
             <div className="flex gap-2">
               <Dialog.Close asChild>
                 <Button variant="outline" onClick={onCancel}>
-                  Cancel
+                  <X className="mr-2 h-4 w-4" />
+                  Close
                 </Button>
               </Dialog.Close>
-              <Button onClick={onInsert}>Insert</Button>
+              <Button onClick={onInsert} disabled={loading}>
+                {loading ? (
+                  <div className="flex items-center">
+                    <Spinner />
+                    Inserting...
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Insert
+                  </>
+                )}
+              </Button>
             </div>
           </div>
 

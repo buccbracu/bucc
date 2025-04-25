@@ -8,24 +8,32 @@ import { toast } from "sonner";
 
 export default function FormDialogButton() {
   const [inputText, setInputText] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   const handleInsert = async () => {
-    const response = await insertToChatbot(inputText);
-    if (response) {
-      setInputText("");
-      toast.success("Data inserted successfully!");
-    } else {
-      
-      toast.error("Failed to insert data");
+    setLoading(true);
+    try {
+      const response = await insertToChatbot(inputText);
+      if (response) {
+        setInputText("");
+        toast.success("Data inserted successfully!");
+      } else {
+        toast.error("Failed to insert data");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-
-     <FormDialog
+      <FormDialog
         title="Insert Data to Chatbot"
         onInsert={handleInsert}
+        loading={loading}
         trigger={
           <Button variant="secondary" className="w-[120px]">
             Insert Data
