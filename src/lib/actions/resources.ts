@@ -9,11 +9,6 @@ import { generateEmbeddings } from "../ai/embedding";
 import { db } from "../db";
 import { embeddings as embeddingsTable } from "../db/schema/embeddings";
 
-
-const generateRandomEmbedding = (): number[] => {
-  return Array.from({ length: 1536 }, () => Math.random());
-};
-
 export const createResource = async (input: NewResourceParams) => {
   try {
     const { content } = insertResourceSchema.parse(input);
@@ -23,18 +18,13 @@ export const createResource = async (input: NewResourceParams) => {
       .values({ content })
       .returning();
 
-    // const embeddings = await generateEmbeddings(content);
-    const contents = [
-      "I love biriyani.",
-      "Biriyani is my favorite food.",
-    ];
-      const embeddings = contents.map((content) => ({
+    const embeddings = await generateEmbeddings(content);
+    await db.insert(embeddingsTable).values(
+      embeddings.map((embedding) => ({
         resourceId: resource.id,
-        content,
-        embedding: generateRandomEmbedding(), // Generate a 1536-dimensional random embedding
-      }));
-      console.log(embeddings);
-    await db.insert(embeddingsTable).values(embeddings);
+        ...embedding,
+      })),
+    );
     return "Resource successfully created and embedded.";
   } catch (error) {
     return error instanceof Error && error.message.length > 0

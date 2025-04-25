@@ -33,19 +33,16 @@ export async function POST(req: Request) {
           similarQuestions: z.array(z.string()).describe("keywords to search"),
         }),
         execute: async ({ similarQuestions }) => {
-          console.log("===========111111111111============");
+          console.log("===========Calling getInformation============");
           const results = await Promise.all(
             similarQuestions.map(
               async (question) => await findRelevantContent(question)
             )
           );
-          console.log("===========2222222222222222============");
           // Flatten the array of arrays and remove duplicates based on 'name'
           const uniqueResults = Array.from(
             new Map(results.flat().map((item) => [item?.name, item])).values()
           );
-          console.log("===========3333333333333============");
-          console.log(uniqueResults);
           return uniqueResults;
         },
       }),
@@ -60,6 +57,7 @@ export async function POST(req: Request) {
             ),
         }),
         execute: async ({ query }) => {
+          console.log("===========Calling understandQuery============");
           const { object } = await generateObject({
             model: openai("gpt-4o-mini"),
             system:
@@ -78,8 +76,5 @@ export async function POST(req: Request) {
       }),
     },
   });
-  for await (const part of result.textStream) {
-    console.log(part);
-  }
   return result.toDataStreamResponse();
 }
