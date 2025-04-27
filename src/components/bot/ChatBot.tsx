@@ -63,7 +63,7 @@ const ChatBot: React.FC = () => {
   }, [status]);
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
+    <div className="fixed z-40 bottom-4 right-4 sm:bottom-6 sm:right-6">
       {!isOpen ? (
         <button
           onClick={toggleChat}
