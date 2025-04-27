@@ -204,7 +204,7 @@ const Footer = () => {
       </div>
       {showScroll && (
         <div
-          className="fixed bottom-20 right-6 z-30 cursor-pointer rounded-full bg-blue-900/80 p-2 text-white dark:bg-gray-600 dark:text-gray-300"
+          className="fixed bottom-20 right-4 z-30 cursor-pointer rounded-full bg-blue-900/80 p-2 text-white dark:bg-gray-600 dark:text-gray-300"
           onClick={scrollTop}
         >
           <ArrowUp />

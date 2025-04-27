@@ -172,12 +172,11 @@ const ChatBot: React.FC = () => {
                 placeholder="Type a message..."
                 onChange={handleInputChange}
                 autoFocus={true}
-                disabled={status == "submitted"}
                 className="flex-1 rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 type="submit"
-                disabled={status == "submitted"}
+                disabled={status == "submitted" || status === "streaming"}
                 className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-700"
               >
                 <Send size={20} />
