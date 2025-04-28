@@ -75,6 +75,38 @@ const deleteBlog = async (blogId: string) => {
   return res.json();
 };
 
+const getPRs = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pr`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch PRs");
+  return res.json();
+}
+
+const deletePR = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pr/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete PR");
+  return res.json();
+}
+
+const getEvents = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch events");
+  return res.json();
+}
+const deleteEvent = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete event");
+  return res.json();
+}
+
+
 export {
   deleteBlog,
   getAllMembers,
@@ -89,6 +121,10 @@ export {
   getPreRegMembers,
   getProfileData,
   getPublicBlogs,
+  getPRs,
+  deletePR,
+  getEvents,
+  deleteEvent
 };
 
 export default getEvaluations;
