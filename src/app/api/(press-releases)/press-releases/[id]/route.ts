@@ -62,16 +62,17 @@ export async function PATCH(
     }
     if (pr.eventId !== updateData.eventId) {
       await Event.findByIdAndUpdate(pr.eventId, {
-      prId: null,
-    });
-    const updatedPR = await PR.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-    await Event.findByIdAndUpdate(updateData.eventId, {
-      prId: updatedPR._id,
-    });
-    return NextResponse.json(updatedPR, { status: 200 });
+        prId: null,
+      });
+      const updatedPR = await PR.findByIdAndUpdate(id, updateData, {
+        new: true,
+        runValidators: true,
+      });
+      await Event.findByIdAndUpdate(updateData.eventId, {
+        prId: updatedPR._id,
+      });
+      return NextResponse.json(updatedPR, { status: 200 });
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
