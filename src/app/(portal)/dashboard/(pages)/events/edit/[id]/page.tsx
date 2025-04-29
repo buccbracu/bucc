@@ -30,10 +30,12 @@ import { JSONContent } from "novel";
 import defaultValue from "../../default-value";
 import * as XLSX from "xlsx";
 import { formatDateForInput } from "@/helpers/formatDateTime";
+import { useRouter } from "next/navigation";
 
 
 export default function EditEvent() {
   const { id: eventId } = useParams();
+  const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
 
   const [value, setValue] = useState<JSONContent>(defaultValue);
@@ -202,6 +204,7 @@ const [allowedDesignations, setAllowedDesignations] = useState<
         toast.error("Failed to update event");
       } else {
         toast.success("Event updated successfully!");
+        router.back();
       }
     } catch (error) {
       console.error("Error:", error);

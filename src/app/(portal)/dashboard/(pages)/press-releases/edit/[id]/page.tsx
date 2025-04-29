@@ -15,8 +15,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import defaultValue from "../../default-value";
 import { Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function EditPressRelease() {
+  const router = useRouter();
   const { id: pressReleaseId } = useParams();
   const [value, setValue] = useState<JSONContent>(defaultValue);
   const [title, setTitle] = useState("");
@@ -164,6 +166,7 @@ const handleCheckEvent = async () => {
         toast.error("Failed to update press release.");
       } else {
         toast.success("Press release updated successfully!");
+        router.back();
       }
     } catch (error) {
       console.error("Submit error:", error);

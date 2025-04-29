@@ -54,7 +54,6 @@ export async function POST(request: NextRequest) {
       !description ||
       !type ||
       !startingDate ||
-      !featuredImage ||
       !endingDate ||
       !allowedMembers
     ) {
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
       startingDate: new Date(startingDate),
       endingDate: new Date(endingDate),
       allowedMembers,
-      featuredImage: featuredImage || "",
+      featuredImage: featuredImage || null,
       allowedDepartments,
       allowedDesignations,
       notes: notes || "",

@@ -10,11 +10,13 @@ import { extractPublicId } from "@/lib/cloudinary-utils";
 import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { JSONContent } from "novel";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { toast } from "sonner";
 import defaultValue from "../default-value";
+import { useRouter } from "next/navigation";
 
 export default function CreatePressRelease() {
+  const router = useRouter();
   const [value, setValue] = useState<JSONContent>(defaultValue);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -123,6 +125,7 @@ export default function CreatePressRelease() {
         toast.error("Failed to create press release.");
       } else {
         toast.success("Press release created successfully!");
+        router.back();
       }
     } catch (error) {
       console.error("Submit error:", error);

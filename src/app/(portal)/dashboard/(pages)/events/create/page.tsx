@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Editor from "@/components/editor-c/editor/advanced-editor";
 import Heading from "@/components/portal/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,11 +20,11 @@ import { extractPublicId } from "@/lib/cloudinary-utils";
 import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { JSONContent } from "novel";
-import defaultValue from "../default-value";
+
+import { useRouter } from "next/navigation";
 
 export default function CreateEvent() {
-  const [value, setValue] = useState<JSONContent>(defaultValue);
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [venue, setVenue] = useState("");
   const [description, setDescription] = useState("");
@@ -97,7 +96,7 @@ export default function CreateEvent() {
       title,
       venue,
       description,
-      featuredImage,
+      featuredImage: featuredImage || null,
       type,
       needAttendance,
       startingDate: new Date(startingDate),
@@ -120,6 +119,7 @@ export default function CreateEvent() {
         toast.error("Failed to create event");
       } else {
         toast.success("Event created successfully!");
+        router.back();
       }
     } catch (error) {
       console.error("Error:", error);

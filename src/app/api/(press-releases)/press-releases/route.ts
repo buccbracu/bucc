@@ -38,19 +38,20 @@ export async function POST(request: NextRequest) {
   try {
     const { title, description, content, eventId, featuredImage } = body;
 
-    if (!title || !description || !content || !eventId || !featuredImage) {
+    if (!title || !description || !content || !eventId) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
       );
     }
 
+    // If featuredImage is not provided, set it to null
     const newPR = new PR({
       title,
       description,
       content,
       eventId,
-      featuredImage,
+      featuredImage: featuredImage || null, // Default to null if not provided
       createdDate: new Date(),
       lastUpdate: new Date(),
     });
