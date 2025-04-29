@@ -63,7 +63,7 @@ export default function PressReleases() {
               {/* Blog Image with Gradient */}
               <div className="relative h-60 w-full">
                 <Image
-                  src={pr.featuredImage || "/fallback-image.jpg"} // Fallback image
+                  src={pr.featuredImage || "/fallback-image.jpg"} 
                   alt={pr.title}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"

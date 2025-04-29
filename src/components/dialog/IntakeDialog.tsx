@@ -30,9 +30,8 @@ const IntakeDialog = ({ open, onClose }: IntakeDialogProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
     console.log("Form Data:", formData);
-    onClose(); // Close dialog after submission
+    onClose(); 
   };
 
   return (
@@ -40,17 +39,17 @@ const IntakeDialog = ({ open, onClose }: IntakeDialogProps) => {
       {/* Overlay */}
       <Dialog.Overlay
         className="fixed inset-0 z-50 bg-black opacity-60"
-        style={{ zIndex: 999 }} // Ensure high enough z-index to overlay other content
+        style={{ zIndex: 999 }} 
       />
 
       {/* Dialog Content */}
       <Dialog.Content
         className="z-60 fixed left-1/2 top-1/2 w-96 -translate-x-1/2 -translate-y-1/2 transform rounded-lg p-6"
         style={{
-          zIndex: 1000, // Ensure the dialog content sits above everything else
-          maxHeight: "80vh", // Prevent overflow
-          overflowY: "auto", // Allow scroll if the dialog content overflows
-          backgroundColor: "#fff", // Solid white background
+          zIndex: 1000, 
+          maxHeight: "80vh", 
+          overflowY: "auto", 
+          backgroundColor: "#fff", 
         }}
       >
         <Dialog.Title className="mb-4 text-xl font-bold">

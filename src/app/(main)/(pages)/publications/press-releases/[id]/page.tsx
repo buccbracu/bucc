@@ -40,7 +40,7 @@ export default function PressReleaseDetails() {
         const data = await res.json();
         setPressRelease(data);
 
-        // Fetch linked event if eventId exists
+        
         if (data.eventId) {
           const eventRes = await fetch(`/api/events/${data.eventId}`);
           if (!eventRes.ok) throw new Error("Failed to fetch linked event");

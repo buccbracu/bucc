@@ -31,7 +31,7 @@ const filterOptions = [
     type: "select",
     name: "type",
     placeholder: "Filter by type",
-    options: ["Workshop", "Seminar", "Competition", "Meeting", "Other"], // adapt based on your event types
+    options: ["Workshop", "Seminar", "Competition", "Meeting", "Other"], 
   },
 ];
 

@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deletePR, getPRs } from "@/server/actions"; // <-- you need to create these similar to blog ones
+import { deletePR, getPRs } from "@/server/actions"; 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
