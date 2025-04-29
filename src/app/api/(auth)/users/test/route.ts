@@ -1,5 +1,4 @@
 
-import { singleWelcomeMail } from "@/helpers/mailer";
 import { welcomeMail } from "@/helpers/mailTemplates";
 import nodemailer from "nodemailer";
 
@@ -19,12 +18,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     for (let i = 0; i < 160; i++) {
-      await singleWelcomeMail(
-        "64f3a2b0c4d5e1f8b8c8b8b8",
-        "John Doe",
-        "tashfeen.azmaine@g.bracu.ac.bd",
-        "Iwonttellyoupass"
-    );
     const mailOptions = {
       from: process.env.GMAIL_USERNAME,
       to: "tashfeen.azmaine@g.bracu.ac.bd",
