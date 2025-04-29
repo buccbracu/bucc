@@ -30,4 +30,3 @@ How to Contribute
 
 Thank you for contributing to the Brac University Computer Club website! Your efforts help us grow and make our club’s digital presence better for everyone.
 
-Happy coding!
