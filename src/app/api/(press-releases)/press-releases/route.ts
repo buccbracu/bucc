@@ -1,6 +1,8 @@
 import { hasAuth } from "@/helpers/hasAuth";
 import dbConnect from "@/lib/dbConnect";
 import PR from "@/model/PR";
+import Event from "@/model/Event";
+
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDesignations = ["Director", "Assistant Director"];
@@ -54,6 +56,9 @@ export async function POST(request: NextRequest) {
     });
 
     const savedPR = await newPR.save();
+    await Event.findByIdAndUpdate(body.eventId, {
+      prId: newPR._id,
+    });
 
     // (Optional) You could add notification logic here if needed for PRs
     // await sendTopicNotification({...})

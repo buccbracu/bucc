@@ -190,7 +190,7 @@ const [allowedDesignations, setAllowedDesignations] = useState<
     };
 
     try {
-      const res = await fetch(`/api/event/${eventId}`, {
+      const res = await fetch(`/api/events/${eventId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -247,7 +247,7 @@ const [allowedDesignations, setAllowedDesignations] = useState<
             onChange={(e) => setDescription(e.target.value)}
             className="w-full rounded border p-2"
           />
-          <Editor editable={true} initialValue={value} onChange={setValue} />
+          {/* <Editor editable={true} initialValue={value} onChange={setValue} /> */}
           <Textarea
             placeholder="Notes (Optional)"
             value={notes}

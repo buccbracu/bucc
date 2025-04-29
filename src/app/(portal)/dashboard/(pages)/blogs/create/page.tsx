@@ -28,9 +28,9 @@ export default function CreateBlog() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [featuredImage, setFeaturedImage] = useState<string | null>(null);
-  const [status, setStatus] = useState("draft"); // Default status
-  const [category, setCategory] = useState(""); // Selected category
-  const [tags, setTags] = useState<{ value: string; label: string }[]>([]); // Array of tag objects
+  const [status, setStatus] = useState("draft");
+  const [category, setCategory] = useState(""); 
+  const [tags, setTags] = useState<{ value: string; label: string }[]>([]); 
   const [isUploading, setIsUploading] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ export default function CreateBlog() {
       setIsUploading(true);
       try {
         const imageUrl = await uploadImage(file, "blog");
-        setFeaturedImage(imageUrl); // Update your state with the uploaded image URL
+        setFeaturedImage(imageUrl); 
         toast.success("Image uploaded successfully!");
       } catch (error) {
         console.error("Image upload failed:", error);

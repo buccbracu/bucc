@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       startingDate: new Date(startingDate),
       endingDate: new Date(endingDate),
       allowedMembers,
-      featuredImage,
+      featuredImage: featuredImage || "",
       allowedDepartments,
       allowedDesignations,
       notes: notes || "",

@@ -110,7 +110,7 @@ export default function CreateEvent() {
     };
 
     try {
-      const res = await fetch("/api/event", {
+      const res = await fetch("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -154,7 +154,7 @@ export default function CreateEvent() {
             onChange={(e) => setDescription(e.target.value)}
             className="w-full rounded border p-2"
           />
-          <Editor editable={true} initialValue={value} onChange={setValue} />
+          {/* <Editor editable={true} initialValue={value} onChange={setValue} /> */}
           <Textarea
             placeholder="Notes (Optional)"
             value={notes}

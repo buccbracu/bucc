@@ -95,17 +95,17 @@ const deletePR = async (id: string) => {
 }
 
 const getEvents = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`);
   if (!res.ok) throw new Error("Failed to fetch events");
   return res.json();
 }
 const getEvent = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`);
   if (!res.ok) throw new Error("Failed to fetch event");
   return res.json();
 }
 const deleteEvent = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`, {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Failed to delete event");
