@@ -15,9 +15,9 @@ const EventSchema = new mongoose.Schema(
       required: true,
     },
     featuredImage: {
-    type: String,
-    required: false,
-  },
+      type: String,
+      required: false,
+    },
     type: {
       type: String,
       required: true,
@@ -34,12 +34,7 @@ const EventSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    attendance: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "MemberInfo",
-      },
-    ],
+    attendance: [Number],
     prId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "PR",

@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import  departments  from "@/constants/departments";
-import  designations  from "@/constants/designations";
+import departments from "@/constants/departments";
+import designations from "@/constants/designations";
 import MultipleSelector from "@/components/ui/multiple-selector";
 import { uploadImage } from "@/lib/client-cloudinary";
 import { extractPublicId } from "@/lib/cloudinary-utils";
@@ -36,14 +36,22 @@ export default function CreateEvent() {
   const [endingDate, setEndingDate] = useState("");
   const [allowedMembers, setAllowedMembers] = useState("");
   const [allowedDepartments, setAllowedDepartments] = useState<
-    { value: string; label: string }[]
+    {
+      value: string;
+      label: string;
+    }[]
   >([]);
   const [allowedDesignations, setAllowedDesignations] = useState<
-    { value: string; label: string }[]
+    {
+      value: string;
+      label: string;
+    }[]
   >([]);
   const [notes, setNotes] = useState("");
+  const studentIDs:string[] = [];
   const [isUploading, setIsUploading] = useState(false);
 
+  // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -61,6 +69,7 @@ export default function CreateEvent() {
     }
   };
 
+  // Handle image delete
   const handleImageDelete = async () => {
     if (featuredImage) {
       const publicId = extractPublicId(featuredImage);
@@ -82,6 +91,7 @@ export default function CreateEvent() {
     }
   };
 
+  // Submit event data
   const handleSubmit = async () => {
     const data = {
       title,
@@ -90,12 +100,13 @@ export default function CreateEvent() {
       featuredImage,
       type,
       needAttendance,
-      startingDate,
-      endingDate,
+      startingDate: new Date(startingDate),
+      endingDate: new Date(endingDate),
       allowedMembers,
       allowedDepartments: allowedDepartments.map((d) => d.value),
       allowedDesignations: allowedDesignations.map((d) => d.value),
       notes,
+      attendance: studentIDs,
     };
 
     try {
@@ -150,6 +161,7 @@ export default function CreateEvent() {
             onChange={(e) => setNotes(e.target.value)}
             className="w-full rounded border p-2"
           />
+          
         </div>
 
         {/* Right Panel */}
@@ -235,9 +247,9 @@ export default function CreateEvent() {
               <h2 className="text-lg font-semibold">Allowed Departments</h2>
               <MultipleSelector
                 options={departments.map((dep) => ({
-                                value: dep.title,
-                                label: dep.title,
-                              }))}
+                  value: dep.title,
+                  label: dep.title,
+                }))}
                 value={allowedDepartments}
                 onChange={(options) => setAllowedDepartments(options)}
                 placeholder="Add Departments..."
@@ -247,9 +259,9 @@ export default function CreateEvent() {
               <h2 className="text-lg font-semibold">Allowed Designations</h2>
               <MultipleSelector
                 options={designations.map((des) => ({
-                                value: des.title,
-                                label: des.title,
-                              }))}
+                  value: des.title,
+                  label: des.title,
+                }))}
                 value={allowedDesignations}
                 onChange={(options) => setAllowedDesignations(options)}
                 placeholder="Add Designations..."

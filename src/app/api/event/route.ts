@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
       allowedDepartments,
       allowedDesignations,
       notes,
+      attendance, // <-- receive attendance from body
     } = body;
 
     if (
@@ -63,20 +64,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Optional: Validate attendance
+    if (
+      attendance &&
+      (!Array.isArray(attendance) ||
+        !attendance.every((a) => typeof a === "number"))
+    ) {
+      return NextResponse.json(
+        { error: "Attendance must be an array of numbers" },
+        { status: 400 },
+      );
+    }
+
     const newEvent = new Event({
       title,
       venue,
       description,
       type,
       needAttendance: needAttendance ?? false,
-      startingDate,
-      endingDate,
+      startingDate: new Date(startingDate),
+      endingDate: new Date(endingDate),
       allowedMembers,
       featuredImage,
       allowedDepartments,
       allowedDesignations,
       notes: notes || "",
-      attendance: [], // initialize empty
+      attendance: attendance || [], // <-- set attendance if provided, otherwise empty
       prId: null, // initially no PR attached
     });
 

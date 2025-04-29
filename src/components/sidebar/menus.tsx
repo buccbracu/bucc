@@ -198,8 +198,8 @@ const menus = [
     ],
   },
   {
-    title: "Event",
-    path: "/dashboard/event",
+    title: "Events",
+    path: "/dashboard/events",
     icon: Calendar,
     variant: "ghost",
     access_department: [
@@ -217,8 +217,8 @@ const menus = [
     ],
   },
   {
-    title: "Press Resleases",
-    path: "/dashboard/pr",
+    title: "Press Releases",
+    path: "/dashboard/press-releases",
     icon: Newspaper,
     variant: "ghost",
     access_department: [

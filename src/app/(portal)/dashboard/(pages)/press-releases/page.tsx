@@ -61,7 +61,7 @@ export default function PressReleases() {
   };
 
   const handleEdit = (prId: string) => {
-    window.location.href = `/dashboard/pr/edit/${prId}`;
+    window.location.href = `/dashboard/press-releases/edit/${prId}`;
   };
 
   const filteredData = prs.filter((pr: any) => {
@@ -149,7 +149,9 @@ export default function PressReleases() {
         <Button
           variant="default"
           size="lg"
-          onClick={() => (window.location.href = "/dashboard/pr/create")}
+          onClick={() =>
+            (window.location.href = "/dashboard/press-releases/create")
+          }
         >
           Create PR
         </Button>

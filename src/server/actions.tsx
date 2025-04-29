@@ -76,7 +76,7 @@ const deleteBlog = async (blogId: string) => {
 };
 
 const getPRs = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pr`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/press-releases`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to fetch PRs");
@@ -84,18 +84,24 @@ const getPRs = async () => {
 }
 
 const deletePR = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pr/${id}`, {
-    method: "DELETE",
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/press-releases/${id}`,
+    {
+      method: "DELETE",
+    },
+  );
   if (!res.ok) throw new Error("Failed to delete PR");
   return res.json();
 }
 
 const getEvents = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event`, {
-    cache: "no-store",
-  });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event`);
   if (!res.ok) throw new Error("Failed to fetch events");
+  return res.json();
+}
+const getEvent = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch event");
   return res.json();
 }
 const deleteEvent = async (id: string) => {
@@ -124,6 +130,7 @@ export {
   getPRs,
   deletePR,
   getEvents,
+  getEvent,
   deleteEvent
 };
 

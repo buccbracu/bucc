@@ -18,26 +18,6 @@ export default function CreatePR() {
   const [unlinkedEvents, setUnlinkedEvents] = useState<Option[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Option[]>([]);
 
-  useEffect(() => {
-    async function fetchEvents() {
-      try {
-        const response = await fetch("/api/events/unlinked"); // your real API endpoint for unlinked events
-        const events = await response.json();
-
-        const options: Option[] = events.map((event: any) => ({
-          label: event.name, // adapt if it's event.title or another field
-          value: event.id,
-        }));
-
-        setUnlinkedEvents(options);
-      } catch (error) {
-        console.error("Failed to fetch events", error);
-        toast.error("Failed to load events");
-      }
-    }
-
-    fetchEvents();
-  }, []);
 
   const handleSubmit = async () => {
     if (selectedEvent.length === 0) {
@@ -49,7 +29,7 @@ export default function CreatePR() {
       title,
       description,
       body: value?.content,
-      eventId: selectedEvent[0].value, // use selected event id
+      eventId: selectedEvent[0].value,
     };
 
     try {
