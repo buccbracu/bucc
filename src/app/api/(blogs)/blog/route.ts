@@ -3,7 +3,6 @@ import dbConnect from "@/lib/dbConnect";
 import Blog from "@/model/Blog";
 import { NextRequest, NextResponse } from "next/server";
 import { sendTopicNotification } from "@/lib/firebase/notification";
-
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
 
@@ -23,17 +22,6 @@ export async function POST(request: NextRequest) {
   }
 
   const user = session.user;
-
-  let body;
-  try {
-    body = await request.json();
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Invalid or missing JSON body" },
-      { status: 400 },
-    );
-  }
-
   try {
     const {
       title,
@@ -43,8 +31,7 @@ export async function POST(request: NextRequest) {
       category,
       tags,
       status,
-    } = body;
-
+    } = await request.json();
     if (!title || !description || !featuredImage || !content || !category) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -85,7 +72,6 @@ export async function POST(request: NextRequest) {
         body: notificationBody,
         topic: "blog",
       });
-
       console.log("Notification Response:", notificationResponse);
     }
 
@@ -95,12 +81,52 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const publicView = searchParams.get("publicView");
 
-export async function GET() {
+  // If `publicView` query param is present, fetch all blogs and skip session/auth checks
+  if (publicView) {
+    try {
+      await dbConnect();
+      const blogs = await Blog.find({ status: "published" }).sort({
+        createdDate: -1,
+      });
+      return NextResponse.json(blogs, { status: 200 });
+    } catch (error: any) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
+
+  // Otherwise, proceed with session/auth checks
+  const { session, isPermitted } = await hasAuth(
+    permittedDesignations,
+    permittedDepartments,
+  );
+
+  if (!session) {
+    return NextResponse.json(
+      { message: "You are not authorized to view this page" },
+      { status: 401 },
+    );
+  }
+
+  await dbConnect();
+
+  const userId = session!.user.id;
+
   try {
-    await dbConnect();
+    let blogs;
 
-    const blogs = await Blog.find().sort({ createdDate: -1 }); // Sort by newest first
+    if (isPermitted) {
+      // Admin/Permitted users can view all blogs
+      blogs = await Blog.find().sort({ createdDate: -1 });
+    } else {
+      // Regular users can only view their own blogs
+      blogs = await Blog.find({ "author.authorId": userId }).sort({
+        createdDate: -1,
+      });
+    }
     return NextResponse.json(blogs, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
