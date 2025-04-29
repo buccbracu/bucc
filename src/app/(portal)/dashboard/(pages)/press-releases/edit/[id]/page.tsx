@@ -156,6 +156,14 @@ const handleCheckEvent = async () => {
     };
 
     try {
+      if (eventDetails == null) {
+        toast.error("Please check the event ID.");
+        return;
+      }
+      if (eventDetails.prId != null){
+        toast.error("Event already linked to another press release.");
+        return;
+      }
       const res = await fetch(`/api/press-releases/${pressReleaseId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
