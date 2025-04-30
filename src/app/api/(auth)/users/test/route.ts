@@ -15,13 +15,18 @@ const transporter = nodemailer.createTransport({
   maxMessages: Infinity,
   rateLimit: 5,
 });
+const API_SECRET = "mySuperSecret123";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
+    if (body.secret !== API_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     for (let i = 0; i < 160; i++) {
       const mailOptions = {
         from: process.env.GMAIL_USERNAME,
-        to: "tashfeen.azmaine@g.bracu.ac.bd",
+        to: "hossainhasib39@g.bracu.ac.bd",
         subject: "Welcome to BUCC Portal",
         text: welcomeMail(
           "John Doe",
