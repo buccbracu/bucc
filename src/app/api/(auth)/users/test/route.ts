@@ -15,18 +15,33 @@ const transporter = nodemailer.createTransport({
   maxMessages: Infinity,
   rateLimit: 5,
 });
+
 const API_SECRET = "mySuperSecret123";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    // Protection
     if (body.secret !== API_SECRET) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    for (let i = 0; i < 160; i++) {
+
+    const recipientEmail = body.email;
+    const emailCount = body.count;
+
+    if (!recipientEmail || !emailCount) {
+      return NextResponse.json(
+        { error: "Please provide both 'email' and 'count' in body" },
+        { status: 400 },
+      );
+    }
+
+    // Send emails
+    for (let i = 0; i < emailCount; i++) {
       const mailOptions = {
         from: process.env.GMAIL_USERNAME,
-        to: "hossainhasib39@g.bracu.ac.bd",
+        to: recipientEmail,
         subject: "Welcome to BUCC Portal",
         text: welcomeMail(
           "John Doe",
@@ -39,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: "Register Successful" },
+      { message: `Sent ${emailCount} emails to ${recipientEmail}` },
       { status: 200 },
     );
   } catch (error: any) {
