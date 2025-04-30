@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.GMAIL_APP_SECRET,
   },
   pool: true,
-  maxConnections: 5,
+  maxConnections: 15,
   maxMessages: Infinity,
   rateLimit: 5,
 });
@@ -22,39 +22,44 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Protection
     if (body.secret !== API_SECRET) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const recipientEmail = body.email;
-    const emailCount = body.count;
+    const emails: string[] = body.emails;
 
-    if (!recipientEmail || !emailCount) {
+    if (!emails || !Array.isArray(emails) || emails.length === 0) {
       return NextResponse.json(
-        { error: "Please provide both 'email' and 'count' in body" },
+        { error: "Please provide an 'emails' array in body" },
         { status: 400 },
       );
     }
 
-    // Send emails
-    for (let i = 0; i < emailCount; i++) {
+    if (emails.length > 200) {
+      return NextResponse.json(
+        { error: "Max 200 emails allowed per request" },
+        { status: 400 },
+      );
+    }
+
+    const sendPromises = emails.map((email) => {
       const mailOptions = {
         from: process.env.GMAIL_USERNAME,
-        to: recipientEmail,
+        to: email,
         subject: "Welcome to BUCC Portal",
         text: welcomeMail(
-          "John Doe",
+          "John Doe", 
           "tashfeen.azmaine@g.bracu.ac.bd",
           "Iwonttellyoupass",
         ),
       };
+      return transporter.sendMail(mailOptions);
+    });
 
-      await transporter.sendMail(mailOptions);
-    }
+    await Promise.all(sendPromises);
 
     return NextResponse.json(
-      { message: `Sent ${emailCount} emails to ${recipientEmail}` },
+      { message: `Sent ${emails.length} emails successfully` },
       { status: 200 },
     );
   } catch (error: any) {
