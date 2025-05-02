@@ -10,10 +10,12 @@ import { extractPublicId } from "@/lib/cloudinary-utils";
 import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { JSONContent } from "novel";
-import {useState } from "react";
+import {useState, useEffect } from "react";
 import { toast } from "sonner";
 import defaultValue from "../default-value";
 import { useRouter } from "next/navigation";
+import EventSearchDropdown from "../EventSearchDropdown";
+
 
 export default function CreatePressRelease() {
   const router = useRouter();
@@ -25,39 +27,13 @@ export default function CreatePressRelease() {
  const [eventDetails, setEventDetails] = useState<null | {
    title: string;
    startingDate: string;
-   prId: string;
+   prId: string | null;
  }>(null);
- const [eventCheckLoading, setEventCheckLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
 
 
-  const handleCheckEvent = async () => {
-  if (!eventId) {
-    toast.error("Please enter an Event ID");
-    return;
-  }
 
-  setEventCheckLoading(true);
-  try {
-    const res = await fetch(`/api/events/${eventId}`);
-    if (!res.ok) throw new Error("Event not found");
-
-    const data = await res.json();
-    setEventDetails({
-      title: data.title,
-      startingDate: data.startingDate,
-      prId: data.prId,
-    });
-    toast.success("Event found!");
-  } catch (error) {
-    setEventDetails(null);
-    console.error(error);
-    toast.error("Event not found or failed to check.");
-  } finally {
-    setEventCheckLoading(false);
-  }
-};
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,14 +83,7 @@ export default function CreatePressRelease() {
     };
 
     try {
-      if (!eventDetails) {
-        toast.error("Please check the event details first.");
-        return;
-      }
-      if (eventDetails.prId != null) {
-        toast.error("Press release already exists for this event.");
-        return;
-      }
+      console.log("Submitting data:", JSON.stringify(eventId));
       const res = await fetch("/api/press-releases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -191,18 +160,17 @@ export default function CreatePressRelease() {
           )}
 
           <div>
-            <h2 className="text-lg font-semibold">Event ID</h2>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter Event Object ID"
-                value={eventId}
-                onChange={(e) => setEventId(e.target.value)}
-                className="w-full rounded border p-2"
-              />
-              <Button onClick={handleCheckEvent} disabled={eventCheckLoading}>
-                {eventCheckLoading ? "Checking..." : "Check"}
-              </Button>
-            </div>
+            <h2 className="text-lg font-semibold">Select Event</h2>
+            <EventSearchDropdown
+              onSelect={(event) => {
+                setEventDetails({
+                  title: event.title,
+                  startingDate: event.startingDate,
+                  prId: event.prId,
+                });
+                setEventId(event._id);
+              }}
+            />
 
             {eventDetails && (
               <div className="mt-4 rounded border bg-muted p-4">
