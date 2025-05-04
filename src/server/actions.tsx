@@ -51,7 +51,6 @@ const getMemberData = async (memberId: string) => {
 
 const getBlog = async (blogId: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog/${blogId}`);
-
   return res.json();
 };
 
@@ -74,6 +73,50 @@ const deleteBlog = async (blogId: string) => {
 
   return res.json();
 };
+const getPR = async (prId: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/press-releases/${prId}`,
+  );
+  return res.json();
+};
+
+const getPRs = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/press-releases`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch PRs");
+  return res.json();
+}
+
+const deletePR = async (id: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/press-releases/${id}`,
+    {
+      method: "DELETE",
+    },
+  );
+  if (!res.ok) throw new Error("Failed to delete PR");
+  return res.json();
+}
+
+const getEvents = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`);
+  if (!res.ok) throw new Error("Failed to fetch events");
+  return res.json();
+}
+const getEvent = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch event");
+  return res.json();
+}
+const deleteEvent = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete event");
+  return res.json();
+}
+
 
 export {
   deleteBlog,
@@ -89,6 +132,12 @@ export {
   getPreRegMembers,
   getProfileData,
   getPublicBlogs,
+  getPR,
+  getPRs,
+  deletePR,
+  getEvents,
+  getEvent,
+  deleteEvent
 };
 
 export default getEvaluations;

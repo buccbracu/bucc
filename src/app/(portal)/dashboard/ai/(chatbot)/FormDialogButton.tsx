@@ -45,7 +45,7 @@ export default function FormDialogButton() {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder="Enter your long chatbot training data or prompt here..."
-          className="w-full resize-none rounded-md border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring"
+          className="w-full resize-none overflow-hidden rounded-md border border-gray-700 bg-black px-4 py-3 text-sm text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring"
         />
       </FormDialog>
     </>

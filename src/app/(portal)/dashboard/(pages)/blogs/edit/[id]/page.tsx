@@ -27,6 +27,8 @@ import { JSONContent } from "novel";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import defaultValue from "../../default-value";
+import { useRouter } from "next/navigation"; // Add this import
+
 
 const permittedDepartments = [
   "Governing Body",
@@ -44,6 +46,7 @@ const permittedDesignations = [
 
 export default function EditBlog() {
   const { id: blogId } = useParams();
+  const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
 
   const [value, setValue] = useState<JSONContent>(defaultValue);
@@ -146,6 +149,7 @@ export default function EditBlog() {
         toast.error("Failed to update blog");
       } else {
         toast.success("Blog updated successfully!");
+        router.back();
       }
     } catch (error) {
       console.error("Error:", error);
