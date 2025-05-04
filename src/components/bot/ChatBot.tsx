@@ -52,6 +52,17 @@ const ChatBot: React.FC = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+ const handleResize = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const textarea = event.target;
+
+  textarea.style.height = 'auto';
+  
+  const maxHeight = 4 * 24; 
+
+  textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+};
+
+
 
   useEffect(() => {
     scrollToBottom();
@@ -63,7 +74,7 @@ const ChatBot: React.FC = () => {
   }, [status]);
 
   return (
-    <div className="fixed z-40 bottom-4 right-4 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-4 right-4 z-40 sm:bottom-6 sm:right-6">
       {!isOpen ? (
         <button
           onClick={toggleChat}
@@ -164,16 +175,18 @@ const ChatBot: React.FC = () => {
               onSubmit={handleSubmit}
               className="flex items-center space-x-2"
             >
-              <input
+              <textarea
                 autoComplete="off"
-                type="text"
                 name="input-message"
                 value={input}
                 placeholder="Type a message..."
                 onChange={handleInputChange}
+                onInput={handleResize}
                 autoFocus={true}
-                className="flex-1 rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={1}
+                className="flex-1 resize-none overflow-hidden rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
               <button
                 type="submit"
                 disabled={status == "submitted" || status === "streaming"}

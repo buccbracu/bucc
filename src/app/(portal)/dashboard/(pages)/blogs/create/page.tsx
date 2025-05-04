@@ -66,7 +66,7 @@ export default function CreateBlog() {
           throw new Error("Failed to delete image");
         }
 
-        setFeaturedImage(null); // Clear the state
+        setFeaturedImage(null); 
         toast.success("Image deleted successfully!");
       } catch (error) {
         console.error(error);
