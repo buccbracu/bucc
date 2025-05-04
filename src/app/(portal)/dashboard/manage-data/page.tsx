@@ -18,16 +18,25 @@ export default function ManageData() {
         <CompleteRegistrationCard />
         <RegisterExistingMembersCard />
         <DownloadCSVCard
-          url="http://localhost:3000/api/preregistration"
+        title="Pre-Registration Data"
+        description="This is the data of the members who have pre-registered. You can download the data from this page clicking the button below. The data will be downloaded in a zip file."
+          url="/api/preregistration"
           fileName="PreRegMemberInfos"
+          isDisabled={true}
         />
         <DownloadCSVCard
-          url="http://localhost:3000/api/members"
+        title="Member Data"
+        description="This is the data of the members who have registered. You can download the data from this page clicking the button below. The data will be downloaded in a zip file."
+          url="/api/members"
           fileName="MemberInfos"
+          isDisabled={false}
         />
         <DownloadCSVCard
-          url="http://localhost:3000/api/ebassessment"
+        title="Evaluation Data"
+        description="This is the data of the members who have registered. You can download the data from this page clicking the button below. The data will be downloaded in a zip file."
+          url="/api/ebassessment"
           fileName="EbassessmentInfos"
+          isDisabled={true}
         />
       </div>
     </main>

@@ -1,5 +1,4 @@
 "use client";
-
 import Editor from "@/components/editor-c/editor/advanced-editor";
 import Heading from "@/components/portal/heading";
 import SpinnerComponent from "@/components/SpinnerComponent";
@@ -13,99 +12,82 @@ import Image from "next/image";
 import { JSONContent } from "novel";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { getPR } from "@/server/actions";
 import defaultValue from "../../default-value";
 import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/context/UserContext";
 
 export default function EditPressRelease() {
-  const router = useRouter();
-  const { id: pressReleaseId } = useParams();
-  const [value, setValue] = useState<JSONContent>(defaultValue);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [featuredImage, setFeaturedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
+    const { id: prId } = useParams();
+    const router = useRouter();
+    const { user, isLoading: isUserLoading } = useUser();
+  
+    const [value, setValue] = useState<JSONContent>(defaultValue);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [featuredImage, setFeaturedImage] = useState<string | null>(null);
+    const [status, setStatus] = useState("draft");
+    const [category, setCategory] = useState("");
+    const [tags, setTags] = useState<{ value: string; label: string }[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+  
 
-  const [eventId, setEventId] = useState(""); // Linked Event ID
-  const [eventDetails, setEventDetails] = useState<null | {
-    title: string;
-    startingDate: string;
-    prId: string | null;
-  }>(null);
-  const [eventCheckLoading, setEventCheckLoading] = useState(false);
+  // const [eventId, setEventId] = useState("");
+  // const [eventDetails, setEventDetails] = useState<null | {
+  //   title: string;
+  //   startingDate: string;
+  //   prId: string | null;
+  // }>(null);
+  // const [eventCheckLoading, setEventCheckLoading] = useState(false);
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/press-releases/${pressReleaseId}`);
-        if (!res.ok) throw new Error("Failed to fetch press release");
-        const data = await res.json();
+ const { data, isLoading, isError } = useQuery({
+   queryKey: ["pr", prId],
+   queryFn: () => getPR(prId as string),
+ });
 
-        setTitle(data.title || "");
-        setDescription(data.description || "");
-        setFeaturedImage(data.featuredImage || null);
-        setEventId(data.eventId || "");
-        setValue({
-          type: "doc",
-          content: data.content,
-        });
+ useEffect(() => {
+   if (data) {
+     setTitle(data.title || "");
+     setDescription(data.description || "");
+     setFeaturedImage(data.featuredImage || null);
 
-        if (data.eventId) {
-          try {
-            const eventRes = await fetch(`/api/events/${data.eventId}`);
-            if (!eventRes.ok) throw new Error("Event not found");
+     setValue({
+       type: "doc",
+       content: data.content,
+     });
 
-            const eventData = await eventRes.json();
-            setEventDetails({
-              title: eventData.title,
-              startingDate: eventData.startingDate,
-              prId: eventData.prId,
-            });
-          } catch (eventError) {
-            console.error("Error fetching linked event:", eventError);
-            toast.error("Failed to fetch linked event.");
-          }
-        }
+   }
+ }, [data]);
 
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching press release:", error);
-        toast.error("Failed to load press release.");
-        setIsLoading(false);
-      }
-    };
+// const handleCheckEvent = async () => {
+//   if (!eventId) {
+//     toast.error("Please enter an Event ID");
+//     return;
+//   }
 
-    fetchData();
-  }, [pressReleaseId]);
+//   setEventCheckLoading(true);
+//   try {
+//     const res = await fetch(`/api/events/${eventId}`);
+//     if (!res.ok) throw new Error("Event not found");
 
-const handleCheckEvent = async () => {
-  if (!eventId) {
-    toast.error("Please enter an Event ID");
-    return;
-  }
-
-  setEventCheckLoading(true);
-  try {
-    const res = await fetch(`/api/events/${eventId}`);
-    if (!res.ok) throw new Error("Event not found");
-
-    const data = await res.json();
-    setEventDetails({
-      title: data.title,
-      startingDate: data.startingDate,
-      prId: data.prId,
-    });
-    toast.success("Event found!");
-  } catch (error) {
-    setEventDetails(null);
-    console.error(error);
-    toast.error("Event not found or failed to check.");
-  } finally {
-    setEventCheckLoading(false);
-  }
-};
+//     const data = await res.json();
+//     setEventDetails({
+//       title: data.title,
+//       startingDate: data.startingDate,
+//       prId: data.prId,
+//     });
+//     toast.success("Event found!");
+//   } catch (error) {
+//     setEventDetails(null);
+//     console.error(error);
+//     toast.error("Event not found or failed to check.");
+//   } finally {
+//     setEventCheckLoading(false);
+//   }
+// };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -147,24 +129,24 @@ const handleCheckEvent = async () => {
 
   const handleSubmit = async () => {
     const data = {
-      id: pressReleaseId,
+      id: prId,
       title,
       description,
       featuredImage,
       content: value?.content,
-      eventId,
+      // eventId,
     };
 
     try {
-      if (eventDetails == null) {
-        toast.error("Please check the event ID.");
-        return;
-      }
-      if (eventDetails.prId != null){
-        toast.error("Event already linked to another press release.");
-        return;
-      }
-      const res = await fetch(`/api/press-releases/${pressReleaseId}`, {
+      // if (eventDetails == null) {
+      //   toast.error("Please check the event ID.");
+      //   return;
+      // }
+      // if (eventDetails.prId != null){
+      //   toast.error("Event already linked to another press release.");
+      //   return;
+      // }
+      const res = await fetch(`/api/press-releases/${prId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -245,7 +227,7 @@ const handleCheckEvent = async () => {
             </>
           )}
 
-          <div>
+          {/* <div>
             <h2 className="text-lg font-semibold">Linked Event ID</h2>
             <div className="flex gap-2">
               <Input
@@ -278,7 +260,7 @@ const handleCheckEvent = async () => {
                 </p>
               </div>
             )}
-          </div>
+          </div> */}
 
           <Button onClick={handleSubmit}>Update Press Release</Button>
         </div>

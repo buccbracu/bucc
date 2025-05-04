@@ -51,7 +51,6 @@ const getMemberData = async (memberId: string) => {
 
 const getBlog = async (blogId: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog/${blogId}`);
-
   return res.json();
 };
 
@@ -72,6 +71,12 @@ const deleteBlog = async (blogId: string) => {
     method: "DELETE",
   });
 
+  return res.json();
+};
+const getPR = async (prId: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/press-releases/${prId}`,
+  );
   return res.json();
 };
 
@@ -127,6 +132,7 @@ export {
   getPreRegMembers,
   getProfileData,
   getPublicBlogs,
+  getPR,
   getPRs,
   deletePR,
   getEvents,

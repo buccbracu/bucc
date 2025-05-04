@@ -10,25 +10,31 @@ import {
 import exportFromJSON from "export-from-json";
 
 const DownloadCSVCard = ({
+  title,
+  description,
   url,
   fileName,
+  isDisabled
 }: {
+  title?: string;
+  description?: string;
   url: string;
   fileName: string;
+  isDisabled:boolean
 }) => {
   const exportType = exportFromJSON.types.csv;
 
   return (
     <Card className="flex h-full flex-col justify-between sm:w-full">
-      <CardHeader>Download CSV</CardHeader>
+      <CardHeader>{title}</CardHeader>
       <CardContent>
         <p>
-          You can download the data from the database in CSV format by clicking
-          the button below.
+         {description}
         </p>
       </CardContent>
       <CardFooter>
         <Button
+        disabled={isDisabled}
           className="mx-3"
           onClick={() => {
             fetch(url)

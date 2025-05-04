@@ -30,11 +30,6 @@ export default function CreatePressRelease() {
    prId: string | null;
  }>(null);
   const [isUploading, setIsUploading] = useState(false);
-
-
-
-
-
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -79,7 +74,7 @@ export default function CreatePressRelease() {
       description,
       content: value?.content,
       featuredImage,
-      eventId,
+      // eventId,
     };
 
     try {
@@ -159,7 +154,7 @@ export default function CreatePressRelease() {
             </>
           )}
 
-          <div>
+          {/* <div>
             <h2 className="text-lg font-semibold">Select Event</h2>
             <EventSearchDropdown
               onSelect={(event) => {
@@ -191,7 +186,7 @@ export default function CreatePressRelease() {
                 </p>
               </div>
             )}
-          </div>
+          </div> */}
 
           <Button onClick={handleSubmit}>Publish Press Release</Button>
         </div>

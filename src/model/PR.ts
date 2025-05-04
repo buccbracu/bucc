@@ -20,7 +20,8 @@ const PRSchema = new mongoose.Schema({
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Event",
-    required: true,
+    required: false,
+    default: null,
   },
   createdDate: {
     type: Date,
