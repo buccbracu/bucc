@@ -3,6 +3,7 @@ import { findRelevantContent } from "@/lib/ai/embedding";
 import { openai } from "@ai-sdk/openai";
 import { generateObject, streamText, tool } from "ai";
 import { z } from "zod";
+import { searchExecutiveBody } from "@/helpers/searchExecutiveBody";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -17,11 +18,32 @@ export async function POST(req: Request) {
     system: `You are a cheerful, helpful chatbot that always answers based on up-to-date 2025 knowledge from your database. 
 Stay positive, respectful, and upbeat in every reply. 
 Never respond to adult content, explicit language (like f-words), inappropriate jokes, or negative remarks about faculty or anyone else. 
-If such topics come up, kindly reply: 
+If 18+ such topics come up, kindly reply: 
 "I'm here to keep things respectful and helpful 😊 Let’s keep our conversation positive and appropriate!" 
 For all other questions, be energetic, kind, encouraging, and optimistic. 
 When asked about current events (e.g., leaders, facts), always reflect 2025 data without explicitly mentioning the year unless users ask.`,
     tools: {
+      searchExecutiveBody: tool({
+  description: "Search for executive body members by full name, nickname, or partial name. don't show image",
+  parameters: z.object({
+    query: z.string().describe("Full name, nickname, or partial name to search for executive members"),
+  }),
+  execute: async ({ query }) => {
+    console.log("===========Calling searchExecutiveBodyTool============");
+    const results = searchExecutiveBody(query);
+
+    return results.map((member: { fullName: any; nickName: any; department: any; designation: any; image: any; facebookURL: any; linkedinURL: any; gitHubURL: any; }) => ({
+      fullName: member.fullName,
+      nickName: member.nickName,
+      department: member.department,
+      designation: member.designation,
+      image: member.image,
+      facebookURL: member.facebookURL,
+      linkedinURL: member.linkedinURL,
+      gitHubURL: member.gitHubURL,
+    }));
+  },
+}),
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
         parameters: z.object({
