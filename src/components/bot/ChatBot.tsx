@@ -183,6 +183,12 @@ const ChatBot: React.FC = () => {
                 onChange={handleInputChange}
                 onInput={handleResize}
                 autoFocus={true}
+                onKeyDown={(e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); 
+      handleSubmit(e);   
+    }
+  }}
                 rows={1}
                 className="flex-1 resize-none overflow-hidden rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
