@@ -1,10 +1,10 @@
 // Intake Info
 const intakeInfo = {
-  intakeName: "Spring 2025",
-  intakeStartDate: "2025-03-03",
-  intakeEndDate: "2025-04-20",
-  isIntakeActive: false,
-  isEvaluationActive: false,
+  intakeName: "Summer 2025",
+  intakeStartDate: "2025-07-07",
+  intakeEndDate: "2025-08-7",
+  isIntakeActive: true,
+  isEvaluationActive: true,
 };
 
 const buccSocials = {
