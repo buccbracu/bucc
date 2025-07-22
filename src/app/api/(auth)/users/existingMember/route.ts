@@ -12,7 +12,7 @@ import UserAuth from "@/model/UserAuth";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
-const permittedDepartments = ["Human Resources"];
+const permittedDepartments = ["Human Resources", "Research and Development"];
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedFields = [
   "name",
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       designation,
       buccDepartment,
       personalEmail,
-      gSuiteEmail,
+      email,
       contactNumber,
       emergencyContact,
       bloodGroup,
@@ -75,8 +75,8 @@ export async function POST(request: NextRequest) {
       Github,
     } = body;
 
-    let user = await UserAuth.findOne({ email: gSuiteEmail }).exec();
-    let member = await MemberInfo.findOne({ email: gSuiteEmail }).exec();
+    let user = await UserAuth.findOne({ email }).exec();
+    let member = await MemberInfo.findOne({ email }).exec();
 
     if (member && user) {
       return NextResponse.json(
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       member = new MemberInfo({
         _id: user._id.toString(),
         name,
-        email: gSuiteEmail,
+        email,
         studentId,
         buccDepartment,
         departmentBracu,
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     } else {
       user = new UserAuth({
         name,
-        email: gSuiteEmail,
+        email,
         password: hashPass,
       });
 
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
       member = new MemberInfo({
         _id: user._id.toString(),
         name,
-        email: gSuiteEmail,
+        email,
         studentId,
         buccDepartment,
         departmentBracu,
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await singleWelcomeMail(user._id.toString(), name, gSuiteEmail, password);
+    await singleWelcomeMail(user._id.toString(), name, email, password);
 
     await PreregMemberInfo.findOneAndDelete({ studentId }).exec();
     await MemberEBAssessment.findOneAndDelete({ studentId }).exec();
@@ -197,10 +197,11 @@ export async function PATCH(request: NextRequest) {
     await dbConnect();
 
     const body = await request.json();
-    const { gSuiteEmail, ...updateFields } = body;
+    const { email, ...updateFields } = body;
+    // console.log(body);
 
-    let member = await MemberInfo.findOne({ email: gSuiteEmail }).exec();
-    let user = await UserAuth.findOne({ email: gSuiteEmail }).exec();
+    let member = await MemberInfo.findOne({ email }).exec();
+    let user = await UserAuth.findOne({ email }).exec();
 
     if (!member || !user) {
       return NextResponse.json(
@@ -208,6 +209,7 @@ export async function PATCH(request: NextRequest) {
         { status: 404 },
       );
     }
+    console.log(member, user);
 
     const updateData: any = {
       memberSocials: {
@@ -225,10 +227,7 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
-    await MemberInfo.updateOne(
-      { email: gSuiteEmail },
-      { $set: updateData },
-    ).exec();
+    await MemberInfo.updateOne({ email }, { $set: updateData }).exec();
 
     return NextResponse.json({ message: "Update Successful" }, { status: 200 });
   } catch (error: any) {
