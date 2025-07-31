@@ -32,7 +32,7 @@ export default function ChatBotStatus() {
             ? "⏸️ The bot is currently paused."
             : "⚠️ The bot is currently running."}
         </CardDescription>
-        {isPaused === null ? (
+        {/* {isPaused === null ? (
           <div className="rounded-full bg-black p-2">
             <Spinner />
           </div>
@@ -44,7 +44,7 @@ export default function ChatBotStatus() {
           >
             {isPaused ? "Resume" : "Pause"}
           </Button>
-        )}
+        )} */}
       </div>
     </CardContent>
   );

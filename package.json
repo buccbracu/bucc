@@ -16,6 +16,7 @@
     "db:check": "drizzle-kit check"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.22",
     "@ai-sdk/openai": "^1.0.8",
     "@ai-sdk/react": "^1.2.8",
     "@auth/mongodb-adapter": "^3.1.0",
@@ -44,6 +45,7 @@
     "drizzle-zod": "^0.6.0",
     "embla-carousel-autoplay": "^8.1.6",
     "embla-carousel-react": "^8.1.6",
+    "exa-js": "^1.8.23",
     "export-from-json": "^1.7.4",
     "firebase": "^11.0.2",
     "firebase-admin": "^13.0.1",
