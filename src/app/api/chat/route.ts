@@ -4,38 +4,7 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject, streamText, tool } from "ai";
 import { z } from "zod";
 import { searchExecutiveBody } from "@/helpers/searchExecutiveBody";
-import Exa from "exa-js";
 
-export const exa = new Exa(process.env.EXA_API_KEY);
-export const webSearch = tool({
-  description: "Search the web for up-to-date information",
-  parameters: z.object({
-    query: z.string().min(1).max(100).describe("The search query"),
-  }),
-  execute: async ({ query }) => {
-    const { results } = await exa.searchAndContents(query, {
-      includeDomains: ["https://www.bracucc.org/", "https://www.bracu.ac.bd/"],
-      livecrawl: "fallback",
-      category: "company",
-      includeImages: false,
-      includeVideos: false,
-      includeNews: false,
-      includeBlogs: false,
-      includeSocial: false,
-      includeProducts: false,
-
-      numResults: 3,
-    });
-    console.log("Web search results:", results);
-    return results.map((result) => ({
-      title: result.title,
-      url: result.url,
-      content: result.text.slice(0, 1000),
-      publishedDate: result.publishedDate,
-    }));
-  },
-});
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -55,7 +24,6 @@ If 18+ such topics come up, kindly reply:
 For all other questions, be energetic, kind, encouraging, and optimistic. 
 When asked about current events (e.g., leaders, facts), always reflect 2025 data without explicitly mentioning the year unless users ask.`,
     tools: {
-      webSearch,
       searchExecutiveBody: tool({
         description:
           "Search for executive body members by full name, nickname, or partial name. don't show image",
