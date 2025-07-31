@@ -6,7 +6,7 @@ import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import nodemailer from "nodemailer";
 
-export const fetchMembers = tool({
+const fetchMembers = tool({
   description:
     "Fetch club members with flexible filtering. Returns member information including department and contact details.",
   parameters: z.object({
@@ -14,7 +14,6 @@ export const fetchMembers = tool({
       .string()
       .optional()
       .describe("Filter by contact number (partial match)"),
-
     buccDepartment: z
       .string()
       .optional()
@@ -97,27 +96,21 @@ export const fetchMembers = tool({
       if (memberStatus) filter.memberStatus = memberStatus;
       if (bloodGroup) filter.bloodGroup = bloodGroup;
       if (gender) filter.gender = gender;
-      // Partial text matches
       if (name) filter.name = { $regex: name, $options: "i" };
       if (email) filter.email = { $regex: email, $options: "i" };
       if (personalEmail)
         filter.personalEmail = { $regex: personalEmail, $options: "i" };
-      // Date filters - handle different formats
       if (birthDate) {
-        // Try to parse as full date first, then as year-month
         if (birthDate.includes("-")) {
           if (birthDate.split("-").length === 3) {
-            // Full date: YYYY-MM-DD
             filter.birthDate = { $eq: new Date(birthDate) };
           } else if (birthDate.split("-").length === 2) {
-            // Year-month: YYYY-MM
             const [year, month] = birthDate.split("-");
             const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
             const endDate = new Date(parseInt(year), parseInt(month), 0);
             filter.birthDate = { $gte: startDate, $lte: endDate };
           }
         } else if (!isNaN(parseInt(birthDate))) {
-          // Just year: YYYY
           const year = parseInt(birthDate);
           const startDate = new Date(year, 0, 1);
           const endDate = new Date(year + 1, 0, 0);
@@ -125,33 +118,28 @@ export const fetchMembers = tool({
         }
       }
       if (lastPromotion) {
-        // Handle promotion date filtering (YYYY-MM format)
         if (lastPromotion.includes("-")) {
           const [year, month] = lastPromotion.split("-");
           const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
           const endDate = new Date(parseInt(year), parseInt(month), 0);
           filter.lastPromotion = { $gte: startDate, $lte: endDate };
         } else if (!isNaN(parseInt(lastPromotion))) {
-          // Just year: YYYY
           const year = parseInt(lastPromotion);
           const startDate = new Date(year, 0, 1);
           const endDate = new Date(year + 1, 0, 0);
           filter.lastPromotion = { $gte: startDate, $lte: endDate };
         }
       }
-      // Select only requested fields
       const projection: any = {};
       returnFields.forEach((field) => {
         projection[field] = 1;
       });
-      // Find members with projection and limit
       const members = await MemberInfo.find(filter, projection).limit(
         Math.min(limit, 100),
       );
       if (members.length === 0) {
         return { count: 0, emailAddresses: [], summary: "No members found" };
       }
-      // Extract only the requested fields
       const memberData = members.map((member: { [x: string]: any }) => {
         const result: any = {};
         returnFields.forEach((field) => {
@@ -159,7 +147,6 @@ export const fetchMembers = tool({
         });
         return result;
       });
-      // Extract email addresses
       const emailAddresses = members.map((m: { email: any }) => m.email);
       return {
         count: members.length,
@@ -176,8 +163,7 @@ export const fetchMembers = tool({
   },
 });
 
-// Email sending tool with personalization
-export const sendEmailToList = tool({
+const sendEmailToList = tool({
   description:
     "Send personalized email to list of addresses with member details.",
   parameters: z.object({
@@ -206,7 +192,6 @@ export const sendEmailToList = tool({
     confirmed,
   }) => {
     try {
-      // If not confirmed, show preview
       if (!confirmed) {
         const recipientCount = emailAddresses.length;
         const preview = `Subject: ${subject}\nRecipients: ${recipientCount}\nMessage: ${message}`;
@@ -215,12 +200,9 @@ export const sendEmailToList = tool({
         }
         return `Preview:\n${preview}\n\nConfirm by replying "yes" or "confirm".`;
       }
-
       if (emailAddresses.length === 0) {
         return "No email addresses provided.";
       }
-
-      // Setup transporter
       const transporter = nodemailer.createTransport({
         service: "Gmail",
         host: "smtp.gmail.com",
@@ -231,14 +213,10 @@ export const sendEmailToList = tool({
           pass: process.env.GMAIL_APP_SECRET,
         },
       });
-
-      // Send emails
       const results = [];
       for (let i = 0; i < emailAddresses.length; i++) {
         const email = emailAddresses[i];
         let personalizedMessage = message;
-
-        // Add personalization if memberDetails are provided
         if (memberDetails && memberDetails[i]) {
           const member = memberDetails[i];
           personalizedMessage = `
@@ -255,7 +233,6 @@ export const sendEmailToList = tool({
 <p>Best regards,<br>BRAC University Computer Club (BUCC)</p>
           `;
         }
-
         try {
           await transporter.sendMail({
             from: "nimbus+@bucc.com",
@@ -272,8 +249,6 @@ export const sendEmailToList = tool({
           });
         }
       }
-
-      // Summary
       const sentCount = results.filter((r) => r.status === "sent").length;
       const failedCount = results.filter((r) => r.status === "failed").length;
       return `✅ Sent: ${sentCount}, Failed: ${failedCount}\nFailed: ${
@@ -289,8 +264,7 @@ export const sendEmailToList = tool({
   },
 });
 
-// Preview email tool with personalization
-export const previewEmailToList = tool({
+const previewEmailToList = tool({
   description:
     "Preview email to list of addresses with personalization options.",
   parameters: z.object({
@@ -314,20 +288,16 @@ export const previewEmailToList = tool({
     if (emailAddresses.length === 0) {
       return "No email addresses provided.";
     }
-
     const recipientCount = emailAddresses.length;
     let preview = `📧 Preview:\n\nSubject: ${subject}\nRecipients: ${recipientCount}\nMessage: ${message}`;
-
     if (memberDetails && memberDetails.length > 0) {
       preview += `\n\nPersonalization will include:\n- Name: ${memberDetails[0]?.name || "N/A"}\n- BUCC Department: ${memberDetails[0]?.buccDepartment || "N/A"}\n- Designation: ${memberDetails[0]?.designation || "N/A"}`;
     }
-
     return `${preview}\n\nUse sendEmailToList with confirmed=true to send.`;
   },
 });
 
-// Query understanding tool
-export const understandQuery = tool({
+const understandQuery = tool({
   description: "Analyze user query to determine intent and tools needed.",
   parameters: z.object({
     query: z.string().describe("User query"),
@@ -347,11 +317,9 @@ export const understandQuery = tool({
   },
 });
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+const maxDuration = 30;
 
 export async function POST(req: Request) {
-  // Ensure database connection
   try {
     await dbConnect();
   } catch (error) {
@@ -365,22 +333,18 @@ export async function POST(req: Request) {
     model: google("gemini-2.0-flash"),
     messages,
     system: `You are Nimbus+, an AI assistant for BRAC University Computer Club.
-
 Capabilities:
 - Fetch member information with filters
 - Send personalized emails
-
 Process:
 1. understandQuery → analyze request
 2. fetchMembers → get member details (name, buccDepartment, designation)
 3. previewEmailToList → preview email
 4. sendEmailToList → send email (confirmed=true)
-
 Important:
 - Never say you can't send emails
 - R&D dept created in 2024
 - Avoid 18+ topics
-
 Always include name, buccDepartment, and designation in emails.`,
     tools: {
       understandQuery,
