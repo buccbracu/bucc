@@ -696,10 +696,9 @@ export async function POST(req: Request) {
   -sendEmailToList: send email (confirmed=true required)
 
   Document Generation:
-  -Use generateDocument for proposals, letters, reports, etc.
+  -Before generating documents, ensure content is well-structured
+  -Show a preview of the document to the user and if they confirm and ask to generate pdf or docx then generate with generateDocument tool.
   -Always specify the output format (pdf or docx)
-  -Ensure well-structured, formal content
-  -Include relevant member information when applicable
 
   Important Guidelines:
   Never say you can't send emails or generate documents
