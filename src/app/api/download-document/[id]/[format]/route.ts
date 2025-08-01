@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { documentStore } from "@/lib/documentStore";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string; format: string } },
+) {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const id = searchParams.get("id");
-    const format = searchParams.get("format");
-
+    const { id, format } = params;
     if (!id) {
       return NextResponse.json({ error: "Missing ID" }, { status: 400 });
     }
-
     const doc = documentStore.get(id);
     if (!doc) {
       console.log(`Document not found for ID: ${id}`);
@@ -22,8 +21,6 @@ export async function GET(req: NextRequest) {
         { status: 404 },
       );
     }
-
-    // Adjust content type based on format parameter
     let contentType = doc.mimeType;
     if (format === "pdf") {
       contentType = "application/pdf";
@@ -31,11 +28,11 @@ export async function GET(req: NextRequest) {
       contentType =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     }
-
     return new NextResponse(new Uint8Array(doc.buffer), {
       headers: {
         "Content-Type": contentType,
         "Content-Disposition": `attachment; filename="${doc.filename}"`,
+        "Content-Length": doc.buffer.length.toString(), // Added this header
       },
     });
   } catch (error) {

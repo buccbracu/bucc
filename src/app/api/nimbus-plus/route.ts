@@ -10,17 +10,46 @@ import jsPDF from "jspdf";
 import { v4 as uuidv4 } from "uuid";
 import { documentStore } from "@/lib/documentStore";
 
-// Function to parse Markdown and convert to formatted elements for DOCX
+const processProposalLines = (lines: string[]) => {
+  const processedLines = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i].trim();
+
+    if (
+      (line === "To" ||
+        line === "From" ||
+        line === "Date" ||
+        line === "Subject") &&
+      i + 1 < lines.length &&
+      lines[i + 1].trim() === ":"
+    ) {
+      const label = line;
+      const colon = lines[i + 1].trim();
+      const value = i + 2 < lines.length ? lines[i + 2].trim() : "";
+
+      if (value) {
+        processedLines.push(`${label}: ${value}`);
+        i += 3;
+      } else {
+        processedLines.push(`${label}:`);
+        i += 2;
+      }
+    } else {
+      processedLines.push(line);
+      i++;
+    }
+  }
+
+  return processedLines;
+};
+
 const parseMarkdownToDocxElements = (markdown: string) => {
   const elements = [];
-
-  // Split into paragraphs (double newline)
   const paragraphs = markdown.split(/\n\s*\n/);
-
   for (const paragraph of paragraphs) {
     if (!paragraph.trim()) continue;
-
-    // Check for headings
     if (paragraph.startsWith("# ")) {
       elements.push(
         new Paragraph({
@@ -43,66 +72,47 @@ const parseMarkdownToDocxElements = (markdown: string) => {
         }),
       );
     } else {
-      // Split paragraph into lines (single newline)
-      const lines = paragraph.split("\n");
-      const children = [];
+      let lines = paragraph.split("\n");
 
-      // Process each line
+      lines = processProposalLines(lines);
+
+      const children = [];
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
-
-        // Process inline formatting for this line
         const lineChildren = [];
         let currentText = line;
         let lastIndex = 0;
-
-        // Process bold text: **text**
         const boldRegex = /\*\*(.*?)\*\*/g;
         let match;
-
         while ((match = boldRegex.exec(line)) !== null) {
-          // Add text before the bold part
           if (match.index > lastIndex) {
             lineChildren.push(
               new TextRun(currentText.substring(0, match.index - lastIndex)),
             );
           }
-
-          // Add the bold text
           lineChildren.push(
             new TextRun({
               text: match[1],
               bold: true,
             }),
           );
-
-          // Update the current text and last index
           currentText = currentText.substring(
             match.index + match[0].length - lastIndex,
           );
           lastIndex = match.index + match[0].length;
         }
-
-        // Add any remaining text
         if (currentText) {
           lineChildren.push(new TextRun(currentText));
         }
-
-        // If no formatting was found, just add the line as plain text
         if (lineChildren.length === 0) {
           lineChildren.push(new TextRun(line));
         }
-
-        // Add the line children to the paragraph children
         children.push(...lineChildren);
-
-        // Add a line break if this isn't the last line
         if (i < lines.length - 1) {
           children.push(new TextRun({ text: "", break: 1 }));
         }
       }
-
       elements.push(
         new Paragraph({
           children: children,
@@ -113,21 +123,14 @@ const parseMarkdownToDocxElements = (markdown: string) => {
       );
     }
   }
-
   return elements;
 };
 
-// Function to parse Markdown for PDF with formatting
 const parseMarkdownForPDF = (markdown: string) => {
   const elements = [];
-
-  // Split into paragraphs (double newline)
   const paragraphs = markdown.split(/\n\s*\n/);
-
   for (const paragraph of paragraphs) {
     if (!paragraph.trim()) continue;
-
-    // Check for headings
     if (paragraph.startsWith("# ")) {
       elements.push({
         text: paragraph.substring(2),
@@ -147,25 +150,22 @@ const parseMarkdownForPDF = (markdown: string) => {
         level: 3,
       });
     } else {
-      // Split paragraph into lines (single newline)
-      const lines = paragraph.split("\n");
+      let lines = paragraph.split("\n");
+
+      lines = processProposalLines(lines);
+
+      lines = lines.filter((line) => line.trim());
+
       const lineElements = [];
-
-      // Process each line
       for (const line of lines) {
-        if (!line.trim()) continue;
-
-        // Process inline formatting for this line
         const textParts = [];
         let currentText = line;
         let lastIndex = 0;
 
-        // Process bold text: **text**
         const boldRegex = /\*\*(.*?)\*\*/g;
         let match;
 
         while ((match = boldRegex.exec(line)) !== null) {
-          // Add text before the bold part
           if (match.index > lastIndex) {
             textParts.push({
               text: currentText.substring(0, match.index - lastIndex),
@@ -173,20 +173,17 @@ const parseMarkdownForPDF = (markdown: string) => {
             });
           }
 
-          // Add the bold text
           textParts.push({
             text: match[1],
             bold: true,
           });
 
-          // Update the current text and last index
           currentText = currentText.substring(
             match.index + match[0].length - lastIndex,
           );
           lastIndex = match.index + match[0].length;
         }
 
-        // Add any remaining text
         if (currentText) {
           textParts.push({
             text: currentText,
@@ -194,7 +191,6 @@ const parseMarkdownForPDF = (markdown: string) => {
           });
         }
 
-        // If no formatting was found, just add the line as plain text
         if (textParts.length === 0) {
           textParts.push({
             text: line,
@@ -214,7 +210,6 @@ const parseMarkdownForPDF = (markdown: string) => {
       });
     }
   }
-
   return elements;
 };
 
@@ -238,7 +233,6 @@ const generateDocument = tool({
       let mimeType: string;
       let fullFilename: string;
       if (format === "docx") {
-        // Create a DOCX document with proper formatting
         const doc = new Document({
           sections: [
             {
@@ -253,82 +247,106 @@ const generateDocument = tool({
         fullFilename = `${filename}.docx`;
       } else {
         const pdf = new jsPDF();
-        // Set up PDF formatting
+
         const pageWidth = pdf.internal.pageSize.getWidth();
-        const margin = 10;
+        const margin = 15;
         const maxWidth = pageWidth - margin * 2;
-        // Parse the markdown content
+        const lineHeight = 7;
+        const paragraphSpacing = 10;
+        const headingSpacing = 8;
+
         const elements = parseMarkdownForPDF(content);
-        // Add each element to the PDF
-        let yPosition = 10;
+
+        let yPosition = margin;
         elements.forEach((element) => {
-          // Check if we need a new page
           if (yPosition > 270) {
             pdf.addPage();
-            yPosition = 10;
+            yPosition = margin;
           }
+
           if (element.isHeading) {
-            // Add heading with larger font
-            pdf.setFontSize(16 + (3 - element.level));
+            const fontSize = 16 + (3 - element.level) * 2;
+            pdf.setFontSize(fontSize);
             pdf.setFont("helvetica", "bold");
+
             const lines = pdf.splitTextToSize(element.text, maxWidth);
             pdf.text(lines, margin, yPosition);
-            yPosition += lines.length * 7 + 5;
-          } else if (element.isParagraph) {
-            // Reset font for paragraph
+            yPosition += lines.length * lineHeight + headingSpacing;
+
             pdf.setFontSize(12);
             pdf.setFont("helvetica", "normal");
-            // Process each line in the paragraph
+          } else if (element.isParagraph) {
             for (const lineElement of element.lines) {
-              // Check if we need a new page
               if (yPosition > 270) {
                 pdf.addPage();
-                yPosition = 10;
+                yPosition = margin;
               }
+
               let xPosition = margin;
-              lineElement.textParts.forEach((part) => {
-                // Set font style based on formatting
-                if (part.bold) {
-                  pdf.setFont("helvetica", "bold");
-                } else {
-                  pdf.setFont("helvetica", "normal");
+              let currentLineText = "";
+              let currentLineIsBold = false;
+
+              for (const part of lineElement.textParts) {
+                if (part.bold !== currentLineIsBold && currentLineText) {
+                  pdf.setFont(
+                    "helvetica",
+                    currentLineIsBold ? "bold" : "normal",
+                  );
+                  const lines = pdf.splitTextToSize(
+                    currentLineText,
+                    maxWidth - (xPosition - margin),
+                  );
+                  pdf.text(lines, xPosition, yPosition);
+
+                  if (lines.length > 1) {
+                    yPosition += (lines.length - 1) * lineHeight;
+                  }
+                  xPosition += pdf.getTextWidth(lines[lines.length - 1]);
+                  currentLineText = "";
                 }
-                // Split text into lines that fit the page width
+
+                currentLineIsBold = part.bold;
+                currentLineText += part.text;
+              }
+
+              if (currentLineText) {
+                pdf.setFont("helvetica", currentLineIsBold ? "bold" : "normal");
                 const lines = pdf.splitTextToSize(
-                  part.text,
+                  currentLineText,
                   maxWidth - (xPosition - margin),
                 );
-                // Add the lines to the PDF
                 pdf.text(lines, xPosition, yPosition);
-                // Update y position based on number of lines
-                yPosition += lines.length * 7;
-                // Reset x position for next part
-                xPosition = margin;
-              });
-              // Add space after each line (but not as much as a paragraph)
-              yPosition += 2;
+
+                if (lines.length > 1) {
+                  yPosition += (lines.length - 1) * lineHeight;
+                }
+              }
+
+              yPosition += lineHeight;
             }
-            // Add space after paragraph
-            yPosition += 3;
+
+            yPosition += paragraphSpacing - lineHeight;
           }
         });
-        // Get the PDF as a Buffer
+
         const pdfBuffer = Buffer.from(pdf.output("arraybuffer"));
         buffer = pdfBuffer;
         mimeType = "application/pdf";
         fullFilename = `${filename}.pdf`;
       }
-      // Store the document with a timestamp
+
       documentStore.set(id, {
         buffer,
         mimeType,
         filename: fullFilename,
         timestamp: Date.now(),
       });
+
       console.log(`Generated document with ID: ${id}`);
       console.log(
         `Document store now contains ${documentStore.size} documents`,
       );
+
       return `✅ Document generated successfully. Download ID: ${id}`;
     } catch (error) {
       console.error("Error generating document:", error);
@@ -664,29 +682,44 @@ export async function POST(req: Request) {
     model: google("gemini-2.0-flash"),
     messages,
     system: `You are Nimbus+, an AI assistant for BRAC University Computer Club.
+
 Capabilities:
-- Fetch member information with filters
-- Send personalized emails
-- Generate documents in PDF or DOCX format
+
+Fetch member information with filters
+
+Send personalized emails
+
+Generate documents in PDF or DOCX format
 
 Process:
-1. understandQuery → analyze request
-2. fetchMembers → get member details (name, buccDepartment, designation)
-3. previewEmailToList → preview email
-4. sendEmailToList → send email (confirmed=true)
-5. generateDocument → create PDF or DOCX documents
 
-For document generation:
-- When a user requests a document (proposal, letter, report, etc.), use the generateDocument tool
-- Provide well-formatted content with proper structure
-- Include relevant member information when appropriate
-- Always specify the format (pdf or docx) in the tool call
+understandQuery: analyze user request
 
-Important:
-- Never say you can't send emails or generate documents
-- R&D dept created in 2024
-- Avoid 18+ topics
-Always include name, buccDepartment, and designation in emails.`,
+fetchMembers: retrieve member details (name, buccDepartment, designation)
+
+previewEmailToList: show email preview
+
+sendEmailToList: send email (confirmed=true required)
+
+Document Generation:
+
+Use generateDocument for proposals, letters, reports, etc.
+
+Always specify the output format (pdf or docx)
+
+Ensure well-structured, formal content
+
+Include relevant member information when applicable
+
+Important Guidelines:
+
+Never say you can't send emails or generate documents
+
+Always include name, buccDepartment, and designation in emails
+
+R&D department was created in 2024
+
+Avoid 18+ or inappropriate content`,
     tools: {
       understandQuery,
       fetchMembers,

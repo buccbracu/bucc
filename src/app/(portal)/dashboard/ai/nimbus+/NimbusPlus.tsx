@@ -19,9 +19,7 @@ const outfit = Outfit({
   weight: ["400", "500", "600", "700"],
 });
 
-// Helper function to extract document IDs from message content
 const extractDocumentIds = (content: string) => {
-  // Updated regex to match full UUID pattern (including hyphens)
   const regex = /Download ID: ([\w-]+)/g;
   const matches = [];
   let match;
@@ -31,7 +29,6 @@ const extractDocumentIds = (content: string) => {
   return matches;
 };
 
-// Helper function to extract document IDs from tool invocations
 const extractDocumentIdsFromToolInvocations = (toolInvocations: any[]) => {
   const ids: string[] = [];
 
@@ -39,7 +36,6 @@ const extractDocumentIdsFromToolInvocations = (toolInvocations: any[]) => {
 
   for (const invocation of toolInvocations) {
     if (invocation.toolName === "generateDocument" && invocation.result) {
-      // Extract ID from the result string
       const resultRegex = /Download ID: ([\w-]+)/g;
       let match;
       while ((match = resultRegex.exec(invocation.result)) !== null) {
@@ -51,7 +47,6 @@ const extractDocumentIdsFromToolInvocations = (toolInvocations: any[]) => {
   return ids;
 };
 
-// Helper function to extract document format from tool invocations
 const extractDocumentFormatFromToolInvocations = (
   toolInvocations: any[],
   id: string,
@@ -117,7 +112,6 @@ export default function NimbusPlus() {
       setToolCall(undefined);
     }
   }, [status]);
-  // Generate particles for background
   useEffect(() => {
     const newParticles = [];
     for (let i = 0; i < 50; i++) {
@@ -129,7 +123,6 @@ export default function NimbusPlus() {
     }
     setParticles(newParticles);
   }, []);
-  // Animate particles
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -145,7 +138,6 @@ export default function NimbusPlus() {
     window.addEventListener("resize", resizeCanvas);
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Draw grid
       ctx.strokeStyle = "rgba(59, 130, 246, 0.1)";
       ctx.lineWidth = 1;
       for (let x = 0; x < canvas.width; x += 50) {
@@ -160,13 +152,11 @@ export default function NimbusPlus() {
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
       }
-      // Draw particles
       particles.forEach((particle, index) => {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(59, 130, 246, 0.5)";
         ctx.fill();
-        // Move particles
         particle.y += 0.5;
         if (particle.y > canvas.height) {
           particle.y = 0;
@@ -180,13 +170,12 @@ export default function NimbusPlus() {
       window.removeEventListener("resize", resizeCanvas);
     };
   }, [particles]);
-  // Adjust messages container height
   useEffect(() => {
     const updateMessagesContainerHeight = () => {
       if (messagesContainerRef.current && containerRef.current) {
         const inputHeight =
           document.getElementById("input-area")?.clientHeight || 80;
-        const headerHeight = 80; // Approximate header height
+        const headerHeight = 80;
         messagesContainerRef.current.style.height = `${containerRef.current.clientHeight - inputHeight - headerHeight}px`;
       }
     };
@@ -249,17 +238,14 @@ export default function NimbusPlus() {
         >
           <div className="mx-auto max-w-4xl px-4 py-8">
             {messages.map((msg, index) => {
-              // Check for document generation in message content
               const contentDocIds =
                 msg.role === "assistant" ? extractDocumentIds(msg.content) : [];
 
-              // Check for document generation in tool invocations
               const toolDocIds =
                 msg.role === "assistant" && msg.toolInvocations
                   ? extractDocumentIdsFromToolInvocations(msg.toolInvocations)
                   : [];
 
-              // Combine both sources of document IDs
               const allDocIds = [...contentDocIds, ...toolDocIds];
 
               return (
@@ -304,7 +290,6 @@ export default function NimbusPlus() {
                     {allDocIds.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-3">
                         {allDocIds.map((id, idx) => {
-                          // Get the format for this document
                           const format = msg.toolInvocations
                             ? extractDocumentFormatFromToolInvocations(
                                 msg.toolInvocations,
@@ -317,7 +302,7 @@ export default function NimbusPlus() {
                               {/* Only show PDF button if format is pdf or unknown */}
                               {(format === "pdf" || format === "unknown") && (
                                 <a
-                                  href={`/api/download-document?id=${id}&format=pdf`}
+                                  href={`/api/download-document/${id}/pdf`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-2 text-sm text-red-300 transition-all hover:bg-red-800/30 hover:text-red-200"
@@ -329,7 +314,7 @@ export default function NimbusPlus() {
                               {/* Only show DOCX button if format is docx or unknown */}
                               {(format === "docx" || format === "unknown") && (
                                 <a
-                                  href={`/api/download-document?id=${id}&format=docx`}
+                                  href={`/api/download-document/${id}/docx`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-900/20 px-4 py-2 text-sm text-green-300 transition-all hover:bg-green-800/30 hover:text-green-200"
