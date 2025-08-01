@@ -19,7 +19,6 @@ const ChatBot: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const [interimTranscript, setInterimTranscript] = useState("");
-
   const {
     messages,
     input,
@@ -56,7 +55,6 @@ const ChatBot: React.FC = () => {
     const maxHeight = 4 * 24;
     textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
   };
-
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -68,11 +66,9 @@ const ChatBot: React.FC = () => {
         recognitionInstance.continuous = true;
         recognitionInstance.interimResults = true;
         recognitionInstance.lang = "en-US";
-
         recognitionInstance.onresult = (event: any) => {
           let finalTranscript = "";
           let interimTranscript = "";
-
           for (let i = event.resultIndex; i < event.results.length; i++) {
             if (event.results[i].isFinal) {
               finalTranscript += event.results[i][0].transcript + " ";
@@ -80,7 +76,6 @@ const ChatBot: React.FC = () => {
               interimTranscript += event.results[i][0].transcript;
             }
           }
-
           if (finalTranscript) {
             setInput((prev) => prev + finalTranscript);
             setInterimTranscript("");
@@ -88,20 +83,16 @@ const ChatBot: React.FC = () => {
             setInterimTranscript(interimTranscript);
           }
         };
-
         recognitionInstance.onerror = (event: any) => {
           console.error("Speech recognition error:", event.error);
           setIsListening(false);
         };
-
         recognitionInstance.onend = () => {
           setIsListening(false);
         };
-
         setRecognition(recognitionInstance);
       }
     }
-
     // Cleanup function
     return () => {
       if (recognition) {
@@ -109,14 +100,12 @@ const ChatBot: React.FC = () => {
       }
     };
   }, [recognition, setInput]);
-
   // Toggle speech recognition
   const toggleListening = () => {
     if (!recognition) {
       alert("Speech recognition is not supported in your browser.");
       return;
     }
-
     if (isListening) {
       recognition.stop();
       setIsListening(false);
@@ -125,21 +114,18 @@ const ChatBot: React.FC = () => {
       setIsListening(true);
     }
   };
-
   // Scroll to bottom when interim transcript changes (while speaking)
   useEffect(() => {
     if (isListening && interimTranscript) {
       scrollToBottom();
     }
   }, [interimTranscript, isListening]);
-
   // Scroll textarea to bottom when input changes
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
   }, [input, interimTranscript]);
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -297,7 +283,7 @@ const ChatBot: React.FC = () => {
                   className={`absolute bottom-2.5 left-2 rounded-full p-1.5 ${
                     isListening
                       ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                      : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                      : "bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"
                   }`}
                   aria-label={
                     isListening ? "Stop listening" : "Start voice input"
