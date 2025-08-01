@@ -237,7 +237,6 @@ const generateDocument = tool({
       let buffer: Buffer;
       let mimeType: string;
       let fullFilename: string;
-
       if (format === "docx") {
         // Create a DOCX document with proper formatting
         const doc = new Document({
@@ -254,15 +253,12 @@ const generateDocument = tool({
         fullFilename = `${filename}.docx`;
       } else {
         const pdf = new jsPDF();
-
         // Set up PDF formatting
         const pageWidth = pdf.internal.pageSize.getWidth();
         const margin = 10;
         const maxWidth = pageWidth - margin * 2;
-
         // Parse the markdown content
         const elements = parseMarkdownForPDF(content);
-
         // Add each element to the PDF
         let yPosition = 10;
         elements.forEach((element) => {
@@ -271,19 +267,17 @@ const generateDocument = tool({
             pdf.addPage();
             yPosition = 10;
           }
-
           if (element.isHeading) {
             // Add heading with larger font
             pdf.setFontSize(16 + (3 - element.level));
-            pdf.setFont("inter", "bold");
+            pdf.setFont("helvetica", "bold");
             const lines = pdf.splitTextToSize(element.text, maxWidth);
             pdf.text(lines, margin, yPosition);
             yPosition += lines.length * 7 + 5;
           } else if (element.isParagraph) {
             // Reset font for paragraph
             pdf.setFontSize(12);
-            pdf.setFont("inter", "normal");
-
+            pdf.setFont("helvetica", "normal");
             // Process each line in the paragraph
             for (const lineElement of element.lines) {
               // Check if we need a new page
@@ -291,48 +285,39 @@ const generateDocument = tool({
                 pdf.addPage();
                 yPosition = 10;
               }
-
               let xPosition = margin;
               lineElement.textParts.forEach((part) => {
                 // Set font style based on formatting
                 if (part.bold) {
-                  pdf.setFont("inter", "bold");
+                  pdf.setFont("helvetica", "bold");
                 } else {
-                  pdf.setFont("inter", "normal");
+                  pdf.setFont("helvetica", "normal");
                 }
-
                 // Split text into lines that fit the page width
                 const lines = pdf.splitTextToSize(
                   part.text,
                   maxWidth - (xPosition - margin),
                 );
-
                 // Add the lines to the PDF
                 pdf.text(lines, xPosition, yPosition);
-
                 // Update y position based on number of lines
                 yPosition += lines.length * 7;
-
                 // Reset x position for next part
                 xPosition = margin;
               });
-
               // Add space after each line (but not as much as a paragraph)
               yPosition += 2;
             }
-
             // Add space after paragraph
             yPosition += 3;
           }
         });
-
         // Get the PDF as a Buffer
         const pdfBuffer = Buffer.from(pdf.output("arraybuffer"));
         buffer = pdfBuffer;
         mimeType = "application/pdf";
         fullFilename = `${filename}.pdf`;
       }
-
       // Store the document with a timestamp
       documentStore.set(id, {
         buffer,
@@ -340,12 +325,10 @@ const generateDocument = tool({
         filename: fullFilename,
         timestamp: Date.now(),
       });
-
       console.log(`Generated document with ID: ${id}`);
       console.log(
         `Document store now contains ${documentStore.size} documents`,
       );
-
       return `✅ Document generated successfully. Download ID: ${id}`;
     } catch (error) {
       console.error("Error generating document:", error);
