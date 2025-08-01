@@ -18,7 +18,6 @@ const outfit = Outfit({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
-
 const extractDocumentIds = (content: string) => {
   const regex = /Download ID: ([\w-]+)/g;
   const matches = [];
@@ -28,12 +27,9 @@ const extractDocumentIds = (content: string) => {
   }
   return matches;
 };
-
 const extractDocumentIdsFromToolInvocations = (toolInvocations: any[]) => {
   const ids: string[] = [];
-
   if (!toolInvocations) return ids;
-
   for (const invocation of toolInvocations) {
     if (invocation.toolName === "generateDocument" && invocation.result) {
       const resultRegex = /Download ID: ([\w-]+)/g;
@@ -43,16 +39,13 @@ const extractDocumentIdsFromToolInvocations = (toolInvocations: any[]) => {
       }
     }
   }
-
   return ids;
 };
-
 const extractDocumentFormatFromToolInvocations = (
   toolInvocations: any[],
   id: string,
 ) => {
   if (!toolInvocations) return null;
-
   for (const invocation of toolInvocations) {
     if (invocation.toolName === "generateDocument" && invocation.result) {
       const resultRegex = /Download ID: ([\w-]+)/g;
@@ -64,18 +57,18 @@ const extractDocumentFormatFromToolInvocations = (
       }
     }
   }
-
   return null;
 };
-
 export default function NimbusPlus() {
   const [toolCall, setToolCall] = useState<string>();
   const [particles, setParticles] = useState<
     Array<{ x: number; y: number; size: number }>
   >([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const {
     messages,
     input,
+    setInput,
     handleInputChange,
     handleSubmit,
     error,
@@ -104,6 +97,71 @@ export default function NimbusPlus() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
+
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to auto to get the correct scrollHeight
+      textareaRef.current.style.height = "auto";
+      // Calculate new height (with max of 4 rows)
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const newHeight = Math.min(scrollHeight, 96); // 96px ≈ 4 rows (24px per row)
+      textareaRef.current.style.height = `${newHeight}px`;
+    }
+  }, [input]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognitionInstance = new SpeechRecognition();
+        recognitionInstance.continuous = true;
+        recognitionInstance.interimResults = true;
+        recognitionInstance.lang = "en-US";
+        recognitionInstance.onresult = (event: any) => {
+          let finalTranscript = "";
+          // Only process final results to avoid repetition
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              finalTranscript += event.results[i][0].transcript + " ";
+            }
+          }
+          // Only update input if there's a final transcript
+          if (finalTranscript) {
+            setInput((prev) => prev + finalTranscript);
+          }
+        };
+        recognitionInstance.onerror = (event: any) => {
+          console.error("Speech recognition error:", event.error);
+          setIsListening(false);
+        };
+        recognitionInstance.onend = () => {
+          setIsListening(false);
+        };
+        setRecognition(recognitionInstance);
+      }
+    }
+  }, [setInput]);
+
+  // Add this function to handle speech recognition
+  const toggleListening = () => {
+    if (!recognition) {
+      alert("Speech recognition is not supported in your browser.");
+      return;
+    }
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      recognition.start();
+      setIsListening(true);
+    }
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -186,6 +244,34 @@ export default function NimbusPlus() {
     };
   }, []);
 
+  // Handle form submission with input clearing
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (input.trim()) {
+      handleSubmit(e);
+      // Clear input after submission
+      setInput("");
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+    }
+  };
+
+  // Handle input changes with auto-resize
+  const handleInputChangeWithResize = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    handleInputChange(e);
+
+    // Auto-resize textarea
+    const textarea = e.target;
+    textarea.style.height = "auto";
+    const scrollHeight = textarea.scrollHeight;
+    const newHeight = Math.min(scrollHeight, 96); // Max 4 rows (24px per row)
+    textarea.style.height = `${newHeight}px`;
+  };
+
   return (
     <div
       ref={containerRef}
@@ -240,14 +326,11 @@ export default function NimbusPlus() {
             {messages.map((msg, index) => {
               const contentDocIds =
                 msg.role === "assistant" ? extractDocumentIds(msg.content) : [];
-
               const toolDocIds =
                 msg.role === "assistant" && msg.toolInvocations
                   ? extractDocumentIdsFromToolInvocations(msg.toolInvocations)
                   : [];
-
               const allDocIds = [...contentDocIds, ...toolDocIds];
-
               return (
                 <motion.div
                   key={msg.id}
@@ -285,7 +368,6 @@ export default function NimbusPlus() {
                     ) : (
                       msg.content
                     )}
-
                     {/* Document download buttons */}
                     {allDocIds.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-3">
@@ -296,7 +378,6 @@ export default function NimbusPlus() {
                                 id,
                               )
                             : "unknown";
-
                           return (
                             <div key={id} className="flex gap-2">
                               {/* Only show PDF button if format is pdf or unknown */}
@@ -424,26 +505,78 @@ export default function NimbusPlus() {
           className="border-t border-blue-900/30 bg-gradient-to-r from-blue-900/20 to-purple-900/20 p-4 backdrop-blur-sm"
         >
           <div className="mx-auto max-w-4xl">
-            <form onSubmit={handleSubmit} className="flex items-end gap-3">
+            <form onSubmit={handleFormSubmit} className="flex items-end gap-3">
               <div className="relative flex-1">
                 <textarea
+                  ref={textareaRef}
+                  style={{
+                    minHeight: "48px",
+                    maxHeight: "96px",
+                    paddingLeft: "3rem",
+                  }}
                   autoComplete="off"
                   name="input-message"
                   value={input}
                   placeholder="Ask Nimbus+... (Try: 'Generate a proposal letter for our upcoming event')"
-                  onChange={handleInputChange}
+                  onChange={handleInputChangeWithResize}
                   autoFocus={true}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
-                      handleSubmit(e);
+                      if (input.trim()) {
+                        handleSubmit(e);
+                        setInput("");
+                        if (textareaRef.current) {
+                          textareaRef.current.style.height = "auto";
+                        }
+                      }
                     }
                   }}
                   rows={1}
-                  className="w-full resize-none rounded-xl border border-blue-500/30 bg-gray-900/50 px-4 py-3 text-gray-300 placeholder-gray-500 backdrop-blur-sm transition-all focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full resize-none overflow-x-hidden rounded-xl border border-blue-500/30 bg-gray-900/50 px-4 py-3 pr-16 text-gray-300 placeholder-gray-500 backdrop-blur-sm transition-all focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                 />
-                <div className="absolute bottom-2 right-2 text-xs text-gray-500">
-                  {input.length}/2000
+                <div className="absolute left-2 top-1/2 flex -translate-y-1/2 transform items-center">
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    className={`rounded-lg p-2 transition-all ${
+                      isListening
+                        ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
+                        : "bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"
+                    }`}
+                  >
+                    {isListening ? (
+                      <div className="relative">
+                        <div className="h-5 w-5">
+                          <svg
+                            className="h-5 w-5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <rect x="6" y="4" width="4" height="16" />
+                            <rect x="14" y="4" width="4" height="16" />
+                          </svg>
+                        </div>
+                        <div className="absolute inset-0 animate-ping rounded-full bg-red-400 opacity-30"></div>
+                      </div>
+                    ) : (
+                      <svg
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                        />
+                      </svg>
+                    )}
+                  </button>
                 </div>
               </div>
               <motion.button
