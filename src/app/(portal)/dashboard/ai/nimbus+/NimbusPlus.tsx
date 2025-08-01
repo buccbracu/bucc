@@ -8,23 +8,76 @@ import {
   Sparkles,
   Zap,
   Shield,
+  Download,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import ReactMarkdown from "react-markdown";
 import { Outfit } from "next/font/google";
-
 const outfit = Outfit({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
+
+// Helper function to extract document IDs from message content
+const extractDocumentIds = (content: string) => {
+  // Updated regex to match full UUID pattern (including hyphens)
+  const regex = /Download ID: ([\w-]+)/g;
+  const matches = [];
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    matches.push(match[1]);
+  }
+  return matches;
+};
+
+// Helper function to extract document IDs from tool invocations
+const extractDocumentIdsFromToolInvocations = (toolInvocations: any[]) => {
+  const ids: string[] = [];
+
+  if (!toolInvocations) return ids;
+
+  for (const invocation of toolInvocations) {
+    if (invocation.toolName === "generateDocument" && invocation.result) {
+      // Extract ID from the result string
+      const resultRegex = /Download ID: ([\w-]+)/g;
+      let match;
+      while ((match = resultRegex.exec(invocation.result)) !== null) {
+        ids.push(match[1]);
+      }
+    }
+  }
+
+  return ids;
+};
+
+// Helper function to extract document format from tool invocations
+const extractDocumentFormatFromToolInvocations = (
+  toolInvocations: any[],
+  id: string,
+) => {
+  if (!toolInvocations) return null;
+
+  for (const invocation of toolInvocations) {
+    if (invocation.toolName === "generateDocument" && invocation.result) {
+      const resultRegex = /Download ID: ([\w-]+)/g;
+      let match;
+      while ((match = resultRegex.exec(invocation.result)) !== null) {
+        if (match[1] === id) {
+          return invocation.args?.format || "unknown";
+        }
+      }
+    }
+  }
+
+  return null;
+};
 
 export default function NimbusPlus() {
   const [toolCall, setToolCall] = useState<string>();
   const [particles, setParticles] = useState<
     Array<{ x: number; y: number; size: number }>
   >([]);
-
   const {
     messages,
     input,
@@ -49,26 +102,21 @@ export default function NimbusPlus() {
       },
     ],
   });
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
   useEffect(() => {
     if (status === "streaming" || status === "ready") {
       setToolCall(undefined);
     }
   }, [status]);
-
   // Generate particles for background
   useEffect(() => {
     const newParticles = [];
@@ -81,53 +129,43 @@ export default function NimbusPlus() {
     }
     setParticles(newParticles);
   }, []);
-
   // Animate particles
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
     const resizeCanvas = () => {
       if (containerRef.current) {
         canvas.width = containerRef.current.clientWidth;
         canvas.height = containerRef.current.clientHeight;
       }
     };
-
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       // Draw grid
       ctx.strokeStyle = "rgba(59, 130, 246, 0.1)";
       ctx.lineWidth = 1;
-
       for (let x = 0; x < canvas.width; x += 50) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
       }
-
       for (let y = 0; y < canvas.height; y += 50) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
       }
-
       // Draw particles
       particles.forEach((particle, index) => {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(59, 130, 246, 0.5)";
         ctx.fill();
-
         // Move particles
         particle.y += 0.5;
         if (particle.y > canvas.height) {
@@ -135,17 +173,13 @@ export default function NimbusPlus() {
           particle.x = Math.random() * canvas.width;
         }
       });
-
       requestAnimationFrame(animate);
     };
-
     animate();
-
     return () => {
       window.removeEventListener("resize", resizeCanvas);
     };
   }, [particles]);
-
   // Adjust messages container height
   useEffect(() => {
     const updateMessagesContainerHeight = () => {
@@ -156,10 +190,8 @@ export default function NimbusPlus() {
         messagesContainerRef.current.style.height = `${containerRef.current.clientHeight - inputHeight - headerHeight}px`;
       }
     };
-
     updateMessagesContainerHeight();
     window.addEventListener("resize", updateMessagesContainerHeight);
-
     return () => {
       window.removeEventListener("resize", updateMessagesContainerHeight);
     };
@@ -172,10 +204,8 @@ export default function NimbusPlus() {
     >
       {/* Futuristic Background */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-purple-900/10 to-transparent" />
-
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col">
         {/* Header */}
@@ -212,61 +242,118 @@ export default function NimbusPlus() {
             </button>
           </div>
         </div>
-
         {/* Messages Area */}
         <div
           ref={messagesContainerRef}
           className="overflow-y-auto bg-transparent"
         >
           <div className="mx-auto max-w-4xl px-4 py-8">
-            {messages.map((msg, index) => (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className={`mb-8 flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {msg.role === "assistant" && (
-                  <div className="mr-4 flex flex-col items-center">
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      className="relative"
-                    >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/20">
-                        <BotMessageSquare size={20} />
-                      </div>
-                      <div className="absolute -bottom-1 -right-1">
-                        <Shield size={16} className="text-green-400" />
-                      </div>
-                    </motion.div>
-                  </div>
-                )}
-                <div
-                  className={`max-w-[85%] rounded-2xl px-5 py-4 backdrop-blur-sm ${
-                    msg.role === "user"
-                      ? "border border-blue-500/30 bg-gradient-to-br from-blue-900/30 to-purple-900/30 text-gray-200"
-                      : "border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300"
-                  }`}
-                >
-                  {msg.role === "assistant" ? (
-                    <div className="prose prose-invert max-w-none prose-headings:my-3 prose-headings:text-blue-300 prose-p:my-2 prose-strong:text-blue-300 prose-li:my-1">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
-                  ) : (
-                    msg.content
-                  )}
-                </div>
-                {msg.role === "user" && (
-                  <div className="ml-4 flex flex-col items-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 text-gray-300">
-                      <User size={20} />
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            ))}
+            {messages.map((msg, index) => {
+              // Check for document generation in message content
+              const contentDocIds =
+                msg.role === "assistant" ? extractDocumentIds(msg.content) : [];
 
+              // Check for document generation in tool invocations
+              const toolDocIds =
+                msg.role === "assistant" && msg.toolInvocations
+                  ? extractDocumentIdsFromToolInvocations(msg.toolInvocations)
+                  : [];
+
+              // Combine both sources of document IDs
+              const allDocIds = [...contentDocIds, ...toolDocIds];
+
+              return (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`mb-8 flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  {msg.role === "assistant" && (
+                    <div className="mr-4 flex flex-col items-center">
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="relative"
+                      >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/20">
+                          <BotMessageSquare size={20} />
+                        </div>
+                        <div className="absolute -bottom-1 -right-1">
+                          <Shield size={16} className="text-green-400" />
+                        </div>
+                      </motion.div>
+                    </div>
+                  )}
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-5 py-4 backdrop-blur-sm ${
+                      msg.role === "user"
+                        ? "border border-blue-500/30 bg-gradient-to-br from-blue-900/30 to-purple-900/30 text-gray-200"
+                        : "border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300"
+                    }`}
+                  >
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-invert max-w-none prose-headings:my-3 prose-headings:text-blue-300 prose-p:my-2 prose-strong:text-blue-300 prose-li:my-1">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
+
+                    {/* Document download buttons */}
+                    {allDocIds.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        {allDocIds.map((id, idx) => {
+                          // Get the format for this document
+                          const format = msg.toolInvocations
+                            ? extractDocumentFormatFromToolInvocations(
+                                msg.toolInvocations,
+                                id,
+                              )
+                            : "unknown";
+
+                          return (
+                            <div key={id} className="flex gap-2">
+                              {/* Only show PDF button if format is pdf or unknown */}
+                              {(format === "pdf" || format === "unknown") && (
+                                <a
+                                  href={`/api/download-document?id=${id}&format=pdf`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/20 px-4 py-2 text-sm text-red-300 transition-all hover:bg-red-800/30 hover:text-red-200"
+                                >
+                                  <Download size={16} />
+                                  Download PDF
+                                </a>
+                              )}
+                              {/* Only show DOCX button if format is docx or unknown */}
+                              {(format === "docx" || format === "unknown") && (
+                                <a
+                                  href={`/api/download-document?id=${id}&format=docx`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-900/20 px-4 py-2 text-sm text-green-300 transition-all hover:bg-green-800/30 hover:text-green-200"
+                                >
+                                  <Download size={16} />
+                                  Download DOCX
+                                </a>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  {msg.role === "user" && (
+                    <div className="ml-4 flex flex-col items-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 text-gray-300">
+                        <User size={20} />
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
             {/* Status Indicators */}
             {status === "submitted" && (
               <motion.div
@@ -300,7 +387,6 @@ export default function NimbusPlus() {
                 </button>
               </motion.div>
             )}
-
             {toolCall && (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -313,7 +399,6 @@ export default function NimbusPlus() {
                 </div>
               </motion.div>
             )}
-
             {error && (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -345,11 +430,9 @@ export default function NimbusPlus() {
                 </button>
               </motion.div>
             )}
-
             <div ref={messagesEndRef} />
           </div>
         </div>
-
         {/* Fixed Input Area */}
         <div
           id="input-area"
@@ -362,7 +445,7 @@ export default function NimbusPlus() {
                   autoComplete="off"
                   name="input-message"
                   value={input}
-                  placeholder="Ask Nimbus+..."
+                  placeholder="Ask Nimbus+... (Try: 'Generate a proposal letter for our upcoming event')"
                   onChange={handleInputChange}
                   autoFocus={true}
                   onKeyDown={(e) => {

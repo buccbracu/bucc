@@ -5,6 +5,354 @@ import { z } from "zod";
 import dbConnect from "@/lib/dbConnect";
 import MemberInfo from "@/model/MemberInfo";
 import nodemailer from "nodemailer";
+import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
+import jsPDF from "jspdf";
+import { v4 as uuidv4 } from "uuid";
+import { documentStore } from "@/lib/documentStore";
+
+// Function to parse Markdown and convert to formatted elements for DOCX
+const parseMarkdownToDocxElements = (markdown: string) => {
+  const elements = [];
+
+  // Split into paragraphs (double newline)
+  const paragraphs = markdown.split(/\n\s*\n/);
+
+  for (const paragraph of paragraphs) {
+    if (!paragraph.trim()) continue;
+
+    // Check for headings
+    if (paragraph.startsWith("# ")) {
+      elements.push(
+        new Paragraph({
+          children: [new TextRun(paragraph.substring(2))],
+          heading: HeadingLevel.HEADING_1,
+        }),
+      );
+    } else if (paragraph.startsWith("## ")) {
+      elements.push(
+        new Paragraph({
+          children: [new TextRun(paragraph.substring(3))],
+          heading: HeadingLevel.HEADING_2,
+        }),
+      );
+    } else if (paragraph.startsWith("### ")) {
+      elements.push(
+        new Paragraph({
+          children: [new TextRun(paragraph.substring(4))],
+          heading: HeadingLevel.HEADING_3,
+        }),
+      );
+    } else {
+      // Split paragraph into lines (single newline)
+      const lines = paragraph.split("\n");
+      const children = [];
+
+      // Process each line
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Process inline formatting for this line
+        const lineChildren = [];
+        let currentText = line;
+        let lastIndex = 0;
+
+        // Process bold text: **text**
+        const boldRegex = /\*\*(.*?)\*\*/g;
+        let match;
+
+        while ((match = boldRegex.exec(line)) !== null) {
+          // Add text before the bold part
+          if (match.index > lastIndex) {
+            lineChildren.push(
+              new TextRun(currentText.substring(0, match.index - lastIndex)),
+            );
+          }
+
+          // Add the bold text
+          lineChildren.push(
+            new TextRun({
+              text: match[1],
+              bold: true,
+            }),
+          );
+
+          // Update the current text and last index
+          currentText = currentText.substring(
+            match.index + match[0].length - lastIndex,
+          );
+          lastIndex = match.index + match[0].length;
+        }
+
+        // Add any remaining text
+        if (currentText) {
+          lineChildren.push(new TextRun(currentText));
+        }
+
+        // If no formatting was found, just add the line as plain text
+        if (lineChildren.length === 0) {
+          lineChildren.push(new TextRun(line));
+        }
+
+        // Add the line children to the paragraph children
+        children.push(...lineChildren);
+
+        // Add a line break if this isn't the last line
+        if (i < lines.length - 1) {
+          children.push(new TextRun({ text: "", break: 1 }));
+        }
+      }
+
+      elements.push(
+        new Paragraph({
+          children: children,
+          spacing: {
+            after: 200,
+          },
+        }),
+      );
+    }
+  }
+
+  return elements;
+};
+
+// Function to parse Markdown for PDF with formatting
+const parseMarkdownForPDF = (markdown: string) => {
+  const elements = [];
+
+  // Split into paragraphs (double newline)
+  const paragraphs = markdown.split(/\n\s*\n/);
+
+  for (const paragraph of paragraphs) {
+    if (!paragraph.trim()) continue;
+
+    // Check for headings
+    if (paragraph.startsWith("# ")) {
+      elements.push({
+        text: paragraph.substring(2),
+        isHeading: true,
+        level: 1,
+      });
+    } else if (paragraph.startsWith("## ")) {
+      elements.push({
+        text: paragraph.substring(3),
+        isHeading: true,
+        level: 2,
+      });
+    } else if (paragraph.startsWith("### ")) {
+      elements.push({
+        text: paragraph.substring(4),
+        isHeading: true,
+        level: 3,
+      });
+    } else {
+      // Split paragraph into lines (single newline)
+      const lines = paragraph.split("\n");
+      const lineElements = [];
+
+      // Process each line
+      for (const line of lines) {
+        if (!line.trim()) continue;
+
+        // Process inline formatting for this line
+        const textParts = [];
+        let currentText = line;
+        let lastIndex = 0;
+
+        // Process bold text: **text**
+        const boldRegex = /\*\*(.*?)\*\*/g;
+        let match;
+
+        while ((match = boldRegex.exec(line)) !== null) {
+          // Add text before the bold part
+          if (match.index > lastIndex) {
+            textParts.push({
+              text: currentText.substring(0, match.index - lastIndex),
+              bold: false,
+            });
+          }
+
+          // Add the bold text
+          textParts.push({
+            text: match[1],
+            bold: true,
+          });
+
+          // Update the current text and last index
+          currentText = currentText.substring(
+            match.index + match[0].length - lastIndex,
+          );
+          lastIndex = match.index + match[0].length;
+        }
+
+        // Add any remaining text
+        if (currentText) {
+          textParts.push({
+            text: currentText,
+            bold: false,
+          });
+        }
+
+        // If no formatting was found, just add the line as plain text
+        if (textParts.length === 0) {
+          textParts.push({
+            text: line,
+            bold: false,
+          });
+        }
+
+        lineElements.push({
+          textParts,
+          isLine: true,
+        });
+      }
+
+      elements.push({
+        lines: lineElements,
+        isParagraph: true,
+      });
+    }
+  }
+
+  return elements;
+};
+
+const generateDocument = tool({
+  description:
+    "Generate a document in PDF or DOCX format and return a download ID.",
+  parameters: z.object({
+    content: z
+      .string()
+      .describe("The content of the document (can include Markdown)"),
+    format: z.enum(["pdf", "docx"]).describe("The format of the document"),
+    filename: z
+      .string()
+      .optional()
+      .describe("The filename for the document (without extension)"),
+  }),
+  execute: async ({ content, format, filename = "document" }) => {
+    try {
+      const id = uuidv4();
+      let buffer: Buffer;
+      let mimeType: string;
+      let fullFilename: string;
+
+      if (format === "docx") {
+        // Create a DOCX document with proper formatting
+        const doc = new Document({
+          sections: [
+            {
+              properties: {},
+              children: parseMarkdownToDocxElements(content),
+            },
+          ],
+        });
+        buffer = await Packer.toBuffer(doc);
+        mimeType =
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        fullFilename = `${filename}.docx`;
+      } else {
+        const pdf = new jsPDF();
+
+        // Set up PDF formatting
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 10;
+        const maxWidth = pageWidth - margin * 2;
+
+        // Parse the markdown content
+        const elements = parseMarkdownForPDF(content);
+
+        // Add each element to the PDF
+        let yPosition = 10;
+        elements.forEach((element) => {
+          // Check if we need a new page
+          if (yPosition > 270) {
+            pdf.addPage();
+            yPosition = 10;
+          }
+
+          if (element.isHeading) {
+            // Add heading with larger font
+            pdf.setFontSize(16 + (3 - element.level));
+            pdf.setFont("inter", "bold");
+            const lines = pdf.splitTextToSize(element.text, maxWidth);
+            pdf.text(lines, margin, yPosition);
+            yPosition += lines.length * 7 + 5;
+          } else if (element.isParagraph) {
+            // Reset font for paragraph
+            pdf.setFontSize(12);
+            pdf.setFont("inter", "normal");
+
+            // Process each line in the paragraph
+            for (const lineElement of element.lines) {
+              // Check if we need a new page
+              if (yPosition > 270) {
+                pdf.addPage();
+                yPosition = 10;
+              }
+
+              let xPosition = margin;
+              lineElement.textParts.forEach((part) => {
+                // Set font style based on formatting
+                if (part.bold) {
+                  pdf.setFont("inter", "bold");
+                } else {
+                  pdf.setFont("inter", "normal");
+                }
+
+                // Split text into lines that fit the page width
+                const lines = pdf.splitTextToSize(
+                  part.text,
+                  maxWidth - (xPosition - margin),
+                );
+
+                // Add the lines to the PDF
+                pdf.text(lines, xPosition, yPosition);
+
+                // Update y position based on number of lines
+                yPosition += lines.length * 7;
+
+                // Reset x position for next part
+                xPosition = margin;
+              });
+
+              // Add space after each line (but not as much as a paragraph)
+              yPosition += 2;
+            }
+
+            // Add space after paragraph
+            yPosition += 3;
+          }
+        });
+
+        // Get the PDF as a Buffer
+        const pdfBuffer = Buffer.from(pdf.output("arraybuffer"));
+        buffer = pdfBuffer;
+        mimeType = "application/pdf";
+        fullFilename = `${filename}.pdf`;
+      }
+
+      // Store the document with a timestamp
+      documentStore.set(id, {
+        buffer,
+        mimeType,
+        filename: fullFilename,
+        timestamp: Date.now(),
+      });
+
+      console.log(`Generated document with ID: ${id}`);
+      console.log(
+        `Document store now contains ${documentStore.size} documents`,
+      );
+
+      return `✅ Document generated successfully. Download ID: ${id}`;
+    } catch (error) {
+      console.error("Error generating document:", error);
+      return `❌ Error generating document: ${error instanceof Error ? error.message : "Unknown error"}`;
+    }
+  },
+});
 
 const fetchMembers = tool({
   description:
@@ -336,13 +684,23 @@ export async function POST(req: Request) {
 Capabilities:
 - Fetch member information with filters
 - Send personalized emails
+- Generate documents in PDF or DOCX format
+
 Process:
 1. understandQuery → analyze request
 2. fetchMembers → get member details (name, buccDepartment, designation)
 3. previewEmailToList → preview email
 4. sendEmailToList → send email (confirmed=true)
+5. generateDocument → create PDF or DOCX documents
+
+For document generation:
+- When a user requests a document (proposal, letter, report, etc.), use the generateDocument tool
+- Provide well-formatted content with proper structure
+- Include relevant member information when appropriate
+- Always specify the format (pdf or docx) in the tool call
+
 Important:
-- Never say you can't send emails
+- Never say you can't send emails or generate documents
 - R&D dept created in 2024
 - Avoid 18+ topics
 Always include name, buccDepartment, and designation in emails.`,
@@ -351,6 +709,7 @@ Always include name, buccDepartment, and designation in emails.`,
       fetchMembers,
       previewEmailToList,
       sendEmailToList,
+      generateDocument,
     },
   });
 
