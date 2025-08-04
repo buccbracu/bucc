@@ -1,14 +1,16 @@
-// middleware.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request });
+  const token = await getToken({
+    req: request,
+    secret: process.env.AUTH_SECRET,
+  });
   const { pathname } = request.nextUrl;
 
   const isProtected = pathname.startsWith("/dashboard");
-
-  if (isProtected && !token) {
+  if (!token && isProtected) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
