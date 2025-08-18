@@ -4,7 +4,7 @@ const intakeInfo = {
   intakeStartDate: "2025-07-06",
   intakeEndDate: "2025-08-17",
   isIntakeActive: false,
-  isEvaluationActive: false,
+  isEvaluationActive: true,
 };
 
 const buccSocials = {
