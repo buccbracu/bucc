@@ -319,9 +319,10 @@ export default function NimbusPlus() {
         </div>
         {/* Messages Area */}
         <div
-          ref={messagesContainerRef}
-          className="overflow-y-auto bg-transparent"
-        >
+  ref={messagesContainerRef}
+  className="flex-1 overflow-y-auto bg-transparent"
+>
+
           <div className="mx-auto max-w-4xl px-4 py-8">
             {messages.map((msg, index) => {
               const contentDocIds =
