@@ -26,7 +26,7 @@ export default function NimbusPlusPage() {
     designation !== undefined && access_designations.includes(designation);
 
   if (!hasAccess) {
-    return <p>You are not authorized to view this page Please Contact ABIR</p>;
+    return <p>You are not authorized to view this page. Please Contact R&D Dept</p>;
   }
 
   return <NimbusPlus />;

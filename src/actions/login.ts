@@ -14,10 +14,9 @@ export const login = async (values: LoginValues) => {
 
   try {
     const result = await signIn("credentials", {
-      redirect: true,
+      redirect: false,
       email,
       password,
-      callbackUrl: "/dashboard"
     });
 
     if (result?.error) {

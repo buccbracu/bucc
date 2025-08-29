@@ -6,7 +6,7 @@ import {generateText, streamText, tool } from "ai";
 import { z } from "zod";
 import { searchExecutiveBody } from "@/helpers/searchExecutiveBody";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   const { messages } = await req.json();

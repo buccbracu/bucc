@@ -682,7 +682,7 @@ const understandQuery = tool({
   },
 });
 
-const maxDuration = 30;
+const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
