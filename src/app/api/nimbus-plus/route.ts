@@ -437,7 +437,6 @@ const fetchMembers = tool({
       "departmentBracu",
       "contactNumber",
     ],
-    limit = 50,
   }) => {
     try {
       await dbConnect();
@@ -497,9 +496,7 @@ const fetchMembers = tool({
         projection[field] = 1;
       });
 
-      const members = await MemberInfo.find(filter, projection).limit(
-        Math.min(limit, 100),
-      );
+      const members = await MemberInfo.find(filter, projection);
 
       if (members.length === 0) {
         return { count: 0, emailAddresses: [], summary: "No members found" };
