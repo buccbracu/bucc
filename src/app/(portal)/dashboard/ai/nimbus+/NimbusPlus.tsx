@@ -289,7 +289,7 @@ export default function NimbusPlus() {
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-blue-900/30 bg-gradient-to-r from-blue-900/20 to-purple-900/20 p-4 backdrop-blur-sm">
+<div className="flex items-center justify-between border-b border-blue-900/30 bg-gradient-to-r from-blue-900/20 to-purple-900/20 py-1 px-3 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <button
     onClick={() => router.back()}
@@ -310,6 +310,7 @@ export default function NimbusPlus() {
                               src={headerBall}
                               alt="My AVIF Image"
                               width={80}
+                              height={80}
                             />
             <div>
               <h1 className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-xl font-bold text-transparent">
