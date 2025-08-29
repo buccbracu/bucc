@@ -692,6 +692,7 @@ export async function POST(req: Request) {
   Process for sending Emails:
   -understandQuery: analyze user request
   -fetchMembers: retrieve member details (name, buccDepartment, designation)
+  if member details are not available still proceed with given email addresses give by the user
   -previewEmailToList: show email preview
   -sendEmailToList: send email (confirmed=true required)
 

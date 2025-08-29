@@ -1,10 +1,11 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import Image from "next/image";
+import myAI from  "/public/images/nimbus_plus.png"; 
+import headerBall from  "/public/images/ball.gif"; 
 import {
   CircleStopIcon,
-  BotMessageSquare,
   Send,
   User,
   Sparkles,
@@ -305,18 +306,11 @@ export default function NimbusPlus() {
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
   </button>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="relative"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
-                <Zap size={20} className="text-white" />
-              </div>
-              <div className="absolute -right-1 -top-1">
-                <Sparkles size={16} className="animate-pulse text-yellow-400" />
-              </div>
-            </motion.div>
+            <Image
+                              src={headerBall}
+                              alt="My AVIF Image"
+                              width={80}
+                            />
             <div>
               <h1 className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-xl font-bold text-transparent">
                 Nimbus+
@@ -366,7 +360,12 @@ export default function NimbusPlus() {
                         className="relative"
                       >
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/20">
-                          <BotMessageSquare size={20} />
+                          <Image
+                              src={myAI}
+                              alt="My AVIF Image"
+                              width={500}
+                              height={300}
+                            />
                         </div>
                         <div className="absolute -bottom-1 -right-1">
                           <Shield size={16} className="text-green-400" />
