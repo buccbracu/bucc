@@ -76,12 +76,13 @@ const ChatBot: React.FC = () => {
         </button>
       ) : (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          transition={{ duration: 0.3 }}
-          className={`${inter.className} fixed bottom-0 left-0 right-0 flex max-h-[80vh] flex-col overflow-hidden rounded-t-xl bg-gray-900 text-white shadow-2xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-[22rem] sm:rounded-xl`}
-        >
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: 50 }}
+  transition={{ duration: 0.3 }}
+  className={`${inter.className} fixed bottom-0 left-0 right-0 flex max-h-[80vh] flex-col overflow-hidden rounded-t-xl bg-gray-900 text-white shadow-2xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-[25rem] sm:rounded-xl`}
+>
+
           {/* Header */}
           <div className="bg-gray-850 flex items-center justify-between border-b border-gray-800 px-4 py-3">
             <div className="flex items-center space-x-2">
@@ -119,7 +120,7 @@ const ChatBot: React.FC = () => {
                     width={28}
                     height={28}
                     alt="Nimbus"
-                    className="mr-2 h-7 w-7 rounded-full object-cover"
+                    className="mr-2 h-9 w-9 rounded-full object-cover"
                     unoptimized={true}
                   />
                 )}
