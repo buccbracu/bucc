@@ -400,6 +400,10 @@ const fetchMembers = tool({
       .string()
       .optional()
       .describe("Filter by birth date (YYYY-MM-DD format)"),
+    joinedBucc: z
+      .string()
+      .optional()
+      .describe("Filter by BUCC intake name (e.g., 'Summer 2025')"),
     returnFields: z
       .array(z.string())
       .optional()
@@ -424,6 +428,7 @@ const fetchMembers = tool({
     personalEmail,
     lastPromotion,
     birthDate,
+    joinedBucc,
     contactNumber,
     returnFields = [
       "name",
@@ -437,6 +442,7 @@ const fetchMembers = tool({
     try {
       await dbConnect();
       const filter: any = {};
+
       if (contactNumber) filter.contactNumber = contactNumber;
       if (buccDepartment) filter.buccDepartment = buccDepartment;
       if (designation) filter.designation = designation;
@@ -445,10 +451,11 @@ const fetchMembers = tool({
       if (memberStatus) filter.memberStatus = memberStatus;
       if (bloodGroup) filter.bloodGroup = bloodGroup;
       if (gender) filter.gender = gender;
+
       if (name) filter.name = { $regex: name, $options: "i" };
       if (email) filter.email = { $regex: email, $options: "i" };
-      if (personalEmail)
-        filter.personalEmail = { $regex: personalEmail, $options: "i" };
+      if (personalEmail) filter.personalEmail = { $regex: personalEmail, $options: "i" };
+
       if (birthDate) {
         if (birthDate.includes("-")) {
           if (birthDate.split("-").length === 3) {
@@ -466,6 +473,7 @@ const fetchMembers = tool({
           filter.birthDate = { $gte: startDate, $lte: endDate };
         }
       }
+
       if (lastPromotion) {
         if (lastPromotion.includes("-")) {
           const [year, month] = lastPromotion.split("-");
@@ -479,16 +487,24 @@ const fetchMembers = tool({
           filter.lastPromotion = { $gte: startDate, $lte: endDate };
         }
       }
+
+      if (joinedBucc) {
+        filter.joinedBucc = { $regex: joinedBucc, $options: "i" };
+      }
+
       const projection: any = {};
       returnFields.forEach((field) => {
         projection[field] = 1;
       });
+
       const members = await MemberInfo.find(filter, projection).limit(
         Math.min(limit, 100),
       );
+
       if (members.length === 0) {
         return { count: 0, emailAddresses: [], summary: "No members found" };
       }
+
       const memberData = members.map((member: { [x: string]: any }) => {
         const result: any = {};
         returnFields.forEach((field) => {
@@ -496,11 +512,13 @@ const fetchMembers = tool({
         });
         return result;
       });
+
       const emailAddresses = members.map((m: { email: any }) => m.email);
+
       return {
         count: members.length,
         members: memberData,
-        emailAddresses: emailAddresses,
+        emailAddresses,
         summary: `Found ${members.length} members`,
       };
     } catch (error) {
@@ -511,6 +529,7 @@ const fetchMembers = tool({
     }
   },
 });
+
 
 const sendEmailToList = tool({
   description:
