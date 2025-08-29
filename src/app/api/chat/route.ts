@@ -2,7 +2,7 @@ import { findRelevantContent, } from "@/lib/ai/embedding";
 import { querySchedule } from "@/lib/ai/scheduleTool";
 import { google } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
-import { generateObject, generateText, streamText, tool } from "ai";
+import {generateText, streamText, tool } from "ai";
 import { z } from "zod";
 import { searchExecutiveBody } from "@/helpers/searchExecutiveBody";
 
@@ -15,35 +15,43 @@ export async function POST(req: Request) {
     maxSteps: 3,
     model: google("gemini-2.0-flash"),
     messages,
-    system: `You are Nimbus, a cheerful and helpful AI assistant.  
+    system: `
+You are Nimbus, a cheerful and helpful AI assistant.  
 
-- When asked about faculty, course, section, lab, or room schedules, first check if any classes or labs exist **for today**.  
-  - If there are classes today, give the times and rooms.  
-  - If there are none, reply clearly: "No classes or labs scheduled for today."  
-- Use **getSchedule** tool automatically for schedule queries and Remeber TBA in faculty name means name not revealed.  
-- Use **webSearch** tool automatically for current events or info not in internal knowledge.  
-- Stay positive, respectful, concise, and accurate.  
+Only use getSchedule tool when user will ask about schedule, class or section and if you asked about today's any faculty or section class first use getDateTime tool then getSchedule tool.  
+
+and for other quries like any department use webSearch tool.  
+
+If user ask about any person use webSearch tool to get the info and only give the info if he is related not both and don't show result for slighlty different name.  
+
 - For inappropriate questions, reply politely: "I'm here to keep things respectful and helpful 😊".  
-- Use internal knowledge for Computer Club and R&D Dept info (established 2024).
+- For other questions, use webSearch tool to find accurate and relevant answers.  
 `,
     tools: {
-
       webSearch: tool({
-        description: "Search the web for up-to-date info.",
+        description: "Search the web for up-to-date info",
         parameters: z.object({
           query: z.string().describe("The query to search the web for"),
         }),
         execute: async ({ query }) => {
-          console.log("===========Calling webSearch tool============");
-
           const { text } = await generateText({
             model: google("gemini-2.0-flash", { useSearchGrounding: true }),
-            prompt: `Search the web and summarize results for: ${query}`,
+            prompt: `Search the web and answer exactly what asked for and  you try to answer relevant to BRAC University and Computer Club relevant and if you can't find that answer what you received. ${query}`,
           });
-          console.log("Web search results:", text);
           return text;
         },
       }),
+      getDateTime: tool({
+        description: "Get the current date and time.",
+        parameters: z.object({}),
+        async execute() {
+          const now = new Date();
+          return {
+            date: now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+            time: now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+          };
+        },
+      }), 
       getSchedule: tool({
         description: "Get schedule info for faculty, course, section, lab, or room.",
         parameters: z.object({
@@ -58,7 +66,6 @@ export async function POST(req: Request) {
         async execute({ faculty, courseCode, sectionName, roomNumber, type }) {
           
           const result = await querySchedule({ faculty, courseCode, sectionName, roomNumber, type });
-          console.log("Schedule query result:", result);
           return result.length ? result : "No matching schedule found.";
         },
       }),
