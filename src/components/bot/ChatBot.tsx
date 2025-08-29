@@ -14,13 +14,9 @@ const inter = Open_Sans({
   weight: ["400", "600"],
 });
 
-
-
 const ChatBot: React.FC = () => {
-
   const [isOpen, setIsOpen] = useState(false);
   const [toolCall, setToolCall] = useState<string>();
-
   const {
     messages,
     input,
@@ -40,33 +36,29 @@ const ChatBot: React.FC = () => {
         role: "assistant",
         id: "1",
         content:
-          "Hey there! I’m Nimbus, your go-to chatbot from the BRAC University Computer Club (BUCC)! 🤖✨ Got questions? I’ve got answers! Whether it’s about our club’s awesome events, real time campus updates, or just random BUCC fun facts, hit me up! I’m here to make your life easier and a little more fun. 😎🎉 Ask away! 🚀",
+          "Hey there! I'm Nimbus, your go-to chatbot from the BRAC University Computer Club (BUCC)! 🤖✨ Got questions? I've got answers! Whether it's about our club's awesome events, real time campus updates, or just random BUCC fun facts, hit me up! I'm here to make your life easier and a little more fun. 😎🎉 Ask away! 🚀",
       },
     ],
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const toggleChat = () => setIsOpen(!isOpen);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
- const handleResize = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-  const textarea = event.target;
 
-  textarea.style.height = 'auto';
-  
-  const maxHeight = 4 * 24; 
-
-  textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
-};
-
-
+  const handleResize = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = event.target;
+    textarea.style.height = "auto";
+    const maxHeight = 4 * 24;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+  };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
   useEffect(() => {
     if (status === "streaming" || status === "ready") {
       setToolCall(undefined);
@@ -78,9 +70,9 @@ const ChatBot: React.FC = () => {
       {!isOpen ? (
         <button
           onClick={toggleChat}
-          className="rounded-full bg-gray-800 p-2 text-white shadow-md transition hover:bg-gray-700"
+          className="rounded-full bg-gray-800 p-3 text-white shadow-lg transition-all hover:scale-105 hover:bg-gray-700"
         >
-          <BotMessageSquare size={25} />
+          <BotMessageSquare size={24} />
         </button>
       ) : (
         <motion.div
@@ -88,42 +80,69 @@ const ChatBot: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           transition={{ duration: 0.3 }}
-          className={`${inter.className} fixed bottom-0 left-0 right-0 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg bg-gray-900 text-white shadow-xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-96 sm:rounded-lg`}
+          className={`${inter.className} fixed bottom-0 left-0 right-0 flex max-h-[80vh] flex-col overflow-hidden rounded-t-xl bg-gray-900 text-white shadow-2xl sm:bottom-4 sm:left-auto sm:right-4 sm:w-[22rem] sm:rounded-xl`}
         >
-          <div className="flex items-center justify-between border-b border-gray-700 p-3">
-            <h2 className="text-base font-medium">Nimbus (ChatBot) 🤖</h2>
-            <button onClick={toggleChat} className="hover:text-gray-400">
-              <X size={20} />
+          {/* Header */}
+          <div className="bg-gray-850 flex items-center justify-between border-b border-gray-800 px-4 py-3">
+            <div className="flex items-center space-x-2">
+              <div className="relative">
+                <Image
+                  src={botIcon}
+                  width={24}
+                  height={24}
+                  alt="Nimbus"
+                  className="h-6 w-6 rounded-full object-cover"
+                  unoptimized={true}
+                />
+                <div className="ring-gray-850 absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 ring-1"></div>
+              </div>
+              <h2 className="text-base font-semibold">Nimbus</h2>
+            </div>
+            <button
+              onClick={toggleChat}
+              className="rounded-full p-1 text-gray-400 hover:bg-gray-800 hover:text-white"
+            >
+              <X size={18} />
             </button>
           </div>
 
-          <div className="flex-1 space-y-2 overflow-y-auto p-3 text-sm">
+          {/* Messages Container */}
+          <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 text-sm">
             {messages.map((msg, index) => (
               <div
                 key={msg.id}
-                className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.role === "assistant" && (
                   <Image
                     src={botIcon}
-                    width={10}
-                    height={10}
-                    alt={"Icon"}
-                    className="mr-2 h-10 w-10 rounded-full object-cover"
+                    width={28}
+                    height={28}
+                    alt="Nimbus"
+                    className="mr-2 h-7 w-7 rounded-full object-cover"
                     unoptimized={true}
                   />
                 )}
                 <div
-                  className={`max-w-[75%] rounded-lg px-4 py-2 ${
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                     msg.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-800 text-gray-300"
+                      ? "rounded-br-none bg-blue-600 text-white"
+                      : "rounded-bl-none bg-gray-800 text-gray-200"
                   }`}
                 >
                   {msg.role === "assistant" ? (
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <ReactMarkdown
+                      components={{
+                        div: ({ node, ...props }) => (
+                          <div
+                            {...props}
+                            className="prose prose-invert prose-headings:my-1 prose-headings:text-white prose-p:my-1 prose-strong:text-white prose-li:my-0"
+                          />
+                        ),
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
                   ) : (
                     msg.content
                   )}
@@ -132,23 +151,24 @@ const ChatBot: React.FC = () => {
             ))}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Status Indicators */}
           {status === "submitted" && (
-            <div className="flex items-center justify-center space-x-3 px-3 py-2 text-sm text-gray-300">
-              <div className="flex items-center space-x-1">
-                <Spinner className="h-4 w-4" />
-                <span>Thinking...</span>
-              </div>
+            <div className="bg-gray-850 flex items-center justify-center space-x-2 border-t border-gray-800 px-4 py-2 text-sm text-gray-400">
+              <Spinner className="h-4 w-4" />
+              <span>Thinking...</span>
               <button
                 type="button"
                 onClick={() => stop()}
-                className="text-red-500 hover:text-red-700"
+                className="ml-2 rounded-full p-1 hover:bg-gray-800 hover:text-red-400"
               >
-                <CircleStopIcon size={18} />
+                <CircleStopIcon size={16} />
               </button>
             </div>
           )}
+
           {toolCall && (
-            <div className="flex items-center justify-center space-x-2 px-3 py-2 text-sm text-blue-400">
+            <div className="bg-gray-850 flex items-center justify-center space-x-2 border-t border-gray-800 px-4 py-2 text-sm text-blue-400">
               <Spinner className="h-4 w-4" />
               <span>
                 {toolCall === "getInformation"
@@ -157,24 +177,23 @@ const ChatBot: React.FC = () => {
               </span>
             </div>
           )}
+
           {error && (
-            <div className="flex items-center justify-center space-x-2 text-sm text-red-500">
+            <div className="bg-gray-850 flex items-center justify-center space-x-2 border-t border-gray-800 px-4 py-2 text-sm text-red-400">
               <span>An error occurred.</span>
               <button
                 type="button"
                 onClick={() => reload()}
-                className="text-sm font-medium underline hover:text-red-700"
+                className="font-medium underline hover:text-red-300"
               >
                 Retry
               </button>
             </div>
           )}
 
-          <div className="sticky bottom-0 border-t border-gray-700 bg-gray-900 p-3">
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center space-x-2"
-            >
+          {/* Input Area */}
+          <div className="bg-gray-850 sticky bottom-0 border-t border-gray-800 p-3">
+            <form onSubmit={handleSubmit} className="flex items-end space-x-2">
               <textarea
                 autoComplete="off"
                 name="input-message"
@@ -184,21 +203,20 @@ const ChatBot: React.FC = () => {
                 onInput={handleResize}
                 autoFocus={true}
                 onKeyDown={(e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); 
-      handleSubmit(e);   
-    }
-  }}
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
                 rows={1}
-                className="flex-1 resize-none overflow-hidden rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 resize-none overflow-hidden rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-
               <button
                 type="submit"
                 disabled={status == "submitted" || status === "streaming"}
-                className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-700"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Send size={20} />
+                <Send size={18} />
               </button>
             </form>
           </div>

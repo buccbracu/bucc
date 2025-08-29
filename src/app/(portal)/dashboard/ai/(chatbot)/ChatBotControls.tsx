@@ -3,7 +3,7 @@ import FormDialogButton from "./FormDialogButton";
 import { Button } from "@/components/ui/button";
 import InfoDialog from "./InfoDialog";
 import SuccessModal from "@/components/success-modal";
-
+import Link from "next/link";
 
 export default function ChatBotControls() {
   return (
@@ -16,9 +16,11 @@ export default function ChatBotControls() {
           </Button>
         }
       />
-      <Button variant="secondary" className="w-[120px]">
-        Configure
-      </Button>
+      <Link href="/dashboard/ai/nimbus+" className="w-[120px] text-center">
+        <Button variant="secondary" className="w-[120px]">
+          Nimbus+
+        </Button>
+      </Link>
       <FormDialogButton />
     </div>
   );

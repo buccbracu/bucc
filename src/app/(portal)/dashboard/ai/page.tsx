@@ -1,10 +1,7 @@
-
 import Heading from "@/components/portal/heading";
 import ChatBotDashBoard from "./(chatbot)/ChatBotDashBoard";
 
-
 export default function AI() {
-
   return (
     <>
       <Heading

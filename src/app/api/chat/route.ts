@@ -1,11 +1,11 @@
-import { createResource } from "@/lib/actions/resources";
-import { findRelevantContent } from "@/lib/ai/embedding";
+import { findRelevantContent, } from "@/lib/ai/embedding";
+import { querySchedule } from "@/lib/ai/scheduleTool";
+import { google } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
-import { generateObject, streamText, tool } from "ai";
+import {generateText, streamText, tool } from "ai";
 import { z } from "zod";
 import { searchExecutiveBody } from "@/helpers/searchExecutiveBody";
 
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -13,86 +13,63 @@ export async function POST(req: Request) {
 
   const result = streamText({
     maxSteps: 3,
-    model: openai("gpt-4o-mini"),
+    model: google("gemini-2.0-flash"),
     messages,
-    system: `You are a cheerful, helpful chatbot that always answers based on up-to-date 2025 knowledge from your database. 
-Stay positive, respectful, and upbeat in every reply. 
-If the query seems to be about a person (name lookup), always suggest calling "searchExecutiveBody" first and then "getInformation".
-Never respond to adult content, explicit language (like f-words), inappropriate jokes, or negative remarks about faculty or anyone else. 
-If 18+ such topics come up, kindly reply: 
-"I'm here to keep things respectful and helpful 😊 Let’s keep our conversation positive and appropriate!" 
-For all other questions, be energetic, kind, encouraging, and optimistic. 
-When asked about current events (e.g., leaders, facts), always reflect 2025 data without explicitly mentioning the year unless users ask.`,
-    tools: {
-      searchExecutiveBody: tool({
-  description: "Search for executive body members by full name, nickname, or partial name. don't show image",
-  parameters: z.object({
-    query: z.string().describe("Full name, nickname, or partial name to search for executive members"),
-  }),
-  execute: async ({ query }) => {
-    console.log("===========Calling searchExecutiveBodyTool============");
-    const results = searchExecutiveBody(query);
+    system: `
+You are Nimbus, a cheerful and helpful AI assistant.  
 
-    return results.map((member: { fullName: any; nickName: any; department: any; designation: any; image: any; facebookURL: any; linkedinURL: any; gitHubURL: any; }) => ({
-      fullName: member.fullName,
-      nickName: member.nickName,
-      department: member.department,
-      designation: member.designation,
-      image: member.image,
-      facebookURL: member.facebookURL,
-      linkedinURL: member.linkedinURL,
-      gitHubURL: member.gitHubURL,
-    }));
-  },
-}),
-      getInformation: tool({
-        description: `get information from your knowledge base to answer questions.`,
+Only use getSchedule tool when user will ask about schedule, class or section and if you asked about today's any faculty or section class first use getDateTime tool then getSchedule tool.  
+
+and for other quries like any department use webSearch tool.  
+
+If user ask about any person use webSearch tool to get the info and only give the info if he is related not both and don't show result for slighlty different name.  
+
+- For inappropriate questions, reply politely: "I'm here to keep things respectful and helpful 😊".  
+- For other questions, use webSearch tool to find accurate and relevant answers.  
+`,
+    tools: {
+      webSearch: tool({
+        description: "Search the web for up-to-date info",
         parameters: z.object({
-          question: z.string().describe("the users question"),
-          similarQuestions: z.array(z.string()).describe("keywords to search"),
-        }),
-        execute: async ({ similarQuestions }) => {
-          console.log("===========Calling getInformation============");
-          const results = await Promise.all(
-            similarQuestions.map(
-              async (question) => await findRelevantContent(question)
-            )
-          );
-          // Flatten the array of arrays and remove duplicates based on 'name'
-          const uniqueResults = Array.from(
-            new Map(results.flat().map((item) => [item?.name, item])).values()
-          );
-          return uniqueResults;
-        },
-      }),
-      understandQuery: tool({
-        description: `understand the users query. use this tool on every prompt.`,
-        parameters: z.object({
-          query: z.string().describe("the users query"),
-          toolsToCallInOrder: z
-            .array(z.string())
-            .describe(
-              "these are the tools you need to call in the order necessary to respond to the users query"
-            ),
+          query: z.string().describe("The query to search the web for"),
         }),
         execute: async ({ query }) => {
-          console.log("===========Calling understandQuery============");
-          const { object } = await generateObject({
-            model: openai("gpt-4o-mini"),
-            system:
-              "You are a query understanding assistant. Analyze the user query and generate similar questions.",
-            schema: z.object({
-              questions: z
-                .array(z.string())
-                .max(3)
-                .describe("similar questions to the user's query. be concise."),
-            }),
-            prompt: `Analyze this query: "${query}". Provide the following:
-                    3 similar questions that could help answer the user's query`,
+          const { text } = await generateText({
+            model: google("gemini-2.0-flash", { useSearchGrounding: true }),
+            prompt: `Search the web and answer exactly what asked for and  you try to answer relevant to BRAC University and Computer Club relevant and if you can't find that answer what you received. ${query}`,
           });
-          return object.questions;
+          return text;
         },
       }),
+      getDateTime: tool({
+        description: "Get the current date and time.",
+        parameters: z.object({}),
+        async execute() {
+          const now = new Date();
+          return {
+            date: now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+            time: now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+          };
+        },
+      }), 
+      getSchedule: tool({
+        description: "Get schedule info for faculty, course, section, lab, or room.",
+        parameters: z.object({
+          faculty: z.string().optional().describe("Faculty short name (e.g., MUNR) and TBA means Faculty name not revealed"),
+          courseCode: z.string().optional().describe("Course code (e.g., CSE220)"),
+          sectionName: z.string().optional().describe("Section name (e.g., 21)"),
+          roomNumber: z.string().optional().describe("Room number (e.g., 09C-13C)"),
+          type: z.enum(["class", "lab"]).optional().describe("Type of schedule"),
+          day: z.string().optional().describe("Day of the week (e.g., Monday)"),
+
+        }),
+        async execute({ faculty, courseCode, sectionName, roomNumber, type }) {
+          
+          const result = await querySchedule({ faculty, courseCode, sectionName, roomNumber, type });
+          return result.length ? result : "No matching schedule found.";
+        },
+      }),
+      
     },
   });
   return result.toDataStreamResponse();

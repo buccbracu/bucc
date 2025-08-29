@@ -1,39 +1,30 @@
-// import { authConfig } from "@/auth.config";
-// import { DEFAULT_REDIRECT, PUBLIC_ROUTES, ROOT } from "@/lib/routes";
-// import NextAuth from "next-auth";
+// import { NextResponse } from "next/server";
+// import { getToken } from "next-auth/jwt";
+// import type { NextRequest } from "next/server";
 
-// const { auth } = NextAuth(authConfig);
+// export async function middleware(request: NextRequest) {
+//   const token = await getToken({
+//     req: request,
+//     secret: process.env.AUTH_SECRET,
+//   });
+//   const { pathname } = request.nextUrl;
 
-// export default auth(async (req) => {
-//   const { nextUrl } = req;
-//   const isAuthenticated = !!req.auth;
-//   const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
+//   const isProtected = pathname.startsWith("/dashboard");
 
-//   if (isPublicRoute && isAuthenticated)
-//     return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
+//   if (!token && isProtected) {
+//     return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
+//   }
 
-//   if (!isAuthenticated && !isPublicRoute)
-//     return Response.redirect(new URL(ROOT, nextUrl));
-// });
+//   if (token && pathname === "/login") {
+//     return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin));
+//   }
+
+//   return NextResponse.next();
+// }
 
 // export const config = {
-//   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+//   matcher: ["/dashboard/:path*", "/login"],
 // };
-// // };
-// // export function middleware(request: NextRequest) {
-// //   const pathname = new URL(request.url).pathname;
-// //   if (!(process.env.NODE_ENV === "development")) {
-// //     if (pathname.startsWith("/dashboard")) {
-// //       if (pathname === "/dashboard") {
-// //         return NextResponse.rewrite(new URL("/dashboard", request.url));
-// //       }
-// //       return NextResponse.rewrite(
-// //         new URL("/dashboard/under-construction", request.url),
-// //       );
-// //     }
-// //     return NextResponse.rewrite(new URL("/under-construction", request.url));
-// //   }
-// // }
 
 export const config = {
   matcher: [],
