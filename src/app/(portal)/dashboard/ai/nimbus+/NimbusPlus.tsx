@@ -613,12 +613,7 @@ export default function NimbusPlus() {
                 <Send size={18} />
               </motion.button>
             </form>
-            <div className="mt-3 flex items-center justify-center text-xs text-gray-500">
-              <span className="flex items-center gap-1">
-                <Shield size={12} className="text-green-400" />
-                End-to-end encrypted • Shift + Enter for new line
-              </span>
-            </div>
+            
           </div>
         </div>
       </div>
