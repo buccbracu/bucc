@@ -13,7 +13,7 @@ interface NimbusLayoutProps {
 
 export default function NimbusLayout({ children }: NimbusLayoutProps) {
   return (
-    <div className="flex h-[calc(100vh-0px)] w-full flex-col m-0 p-0">
+    <div className="fixed inset-0 flex h-screen w-screen flex-col bg-[#0a0a0a]">
       {children}
     </div>
   );

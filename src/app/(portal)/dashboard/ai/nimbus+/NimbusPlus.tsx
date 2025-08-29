@@ -1,5 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   CircleStopIcon,
   BotMessageSquare,
@@ -60,6 +62,8 @@ const extractDocumentFormatFromToolInvocations = (
   return null;
 };
 export default function NimbusPlus() {
+  const router = useRouter();
+
   const [toolCall, setToolCall] = useState<string>();
   const [particles, setParticles] = useState<
     Array<{ x: number; y: number; size: number }>
@@ -286,6 +290,21 @@ export default function NimbusPlus() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-blue-900/30 bg-gradient-to-r from-blue-900/20 to-purple-900/20 p-4 backdrop-blur-sm">
           <div className="flex items-center gap-3">
+            <button
+    onClick={() => router.back()}
+    className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-600 bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-all"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className="h-5 w-5"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
