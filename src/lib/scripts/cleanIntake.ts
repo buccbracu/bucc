@@ -16,13 +16,9 @@
  * - All records with status "Accepted"
  * - UserAuth accounts for accepted members
  * 
- * Run this script with:
- * node dist/lib/scripts/cleanIntake.js
- * OR
- * tsx src/lib/scripts/cleanIntake.ts
  */
 
-const dbConnect = require('../dbConnect')   
+import dbConnect from '@/lib/dbConnect';   
 
 
 async function cleanIntake() {
@@ -54,14 +50,14 @@ async function cleanIntake() {
 
     // Delete by email
     for (const { email, studentId } of deletableData) {
-        const deletedMemberInfo = await MemberInfo.deleteMany({ email })
+        // const deletedMemberInfo = await MemberInfo.deleteMany({ email })
         const deletedPrereg = await PreregMemberInfo.deleteMany({ email })
         const deletedAssessment = await MemberEBAssessment.deleteMany({ gSuiteEmail: email })
         const deletedAttendance = await IntervieweeAttendance.deleteMany({ studentId })
         const deletedAuth = await UserAuth.deleteMany({ email })
         
         console.log(`Deleted records for ${email}:`, {
-            memberInfo: deletedMemberInfo.deletedCount,
+            // memberInfo: deletedMemberInfo.deletedCount,
             prereg: deletedPrereg.deletedCount,
             assessment: deletedAssessment.deletedCount,
             attendance: deletedAttendance.deletedCount,
