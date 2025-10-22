@@ -1,4 +1,4 @@
-import coAdvisor2Image from "/public/images/people/advisors/Jawaril-Munshad-Abedin.jpg";
+import coAdvisor2Image from "/public/images/people/advisors/Ateya-Ahmed-Subarna.jpeg";
 import advisorImage from "/public/images/people/advisors/Annajiat-Alim-Rasel.jpeg";
 import coAdvisor1Image from "/public/images/people/advisors/Arif-Shakil.jpeg";
 
@@ -26,13 +26,13 @@ const coAdvisorsData = [
     website: "https://cse.sds.bracu.ac.bd/faculty_profile/21/arif_shakil",
   },
   {
-    name: "Jawaril Munshad Abedin",
+    name: "Ateya Ahmed Subarna",
     designation: "Co-Advisor",
     bracu_designation: "Lecturer",
     image: coAdvisor2Image,
-    bio: "Jawaril Munshad Abedin completed her BSc. from Brac University in Fall 2021 with a cgpa 3.99/4.00. She completed her SSC and HSC from Viqarunnisa Noon School and College in 2015 and 2017. She was also awarded the Best Girl Gold Medal from the Main Morning branch of Viqarunnisa Noon School and College in 2014. Jawaril joined BRAC University as a Lecturer in the Department of Computer Science and Engineering in June 2023. Prior to this, she served as a contractual lecturer in the same department for 3 semesters. She has also served as a Student Tutor for almost 2 years in the same department during her undergraduate years. Moreover, she served as the Vice Chairperson of the IEEE Computer Society BRAC University Student Branch Chapter in 2020. She became the first BRAC University student to win the Richard E. Merwin Student Scholarship from the IEEE Computer Society, USA in 2020 for her excellent academic result and volunteering contribution to IEEE. She is committed to enriching student learning and club activities at BUCC.",
-    linkedin: "https://www.linkedin.com/in/jawaril/",
-    website:"https://cse.sds.bracu.ac.bd/faculty_profile/57/jawaril_munshad_abedin",
+    bio: "Ateya Ahmed Subarna is a Lecturer at the Department of Computer Science and Engineering, BRAC University.Her major interest sectors are Natural Language Processing (NLP), Health Informatics, Artificial Intelligence, and Machine Learning.She has worked on projects that bridge language and technology to make digital tools in a way more inclusive and meaningful for people.  She inspires students to explore new ideas and think creatively with her strong  background in research and teaching.She is determined to guide the club members with her enthusiasm and experience, helping them grow in both technical and research fields as the advisor/co-advisor of the BRAC University Computer Club (BUCC). Her mentorship continues to motivate students to dream bigger, innovate, and make a lasting impact through technology.",
+    linkedin: "https://www.linkedin.com/in/ateya-subarna-0a9180389/",
+    website:"https://cse.sds.bracu.ac.bd/faculty_profile/270/ateya_ahmed_subarna",
   },
 ];
 
