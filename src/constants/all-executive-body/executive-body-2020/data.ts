@@ -38,7 +38,7 @@ const ExecutiveBody2020 = [
     image: AnonMale,
   },
   {
-    fullName: "MD. AL-JUNAED ISLAM",
+    fullName: "Md. Al-Junaed Islam",
     nickName: "Junaed",
     department: "Creative",
     designation: "Assistant Director",
