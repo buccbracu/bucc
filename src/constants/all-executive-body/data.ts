@@ -1,3 +1,4 @@
+import ExecutiveBody2021 from "./executive-body-2021/data";
 import ExecutiveBody2022 from "./executive-body-2022/data";
 import ExecutiveBody2023 from "./executive-body-2023/data";
 import ExecutiveBody2024 from "./executive-body-2024/data";
@@ -66,6 +67,11 @@ const allExecutiveBodyData = [
     panelYear: "Executive Body 2022",
     data: ExecutiveBody2022,
     executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2022),
+  },
+  {
+    panelYear: "Executive Body 2021",
+    data: ExecutiveBody2021,
+    executiveMembersByDepartment: sortDataByDepartment(ExecutiveBody2021),
   },
 ];
 
