@@ -1,4 +1,4 @@
-# 🚀 BUCC Web App (Next.js)
+# 🚀 BUCC Web Portal
 
 This project is developed and maintained by the **BRAC University Computer Club (BUCC)** Web Team.  
 Follow the instructions below to set up the project locally and contribute effectively.
