@@ -1,8 +1,13 @@
 "use client";
 
 import PageHeader from "@/components/page-header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import allExecutiveBodyData from "@/constants/all-executive-body/data";
 import { Facebook, Github, Linkedin } from "lucide-react";
 import Image from "next/image";
@@ -24,27 +29,26 @@ export default function ExecutiveBody() {
         description="The Executive Body of the BRAC University Computer Club (BUCC) is the heart and soul of the club's operations. Composed of enthusiastic and committed members, this team is the engine driving all club activities and initiatives. They excel in planning events, managing projects, and ensuring that everything runs smoothly within the club. Their primary goal is to nurture a dynamic and collaborative environment that encourages personal and professional development for all members. Through their vision and dedication, the Executive Body continually elevates BUCC, creating a lasting positive impact on its members and the broader community."
       />
 
-      {/* Panel Year Selection Buttons */}
-      <div className="relative mt-8 flex flex-wrap justify-center gap-2 px-10">
-        {allExecutiveBodyData.map((panel, index) => (
-          <div key={index} className="relative">
-            <Button
-              onClick={() => setSelectedPanelIndex(index)}
-              className={`rounded-md border px-4 py-2 font-semibold transition-colors ${
-                selectedPanelIndex === index
-                  ? "bg-[#1f4864] text-white"
-                  : "bg-white text-[#1f4864] dark:bg-gray-800 dark:text-white"
-              } hover:bg-[#1f4864] hover:text-white`}
-            >
-              {panel.panelYear}
-            </Button>
-            {index === 0 && (
-              <Badge className="absolute left-0 top-0 -ml-6 -mt-3 inline-flex items-center justify-center rounded-full bg-green-700 px-2 py-1 text-xs font-bold leading-none text-white">
-                Current
-              </Badge>
-            )}
-          </div>
-        ))}
+      {/* Panel Year Selection Dropdown */}
+      <div className="relative mt-8 flex justify-center px-10">
+        <div className="w-full max-w-xs">
+          <Select
+            value={selectedPanelIndex.toString()}
+            onValueChange={(value) => setSelectedPanelIndex(Number(value))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Panel Year" />
+            </SelectTrigger>
+            <SelectContent>
+              {allExecutiveBodyData.map((panel, index) => (
+                <SelectItem key={index} value={index.toString()}>
+                  {panel.panelYear}
+                  {index === 0 && " (Current)"}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Executive Members Section */}
