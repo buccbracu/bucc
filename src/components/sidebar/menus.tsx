@@ -237,6 +237,26 @@ const menus = [
     ],
   },
   {
+    title: "Event Banners",
+    path: "/dashboard/event-banners",
+    icon: Megaphone,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Event Management",
+      "Communication and Marketing",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ],
+  },
+  {
     title: "Press Releases",
     path: "/dashboard/press-releases",
     icon: Newspaper,

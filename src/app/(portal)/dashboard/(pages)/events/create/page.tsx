@@ -22,6 +22,20 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
+import { createEventBanner } from "@/actions/eventBanners";
+
+const eventTypes = [
+  "Workshop",
+  "Seminar",
+  "Conference",
+  "Meetup",
+  "Hackathon",
+  "Training",
+  "Webinar",
+  "Competition",
+  "Social Event",
+  "Other",
+];
 
 export default function CreateEvent() {
   const router = useRouter();
@@ -47,8 +61,11 @@ export default function CreateEvent() {
     }[]
   >([]);
   const [notes, setNotes] = useState("");
+  const [eventUrl, setEventUrl] = useState("");
   const studentIDs:string[] = [];
   const [isUploading, setIsUploading] = useState(false);
+  const [createBanner, setCreateBanner] = useState(false);
+  const [bannerUrl, setBannerUrl] = useState("");
 
   // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,15 +109,32 @@ export default function CreateEvent() {
 
   // Submit event data
   const handleSubmit = async () => {
+    // Validate required fields
+    if (!title || !venue || !description || !type || !startingDate || !endingDate || !allowedMembers) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (createBanner && !featuredImage) {
+      toast.error("Please upload an event banner image to create a homepage banner");
+      return;
+    }
+
+    if (createBanner && !bannerUrl) {
+      toast.error("Please provide a target URL for the event banner");
+      return;
+    }
+
     const data = {
       title,
       venue,
       description,
       featuredImage: featuredImage || null,
+      eventUrl: eventUrl || null,
       type,
       needAttendance,
-      startingDate: new Date(startingDate),
-      endingDate: new Date(endingDate),
+      startingDate: new Date(startingDate).toISOString(),
+      endingDate: new Date(endingDate).toISOString(),
       allowedMembers,
       allowedDepartments: allowedDepartments.map((d) => d.value),
       allowedDesignations: allowedDesignations.map((d) => d.value),
@@ -116,11 +150,39 @@ export default function CreateEvent() {
       });
 
       if (!res.ok) {
-        toast.error("Failed to create event");
-      } else {
-        toast.success("Event created successfully!");
-        router.back();
+        const errorData = await res.json();
+        toast.error(errorData.error || errorData.message || "Failed to create event");
+        return;
       }
+
+      toast.success("Event created successfully!");
+
+      // Create event banner if checkbox is checked
+      if (createBanner && featuredImage) {
+        const bannerData = {
+          title,
+          imageUrl: featuredImage,
+          targetUrl: bannerUrl,
+          isActive: true,
+          eventDate: new Date(startingDate),
+          eventEndDate: new Date(endingDate),
+          description,
+          location: venue,
+          tags: [type],
+          category: type,
+          isExclusive: false,
+        };
+
+        const bannerResult = await createEventBanner(bannerData as any);
+        
+        if (bannerResult.success) {
+          toast.success("Event banner created successfully!");
+        } else {
+          toast.error("Event created but failed to create banner: " + (bannerResult.error || "Unknown error"));
+        }
+      }
+
+      router.back();
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to create event. Please try again.");
@@ -197,11 +259,32 @@ export default function CreateEvent() {
           )}
 
           <h2 className="text-lg font-semibold">Event Type</h2>
-          <Input
-            placeholder="Type (e.g. Seminar, Workshop)"
+          <Select
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onValueChange={(value) => setType(value)}
+          >
+            <SelectTrigger className="w-full rounded border p-2">
+              <SelectValue placeholder="Select Event Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {eventTypes.map((eventType) => (
+                <SelectItem key={eventType} value={eventType}>
+                  {eventType}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <h2 className="text-lg font-semibold">Event URL (Optional)</h2>
+          <Input
+            placeholder="Event registration/details URL (e.g., https://example.com/event)"
+            value={eventUrl}
+            onChange={(e) => setEventUrl(e.target.value)}
+            className="w-full rounded border p-2"
           />
+          <p className="text-sm text-gray-500">
+            This URL will be used when users click the event banner on the homepage
+          </p>
 
           <h2 className="text-lg font-semibold">Attendance Required?</h2>
           <div className="flex items-center gap-2">
@@ -212,6 +295,30 @@ export default function CreateEvent() {
             />
             <label>Need Attendance</label>
           </div>
+
+          <h2 className="text-lg font-semibold">Create Homepage Banner?</h2>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={createBanner}
+              onChange={(e) => setCreateBanner(e.target.checked)}
+            />
+            <label>Also create event banner for homepage</label>
+          </div>
+
+          {createBanner && (
+            <>
+              <Input
+                placeholder="Banner Target URL (e.g., https://example.com/event)"
+                value={bannerUrl}
+                onChange={(e) => setBannerUrl(e.target.value)}
+                className="w-full rounded border p-2"
+              />
+              <p className="text-sm text-gray-500">
+                This URL will be linked when users click the banner on the homepage
+              </p>
+            </>
+          )}
 
           <h2 className="text-lg font-semibold">Starting Date & Time</h2>
           <Input

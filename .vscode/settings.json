@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["Hackathon"]
+  "cSpell.words": [
+    "Hackathon"
+  ],
+  "typescript.autoClosingTags": false
 }

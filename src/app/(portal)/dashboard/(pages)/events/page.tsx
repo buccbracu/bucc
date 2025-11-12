@@ -58,8 +58,13 @@ export default function MyEvents() {
       toast.success("Event deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["events"] });
     },
-    onError: () => {
-      toast.error("Failed to delete event.");
+    onError: (error: any) => {
+      const errorMessage = error.message || "Failed to delete event.";
+      if (errorMessage.includes("Unauthorized") || errorMessage.includes("401")) {
+        toast.error("You don't have permission to delete this event. Only Directors or Assistant Directors in Press Release and Publications can delete events.");
+      } else {
+        toast.error(errorMessage);
+      }
     },
   });
 

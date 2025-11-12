@@ -1,14 +1,13 @@
 import { hasAuth } from "@/helpers/hasAuth";
-import dbConnect from "@/lib/dbConnect";
-import Event from "@/model/Event";
+import { db } from "@/lib/db";
+import { events } from "@/lib/db/schema/events";
+import { desc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
 
 export async function POST(request: NextRequest) {
-  await dbConnect();
-
   const { session, isPermitted } = await hasAuth(
     permittedDesignations,
     permittedDepartments,
@@ -45,7 +44,6 @@ export async function POST(request: NextRequest) {
       allowedDepartments,
       allowedDesignations,
       notes,
-      attendance, // <-- receive attendance from body
     } = body;
 
     if (
@@ -63,38 +61,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Optional: Validate attendance
-    if (
-      attendance &&
-      (!Array.isArray(attendance) ||
-        !attendance.every((a) => typeof a === "number"))
-    ) {
-      return NextResponse.json(
-        { error: "Attendance must be an array of numbers" },
-        { status: 400 },
-      );
-    }
+    const newEvent = await db
+      .insert(events)
+      .values({
+        title,
+        venue,
+        description,
+        type,
+        needAttendance: needAttendance ?? false,
+        startingDate: new Date(startingDate),
+        endingDate: new Date(endingDate),
+        allowedMembers,
+        featuredImage: featuredImage || null,
+        allowedDepartments: allowedDepartments || [],
+        allowedDesignations: allowedDesignations || [],
+        notes: notes || "",
+        prId: null,
+      })
+      .returning();
 
-    const newEvent = new Event({
-      title,
-      venue,
-      description,
-      type,
-      needAttendance: needAttendance ?? false,
-      startingDate: new Date(startingDate),
-      endingDate: new Date(endingDate),
-      allowedMembers,
-      featuredImage: featuredImage || null,
-      allowedDepartments,
-      allowedDesignations,
-      notes: notes || "",
-      attendance: attendance || [], // <-- set attendance if provided, otherwise empty
-      prId: null, // initially no PR attached
-    });
-
-    const savedEvent = await newEvent.save();
-
-    return NextResponse.json(savedEvent, { status: 201 });
+    return NextResponse.json(newEvent[0], { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -102,10 +88,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    await dbConnect();
+    const allEvents = await db
+      .select()
+      .from(events)
+      .orderBy(desc(events.createdAt));
 
-    const events = await Event.find().sort({ createdDate: -1 }); // Sort newest first
-    return NextResponse.json(events, { status: 200 });
+    return NextResponse.json(allEvents, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

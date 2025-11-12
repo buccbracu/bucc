@@ -51,3 +51,14 @@ src/lib/firebase/firebase-service-key.json
 certificates
 
 GEMINI.md
+docs-and-tests/test-db-connection.mjs
+scripts/create-test-admin.mjs
+scripts/seed-demo-events.mjs
+scripts/seed-new-events.mjs
+docs-and-tests/test-banner-logic.mjs
+docs-and-tests/add-demo-data.mjs
+scripts/seed-test-events.mjs
+.gitignore
+src/lib/db/seed-events-postgres.ts
+src/lib/db/seed-events.ts
+docs-and-tests/verify-setup.mjs

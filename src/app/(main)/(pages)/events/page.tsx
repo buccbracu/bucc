@@ -1,9 +1,19 @@
-import UnderConstruction from "@/components/ui/under-construction";
+import EventsTimeline from "@/components/events/EventsTimeline";
+import { getAllEventBanners } from "@/actions/eventBanners";
 
-export default function Events() {
+export const metadata = {
+  title: "Events | BRAC University Computer Club",
+  description: "Explore past and upcoming events organized by BUCC",
+};
+
+export default async function EventsPage() {
+  const bannersResult = await getAllEventBanners();
+
+  const bannerEvents = bannersResult.success ? bannersResult.data ?? [] : [];
+
   return (
-    <div className="ext-3xl font-bold flex justify-center items-center min-h-[calc(100vh-140px)]">
-      <UnderConstruction />
+    <div className="min-h-screen bg-background">
+      <EventsTimeline events={bannerEvents} />
     </div>
   );
 }
