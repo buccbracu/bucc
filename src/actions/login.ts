@@ -1,4 +1,4 @@
-import { signIn } from "next-auth/react";
+import { signIn } from "@/auth";
 
 interface LoginValues {
   email: string;
