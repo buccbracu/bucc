@@ -36,12 +36,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={font.className}>
+      <body className={`${font.className} overflow-x-hidden`}>
         <Providers>
           <AnnouncementBar />
           <Navbar />
           <EventBanner />
-          <main className="relative min-h-[calc(100vh-140px)] overflow-auto">
+          <main className="relative min-h-[calc(100vh-140px)]">
             {children}
           </main>
           <Footer />
