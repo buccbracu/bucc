@@ -2,7 +2,7 @@ import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import AnnouncementBar from "@/components/navbar/announcement-bar";
 import Navbar from "@/components/navbar/Navbar";
-import EventBanner from "@/components/EventBanner";
+import EventBannerCarousel from "@/components/EventBannerCarousel";
 import Providers from "@/util/Providers";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
@@ -40,7 +40,7 @@ export default function RootLayout({
         <Providers>
           <AnnouncementBar />
           <Navbar />
-          <EventBanner />
+          <EventBannerCarousel />
           <main className="relative min-h-[calc(100vh-140px)]">
             {children}
           </main>

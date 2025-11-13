@@ -183,8 +183,8 @@ const [allowedDesignations, setAllowedDesignations] = useState<
       eventUrl: eventUrl || null,
       type,
       needAttendance,
-      startingDate: new Date(startingDate),
-      endingDate: new Date(endingDate),
+      startingDate: startingDate || null,
+      endingDate: endingDate || null,
       allowedDepartments: allowedDepartments.map((dept) => dept.value),
       allowedDesignations: allowedDesignations.map(
         (des) => des.value,
@@ -204,7 +204,9 @@ const [allowedDesignations, setAllowedDesignations] = useState<
       });
 
       if (!res.ok) {
-        toast.error("Failed to update event");
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Update failed:", errorData);
+        toast.error(`Failed to update event: ${errorData.error || "Unknown error"}`);
       } else {
         toast.success("Event updated successfully!");
         router.back();

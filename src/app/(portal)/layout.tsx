@@ -36,15 +36,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`flex items-start justify-between ${font.className}`}>
+      <body className={font.className}>
         <Providers>
-          <Sidebar />
-          <main className="mx-6 min-h-screen w-full md:m-10">
-            <div className="absolute right-3 top-3">
-              <ThemeToggler />
-            </div>
-            {children}
-          </main>
+          <div className="flex items-start justify-between">
+            <Sidebar />
+            <main className="mx-6 min-h-screen w-full md:m-10">
+              <div className="absolute right-3 top-3">
+                <ThemeToggler />
+              </div>
+              {children}
+            </main>
+          </div>
         </Providers>
       </body>
     </html>

@@ -190,14 +190,14 @@ export default function CreateEvent() {
   };
 
   return (
-    <main>
+    <>
       <Heading
         headingText="Create Event"
         subHeadingText="Plan and publish your event"
       />
-      <div className="flex min-h-screen w-full flex-row items-start justify-center gap-6">
+      <div className="flex w-full flex-col gap-6 lg:flex-row">
         {/* Left Panel */}
-        <div className="flex w-2/3 flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6">
           <Input
             placeholder="Event Title"
             value={title}
@@ -227,7 +227,7 @@ export default function CreateEvent() {
         </div>
 
         {/* Right Panel */}
-        <div className="flex w-1/3 flex-col gap-6 rounded-md border p-4">
+        <div className="flex w-full flex-col gap-6 rounded-md border p-4 lg:w-80">
           <h2 className="text-lg font-semibold">Event Banner</h2>
           {featuredImage ? (
             <div className="relative w-full">
@@ -380,6 +380,6 @@ export default function CreateEvent() {
           <Button onClick={handleSubmit}>Create Event</Button>
         </div>
       </div>
-    </main>
+    </>
   );
 }

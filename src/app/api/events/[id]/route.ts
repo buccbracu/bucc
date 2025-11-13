@@ -90,9 +90,21 @@ export async function PATCH(
   }
 
   try {
+    // Remove the 'id' field from body if it exists to avoid conflicts
+    const { id, ...updateData } = body;
+    
+    // Convert date strings to Date objects if they exist
+    const processedData: any = { ...updateData };
+    if (processedData.startingDate) {
+      processedData.startingDate = new Date(processedData.startingDate);
+    }
+    if (processedData.endingDate) {
+      processedData.endingDate = new Date(processedData.endingDate);
+    }
+    
     const updatedEvent = await db
       .update(events)
-      .set({ ...body, updatedAt: new Date() })
+      .set({ ...processedData, updatedAt: new Date() })
       .where(eq(events.id, params.id))
       .returning();
 
@@ -102,6 +114,10 @@ export async function PATCH(
 
     return NextResponse.json(updatedEvent[0], { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error updating event:", error);
+    return NextResponse.json({ 
+      error: error.message,
+      details: error.toString() 
+    }, { status: 500 });
   }
 }

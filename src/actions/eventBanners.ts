@@ -62,6 +62,62 @@ export async function getActiveEventBanner() {
   }
 }
 
+export async function getTodayEventBanners() {
+  try {
+    // Get all active banners
+    const banners = await db
+      .select()
+      .from(eventBanners)
+      .where(eq(eventBanners.isActive, true))
+      .orderBy(desc(eventBanners.createdAt));
+    
+    if (banners.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date(now);
+    todayEnd.setHours(23, 59, 59, 999);
+
+    // Find all ongoing events (event_date <= now <= event_end_date) happening today
+    const ongoingEvents = banners.filter((banner) => {
+      if (!banner.eventDate || !banner.eventEndDate) return false;
+      const eventDate = new Date(banner.eventDate);
+      const eventEndDate = new Date(banner.eventEndDate);
+      return now >= eventDate && now <= eventEndDate && eventDate >= todayStart && eventDate <= todayEnd;
+    });
+
+    // Find all upcoming events happening today (event_date >= now and event_date is today)
+    const upcomingEvents = banners.filter((banner) => {
+      if (!banner.eventDate) return false;
+      const eventDate = new Date(banner.eventDate);
+      return eventDate >= now && eventDate >= todayStart && eventDate <= todayEnd;
+    });
+
+    // Combine ongoing and upcoming events, remove duplicates
+    const todayEvents = [...ongoingEvents];
+    upcomingEvents.forEach(event => {
+      if (!todayEvents.find(e => e.id === event.id)) {
+        todayEvents.push(event);
+      }
+    });
+
+    // Sort by event date (earliest first)
+    todayEvents.sort((a, b) => {
+      const dateA = new Date(a.eventDate!).getTime();
+      const dateB = new Date(b.eventDate!).getTime();
+      return dateA - dateB;
+    });
+
+    return { success: true, data: todayEvents };
+  } catch (error) {
+    console.error("Error fetching today's event banners:", error);
+    return { success: false, error: "Failed to fetch today's event banners" };
+  }
+}
+
 export async function getAllEventBanners() {
   try {
     const banners = await db

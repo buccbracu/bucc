@@ -96,14 +96,23 @@ export default function EventBannersManager() {
   }
 
   async function handleToggleStatus(id: string, currentStatus: boolean) {
-    await toggleEventBannerStatus(id, !currentStatus);
-    fetchBanners();
+    const result = await toggleEventBannerStatus(id, !currentStatus);
+    if (result.success) {
+      fetchBanners();
+    } else {
+      alert("Failed to toggle banner status: " + (result.error || "Unknown error"));
+    }
   }
 
   async function handleDelete(id: string) {
     if (confirm("Are you sure you want to delete this banner?")) {
-      await deleteEventBanner(id);
-      fetchBanners();
+      const result = await deleteEventBanner(id);
+      if (result.success) {
+        alert("Event banner deleted successfully!");
+        fetchBanners();
+      } else {
+        alert("Failed to delete event banner: " + (result.error || "Unknown error"));
+      }
     }
   }
 
