@@ -25,8 +25,8 @@ export default function EventBanner() {
     fetchBanner();
   }, []);
 
-  // Don't show banner on events page to avoid duplication
-  if (pathname === "/events" || isLoading || !banner || !isVisible) {
+  // Don't show banner on events page or 404 page
+  if (pathname === "/events" || pathname === "/not-found" || isLoading || !banner || !isVisible) {
     return null;
   }
 
