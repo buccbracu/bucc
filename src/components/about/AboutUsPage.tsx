@@ -150,7 +150,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
             <div className="space-y-8 order-2 lg:order-1">
               <div>
                 <h2 className="text-4xl md:text-5xl font-bold text-[#1f4864] dark:text-white mb-6 leading-tight">
-                  Building Tomorrow's
+                  Building Tomorrow&apos;s
                   <span className="block bg-gradient-to-r from-[#1f4864] to-[#127cc1] bg-clip-text text-transparent">
                     Tech Leaders
                   </span>
@@ -274,7 +274,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
         <div className="container px-4 md:px-6">
           <div className="mb-16 text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-[#1f4864] dark:text-white mb-4">
-              What's Coming Next
+              What&apos;s Coming Next
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Join us in our upcoming workshops, competitions, and tech talks
@@ -407,7 +407,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
               Our Journey
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Key milestones that shaped BUCC's legacy
+              Key milestones that shaped BUCC&apos;s legacy
             </p>
           </div>
           <div className="mx-auto max-w-5xl">
@@ -494,7 +494,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
             </h2>
             <p className="mb-10 text-xl text-white/90 md:text-2xl max-w-3xl mx-auto leading-relaxed">
               Become part of a vibrant community of tech enthusiasts and start your
-              journey to excellence. Whether you're a beginner or an expert, there's
+              journey to excellence. Whether you&apos;re a beginner or an expert, there&apos;s
               a place for you at BUCC.
             </p>
             <div className="flex flex-wrap justify-center gap-4">

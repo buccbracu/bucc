@@ -136,7 +136,7 @@ export default function Gallery() {
           {filteredEvents.length === 0 && events.length > 0 && (
             <div className="text-center py-12">
               <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground mb-2">No events found matching "{searchQuery}"</p>
+              <p className="text-muted-foreground mb-2">No events found matching &quot;{searchQuery}&quot;</p>
               <button
                 onClick={() => setSearchQuery("")}
                 className="text-sm text-primary hover:underline"

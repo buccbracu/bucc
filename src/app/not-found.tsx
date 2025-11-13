@@ -28,7 +28,7 @@ export default function NotFound() {
       <div className="content-overlay">
         <h1 className="error-title">Page Not Found</h1>
         <p className="error-message">
-          The page you're looking for doesn't exist or hasn't been implemented yet.
+          The page you&apos;re looking for doesn&apos;t exist or hasn&apos;t been implemented yet.
         </p>
         <Link href="/" className="home-button">
           Go Back Home
