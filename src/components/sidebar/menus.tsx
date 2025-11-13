@@ -13,10 +13,40 @@ import {
   Vault,
   Brain,
   Megaphone,
-  Images
+  Images,
+  Home
 } from "lucide-react";
 
 const menus = [
+  {
+    title: "Return to Home",
+    path: "/",
+    icon: Home,
+    variant: "ghost",
+    access_department: [
+      "Advisors Body",
+      "Governing Body",
+      "Communication and Marketing",
+      "Creative",
+      "Event Management",
+      "Finance",
+      "Human Resources",
+      "Press Release and Publications",
+      "Research and Development",
+    ],
+    access_designation: [
+      "Advisor",
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+      "Senior Executive",
+      "Executive",
+      "General Member",
+    ],
+  },
   {
     title: "Dashboard",
     path: "/dashboard",
