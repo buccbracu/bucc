@@ -22,6 +22,7 @@ export const events = pgTable("events", {
   allowedDesignations: text("allowed_designations").array().default(sql`'{}'::text[]`),
   notes: text("notes").default(""),
   prId: varchar("pr_id", { length: 191 }),
+  showInGallery: boolean("show_in_gallery").notNull().default(true),
   createdAt: timestamp("created_at")
     .notNull()
     .default(sql`now()`),

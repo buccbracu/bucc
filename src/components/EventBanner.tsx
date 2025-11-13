@@ -13,6 +13,7 @@ export default function EventBanner() {
   const [banner, setBanner] = useState<EventBanner | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [is404, setIs404] = useState(false);
 
   useEffect(() => {
     async function fetchBanner() {
@@ -25,8 +26,23 @@ export default function EventBanner() {
     fetchBanner();
   }, []);
 
+  useEffect(() => {
+    // Check if we're on a 404 page by looking for the not-found containers
+    const check404 = () => {
+      const notFoundContainer = document.querySelector('.not-found-container');
+      const animated404Container = document.querySelector('.animated-404-container');
+      setIs404(!!(notFoundContainer || animated404Container));
+    };
+    
+    check404();
+    // Recheck after a short delay to handle dynamic content
+    const timer = setTimeout(check404, 100);
+    
+    return () => clearTimeout(timer);
+  }, [pathname]);
+
   // Don't show banner on events page or 404 page
-  if (pathname === "/events" || pathname === "/not-found" || isLoading || !banner || !isVisible) {
+  if (pathname === "/events" || is404 || isLoading || !banner || !isVisible) {
     return null;
   }
 

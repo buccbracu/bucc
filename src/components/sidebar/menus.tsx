@@ -12,7 +12,8 @@ import {
   UsersRound,
   Vault,
   Brain,
-  Megaphone
+  Megaphone,
+  Images
 } from "lucide-react";
 
 const menus = [
@@ -245,6 +246,27 @@ const menus = [
       "Governing Body",
       "Event Management",
       "Communication and Marketing",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ],
+  },
+  {
+    title: "Gallery",
+    path: "/dashboard/gallery",
+    icon: Images,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Event Management",
+      "Communication and Marketing",
+      "Creative",
       "Research and Development",
     ],
     access_designation: [

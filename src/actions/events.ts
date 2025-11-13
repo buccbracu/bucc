@@ -18,6 +18,39 @@ export async function getAllEvents() {
   }
 }
 
+export async function getAllEventsWithGalleryCounts(includeInactive = false) {
+  try {
+    const { eventGalleries } = await import("@/lib/db/schema/eventGalleries");
+    const { sql, count } = await import("drizzle-orm");
+    
+    const allEvents = await db
+      .select({
+        event: events,
+        galleryCount: count(eventGalleries.id),
+      })
+      .from(events)
+      .leftJoin(
+        eventGalleries,
+        includeInactive
+          ? sql`${events.id} = ${eventGalleries.eventId}`
+          : sql`${events.id} = ${eventGalleries.eventId} AND ${eventGalleries.isActive} = true`
+      )
+      .groupBy(events.id)
+      .orderBy(desc(events.createdAt));
+    
+    return { 
+      success: true, 
+      data: allEvents.map(row => ({
+        ...row.event,
+        galleryCount: Number(row.galleryCount)
+      }))
+    };
+  } catch (error) {
+    console.error("Error fetching events with gallery counts:", error);
+    return { success: false, error: "Failed to fetch events with gallery counts" };
+  }
+}
+
 export async function getEventById(id: string) {
   try {
     const event = await db
@@ -127,5 +160,24 @@ export async function getFeaturedEvent() {
   } catch (error) {
     console.error("Error fetching featured event:", error);
     return { success: false, error: "Failed to fetch featured event" };
+  }
+}
+
+export async function toggleEventGalleryVisibility(id: string, showInGallery: boolean) {
+  try {
+    const updatedEvent = await db
+      .update(events)
+      .set({ showInGallery, updatedAt: new Date() })
+      .where(eq(events.id, id))
+      .returning();
+
+    if (updatedEvent.length === 0) {
+      return { success: false, error: "Event not found" };
+    }
+
+    return { success: true, data: updatedEvent[0] };
+  } catch (error) {
+    console.error("Error toggling event gallery visibility:", error);
+    return { success: false, error: "Failed to toggle event gallery visibility" };
   }
 }
