@@ -1,12 +1,22 @@
-import UnderConstruction from '@/components/ui/under-construction'
-import React from 'react'
+import AboutUsPage from "@/components/about/AboutUsPage";
+import { getAllEvents } from "@/actions/events";
 
-const AboutUs = () => {
-  return (
-    <div className="ext-3xl font-bold flex justify-center items-center min-h-[calc(100vh-140px)]">
-      <UnderConstruction />
-    </div>
-  )
+export const metadata = {
+  title: "About Us | BRAC University Computer Club",
+  description:
+    "Learn about BUCC's mission, vision, and journey since 2001. Discover how we empower tech enthusiasts and shape future leaders in technology.",
+};
+
+export default async function AboutUs() {
+  const eventsResult = await getAllEvents();
+  const allEvents = eventsResult.success ? eventsResult.data ?? [] : [];
+  
+  // Filter upcoming events
+  const now = new Date();
+  const upcomingEvents = allEvents
+    .filter((event) => new Date(event.startingDate) > now)
+    .sort((a, b) => new Date(a.startingDate).getTime() - new Date(b.startingDate).getTime())
+    .slice(0, 3);
+  
+  return <AboutUsPage upcomingEvents={upcomingEvents} />;
 }
-
-export default AboutUs

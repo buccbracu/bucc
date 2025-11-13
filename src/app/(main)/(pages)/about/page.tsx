@@ -1,9 +1,5 @@
-import UnderConstruction from "@/components/ui/under-construction";
+import { redirect } from "next/navigation";
 
 export default function About() {
-  return (
-    <div className="ext-3xl font-bold flex justify-center items-center min-h-[calc(100vh-140px)]">
-      <UnderConstruction />
-    </div>
-  );
+  redirect("/about/about-us");
 }

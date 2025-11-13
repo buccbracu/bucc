@@ -81,7 +81,7 @@ export default function ActionButtons() {
                                   onClick={() => {
                                     setIsSheetOpen(false);
                                   }}
-                                  href={`${menu.path}${child.path}`}
+                                  href={child.path}
                                 >
                                   <p>{child.title}</p>
                                 </Link>
