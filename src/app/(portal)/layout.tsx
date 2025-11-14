@@ -4,6 +4,8 @@ import Providers from "@/util/Providers";
 import type { Metadata } from "next";
 import "@/app/prosemirror.css";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "BRAC University Computer Club | Upgrade Yourself",
   icons: [
