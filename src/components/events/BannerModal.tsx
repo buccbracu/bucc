@@ -3,7 +3,21 @@
 import { X, Calendar, MapPin, Tag, ExternalLink, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { EventBanner } from "@/lib/db/schema/eventBanners";
+type EventBanner = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  isActive: boolean;
+  eventDate: Date | null;
+  eventEndDate: Date | null;
+  description?: string;
+  location?: string;
+  tags?: string[];
+  category?: string;
+  isExclusive?: boolean;
+  createdAt: Date;
+};
 
 interface BannerModalProps {
   banner: EventBanner;

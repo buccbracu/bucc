@@ -5,8 +5,19 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { getTodayEventBanners } from "@/actions/eventBanners";
-import type { EventBanner } from "@/lib/db/schema/eventBanners";
+import { getTodayEvents } from "@/actions/events";
+type EventBanner = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  isActive: boolean;
+  eventDate: Date | null;
+  eventEndDate: Date | null;
+  description?: string;
+  location?: string;
+  createdAt: Date;
+};
 import {
   Carousel,
   CarouselContent,
@@ -28,7 +39,7 @@ export default function EventBannerCarousel() {
 
   useEffect(() => {
     async function fetchBanners() {
-      const result = await getTodayEventBanners();
+      const result = await getTodayEvents();
       if (result.success && result.data) {
         setBanners(result.data);
       }

@@ -3,7 +3,22 @@
 import { X, Calendar, MapPin, Users, Tag, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Event } from "@/lib/db/schema/events";
+type Event = {
+  id: string;
+  title: string;
+  venue: string;
+  description: string;
+  featuredImage?: string;
+  eventUrl?: string;
+  type: string;
+  needAttendance?: boolean;
+  startingDate: Date;
+  endingDate: Date;
+  allowedMembers: string;
+  allowedDepartments?: string[];
+  allowedDesignations?: string[];
+  notes?: string;
+};
 
 interface EventModalProps {
   event: Event;

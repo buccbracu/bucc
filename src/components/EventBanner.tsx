@@ -5,8 +5,19 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { getActiveEventBanner } from "@/actions/eventBanners";
-import type { EventBanner } from "@/lib/db/schema/eventBanners";
+import { getActiveEvent } from "@/actions/events";
+type EventBanner = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  isActive: boolean;
+  eventDate: Date | null;
+  eventEndDate: Date | null;
+  description?: string;
+  location?: string;
+  createdAt: Date;
+};
 
 export default function EventBanner() {
   const pathname = usePathname();
@@ -17,7 +28,7 @@ export default function EventBanner() {
 
   useEffect(() => {
     async function fetchBanner() {
-      const result = await getActiveEventBanner();
+      const result = await getActiveEvent();
       if (result.success && result.data) {
         setBanner(result.data);
       }

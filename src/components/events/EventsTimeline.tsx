@@ -1,16 +1,45 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, MapPin, ExternalLink, Tag, Sparkles, Users } from "lucide-react";
 import EventModal from "./EventModal";
 import BannerModal from "./BannerModal";
-import type { EventBanner } from "@/lib/db/schema/eventBanners";
-import type { Event as PostgresEvent } from "@/lib/db/schema/events";
+// MongoDB document types
+type EventBanner = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  isActive: boolean;
+  eventDate: Date | null;
+  eventEndDate: Date | null;
+  description?: string;
+  location?: string;
+  tags?: string[];
+  category?: string;
+  isExclusive?: boolean;
+  createdAt: Date;
+};
+
+type MongoEvent = {
+  id: string;
+  title: string;
+  venue: string;
+  description: string;
+  featuredImage?: string;
+  type: string;
+  startingDate: Date;
+  endingDate: Date;
+  allowedMembers: string;
+  allowedDepartments?: string[];
+  allowedDesignations?: string[];
+  notes?: string;
+};
 
 // Union type for both event types
-type Event = EventBanner | PostgresEvent;
+type Event = EventBanner | MongoEvent;
 
 interface EventsTimelineProps {
   events: Event[];
@@ -21,8 +50,8 @@ function isEventBanner(event: Event): event is EventBanner {
   return 'targetUrl' in event && 'imageUrl' in event;
 }
 
-// Type guard to check if event is PostgresEvent
-function isPostgresEvent(event: Event): event is PostgresEvent {
+// Type guard to check if event is MongoEvent
+function isMongoEvent(event: Event): event is MongoEvent {
   return 'venue' in event && !('targetUrl' in event);
 }
 
@@ -30,7 +59,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
   const [filter, setFilter] = useState<"all" | "upcoming" | "ongoing" | "completed">("all");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeEventIndex, setActiveEventIndex] = useState<number>(0);
-  const [selectedEvent, setSelectedEvent] = useState<PostgresEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<MongoEvent | null>(null);
   const [selectedBanner, setSelectedBanner] = useState<EventBanner | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
@@ -132,7 +161,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
   // Get unique categories
   const categories = Array.from(
     new Set(
-      events.map((e) => (isEventBanner(e) ? e.category : e.type)).filter(Boolean)
+      events.map((e) => (isEventBanner(e) ? e.category : e.type)).filter((cat): cat is string => Boolean(cat))
     )
   );
 
@@ -270,9 +299,9 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
             >
               All Categories
             </button>
-            {categories.map((category) => (
+            {categories.map((category, idx) => (
               <button
-                key={category}
+                key={`category-${category}-${idx}`}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-1.5 text-sm rounded-full transition-all ${
                   selectedCategory === category
@@ -310,31 +339,35 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                   } flex-col gap-8 transition-all duration-300`}
                 >
                   {/* Active Line Segment - Desktop */}
-                  {isActive && (
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary via-primary to-primary hidden md:block z-[5] animate-pulse" />
-                  )}
+                  <Fragment key="active-line-desktop">
+                    {isActive && (
+                      <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary via-primary to-primary hidden md:block z-[5] animate-pulse" />
+                    )}
+                  </Fragment>
                   
                   {/* Active Line Segment - Mobile */}
-                  {isActive && (
-                    <div className="absolute left-4 top-0 w-0.5 h-full bg-gradient-to-b from-primary via-primary to-primary md:hidden z-[5] animate-pulse" />
-                  )}
+                  <Fragment key="active-line-mobile">
+                    {isActive && (
+                      <div className="absolute left-4 top-0 w-0.5 h-full bg-gradient-to-b from-primary via-primary to-primary md:hidden z-[5] animate-pulse" />
+                    )}
+                  </Fragment>
 
                   {/* Timeline Dot - Desktop */}
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 rounded-full border-4 border-background z-10 hidden md:block shadow-lg transition-all duration-300 ${
+                  <div key="dot-desktop" className={`absolute left-1/2 transform -translate-x-1/2 rounded-full border-4 border-background z-10 hidden md:block shadow-lg transition-all duration-300 ${
                     isActive 
                       ? "w-8 h-8 bg-primary ring-4 ring-primary/30" 
                       : "w-6 h-6 bg-primary/60"
                   }`} />
                   
                   {/* Timeline Dot - Mobile */}
-                  <div className={`absolute left-4 transform -translate-x-1/2 rounded-full border-2 border-background z-10 md:hidden shadow-lg transition-all duration-300 ${
+                  <div key="dot-mobile" className={`absolute left-4 transform -translate-x-1/2 rounded-full border-2 border-background z-10 md:hidden shadow-lg transition-all duration-300 ${
                     isActive 
                       ? "w-5 h-5 bg-primary ring-2 ring-primary/30" 
                       : "w-4 h-4 bg-primary/60"
                   }`} />
 
                   {/* Content */}
-                  <div className={`w-full md:w-[calc(50%-3rem)] pl-12 md:pl-0 ${isLeft ? "md:text-right" : "md:text-left"}`}>
+                  <div key="content" className={`w-full md:w-[calc(50%-3rem)] pl-12 md:pl-0 ${isLeft ? "md:text-right" : "md:text-left"}`}>
                     {isEventBanner(event) ? (
                       <div
                         className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
@@ -351,40 +384,48 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          {status === "ongoing" && (
-                            <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                              Ongoing Now
-                            </div>
-                          )}
-                          {status === "upcoming" && (
-                            <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                              Upcoming
-                            </div>
-                          )}
+                          <Fragment key="status-ongoing">
+                            {status === "ongoing" && (
+                              <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
+                                Ongoing Now
+                              </div>
+                            )}
+                          </Fragment>
+                          <Fragment key="status-upcoming">
+                            {status === "upcoming" && (
+                              <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                                Upcoming
+                              </div>
+                            )}
+                          </Fragment>
                         </div>
                         {/* Event Details */}
                         <div className="p-6">
                           {/* Status and Tags Row */}
                           <div className="flex flex-wrap items-center gap-2 mb-3">
                             {/* Status Badge */}
-                            <span className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
+                            <span key="status" className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
                               {getEventStatus(event).label}
                             </span>
                             
                             {/* Exclusive Badge */}
-                            {event.isExclusive && (
-                              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" />
-                                Exclusive
-                              </span>
-                            )}
+                            <Fragment key="exclusive">
+                              {event.isExclusive && (
+                                <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+                                  <Sparkles className="w-3 h-3" />
+                                  Exclusive
+                                </span>
+                              )}
+                            </Fragment>
                             
                             {/* Category Badge */}
-                            {event.category && (
-                              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                {event.category}
-                              </span>
-                            )}
+                            <Fragment key="category">
+                              {event.category && (
+                                <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                                  {event.category}
+                                </span>
+                              )}
+                            </Fragment>
                           </div>
 
                           <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
@@ -402,7 +443,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                             <div className="flex flex-wrap gap-2 mb-4">
                               {event.tags.map((tag, idx) => (
                                 <span
-                                  key={idx}
+                                  key={`banner-tag-${event.id}-${idx}`}
                                   className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground px-2 py-1 rounded"
                                 >
                                   <Tag className="w-3 h-3" />
@@ -413,7 +454,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                           )}
 
                           <div className="flex flex-col gap-2 mb-4">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <div key="date-info" className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar className="w-4 h-4" />
                               <span>{formatDate(event.eventDate)}</span>
                               {event.eventEndDate && (
@@ -421,12 +462,14 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                               )}
                             </div>
 
-                            {event.location && (
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <MapPin className="w-4 h-4" />
-                                <span>{event.location}</span>
-                              </div>
-                            )}
+                            <Fragment key="location-info">
+                              {event.location && (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{event.location}</span>
+                                </div>
+                              )}
+                            </Fragment>
                           </div>
 
                           <Link
@@ -462,16 +505,20 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                               <Calendar className="w-20 h-20 text-primary/40" />
                             </div>
                           )}
-                          {status === "ongoing" && (
-                            <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                              Ongoing Now
-                            </div>
-                          )}
-                          {status === "upcoming" && (
-                            <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                              Upcoming
-                            </div>
-                          )}
+                          <Fragment key="status-ongoing-mongo">
+                            {status === "ongoing" && (
+                              <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
+                                Ongoing Now
+                              </div>
+                            )}
+                          </Fragment>
+                          <Fragment key="status-upcoming-mongo">
+                            {status === "upcoming" && (
+                              <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                                Upcoming
+                              </div>
+                            )}
+                          </Fragment>
                         </div>
 
                         {/* Event Details */}
@@ -479,31 +526,37 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                         {/* Status and Tags Row */}
                         <div className="flex flex-wrap items-center gap-2 mb-3">
                           {/* Status Badge */}
-                          <span className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
+                          <span key="status" className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
                             {getEventStatus(event).label}
                           </span>
                           
                           {/* Exclusive Badge */}
-                          {isEventBanner(event) && event.isExclusive && (
-                            <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-                              <Sparkles className="w-3 h-3" />
-                              Exclusive
-                            </span>
-                          )}
+                          <Fragment key="exclusive">
+                            {isEventBanner(event) && event.isExclusive && (
+                              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+                                <Sparkles className="w-3 h-3" />
+                                Exclusive
+                              </span>
+                            )}
+                          </Fragment>
                           
                           {/* Category Badge */}
-                          {isEventBanner(event) && event.category && (
-                            <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                              {event.category}
-                            </span>
-                          )}
+                          <Fragment key="category">
+                            {isEventBanner(event) && event.category && (
+                              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                                {event.category}
+                              </span>
+                            )}
+                          </Fragment>
                           
-                          {/* Type Badge for Postgres Events */}
-                          {isPostgresEvent(event) && (
-                            <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                              {event.type}
-                            </span>
-                          )}
+                          {/* Type Badge for Mongo Events */}
+                          <Fragment key="type">
+                            {isMongoEvent(event) && (
+                              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                                {event.type}
+                              </span>
+                            )}
+                          </Fragment>
                         </div>
 
                         <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
@@ -521,7 +574,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                           <div className="flex flex-wrap gap-2 mb-4">
                             {event.tags.map((tag, idx) => (
                               <span
-                                key={idx}
+                                key={`event-tag-${event.id}-${idx}`}
                                 className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground px-2 py-1 rounded"
                               >
                                 <Tag className="w-3 h-3" />
@@ -532,7 +585,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                         )}
 
                         <div className="flex flex-col gap-2 mb-4">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <div key="date-info" className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Calendar className="w-4 h-4" />
                             {isEventBanner(event) ? (
                               <>
@@ -548,25 +601,29 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                             )}
                           </div>
 
-                          {isEventBanner(event) && event.location && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <MapPin className="w-4 h-4" />
-                              <span>{event.location}</span>
-                            </div>
-                          )}
-
-                          {isPostgresEvent(event) && (
-                            <>
+                          <Fragment key="location-info">
+                            {isEventBanner(event) && event.location && (
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <MapPin className="w-4 h-4" />
-                                <span>{event.venue}</span>
+                                <span>{event.location}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Users className="w-4 h-4" />
-                                <span>{event.allowedMembers}</span>
-                              </div>
-                            </>
-                          )}
+                            )}
+                          </Fragment>
+
+                          <Fragment key="mongo-info">
+                            {isMongoEvent(event) && (
+                              <>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{event.venue}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Users className="w-4 h-4" />
+                                  <span>{event.allowedMembers}</span>
+                                </div>
+                              </>
+                            )}
+                          </Fragment>
                         </div>
 
                         {isEventBanner(event) && (
@@ -586,7 +643,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                   </div>
 
                   {/* Spacer for alignment */}
-                  <div className="hidden md:block w-[calc(50%-3rem)]" />
+                  <div key="spacer" className="hidden md:block w-[calc(50%-3rem)]" />
                 </div>
               );
             })}
