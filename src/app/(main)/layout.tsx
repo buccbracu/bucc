@@ -41,7 +41,7 @@ export default function RootLayout({
           <AnnouncementBar />
           <Navbar />
           <EventBannerCarousel />
-          <main className="relative min-h-[calc(100vh-140px)]">
+          <main className="relative">
             {children}
           </main>
           <Footer />
