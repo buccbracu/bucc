@@ -18,6 +18,10 @@ const EventSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    eventUrl: {
+      type: String,
+      required: false,
+    },
     type: {
       type: String,
       required: true,
@@ -58,6 +62,10 @@ const EventSchema = new mongoose.Schema(
     notes: {
       type: String,
       default: "",
+    },
+    showInGallery: {
+      type: Boolean,
+      default: true,
     },
   },
   {
