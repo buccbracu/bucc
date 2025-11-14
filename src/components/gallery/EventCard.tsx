@@ -2,24 +2,52 @@
 
 import Image from "next/image";
 import { Calendar, MapPin, Images } from "lucide-react";
-import type { Event } from "@/lib/db/schema/events";
+type Event = {
+  id: string;
+  title: string;
+  venue: string;
+  description: string;
+  featuredImage?: string;
+  startingDate: Date;
+  endingDate: Date;
+  type: string;
+};
+
+type EventBanner = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  eventDate: Date | null;
+  location?: string;
+};
 
 interface EventCardProps {
-  event: Event;
+  event: Event | EventBanner;
   imageCount: number;
   onClick: () => void;
 }
 
+// Type guard to check if event is EventBanner
+function isEventBanner(event: Event | EventBanner): event is EventBanner {
+  return 'imageUrl' in event;
+}
+
 export function EventCard({ event, imageCount, onClick }: EventCardProps) {
+  const imageUrl = isEventBanner(event) ? event.imageUrl : event.featuredImage;
+  const eventDate = isEventBanner(event) 
+    ? (event.eventDate ? new Date(event.eventDate) : null)
+    : new Date(event.startingDate);
+  const location = isEventBanner(event) ? event.location : event.venue;
+
   return (
     <div
       onClick={onClick}
       className="group cursor-pointer rounded-lg overflow-hidden border hover:shadow-lg transition-all duration-300"
     >
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
-        {event.featuredImage ? (
+        {imageUrl ? (
           <Image
-            src={event.featuredImage}
+            src={imageUrl}
             alt={event.title}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -41,14 +69,18 @@ export function EventCard({ event, imageCount, onClick }: EventCardProps) {
           {event.title}
         </h3>
         <div className="space-y-1 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            <span>{new Date(event.startingDate).toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            <span className="line-clamp-1">{event.venue}</span>
-          </div>
+          {eventDate && (
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              <span>{eventDate.toLocaleDateString()}</span>
+            </div>
+          )}
+          {location && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              <span className="line-clamp-1">{location}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

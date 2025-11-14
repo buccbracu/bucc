@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { Event } from "@/lib/db/schema/events";
+type Event = {
+  id: string;
+  title: string;
+  startingDate: Date;
+};
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 

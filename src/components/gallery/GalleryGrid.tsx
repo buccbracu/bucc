@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
-import type { EventGallery } from "@/lib/db/schema/eventGalleries";
+type EventGallery = {
+  id: string;
+  imageUrl: string;
+  caption?: string;
+};
 
 interface GalleryGridProps {
   images: EventGallery[];

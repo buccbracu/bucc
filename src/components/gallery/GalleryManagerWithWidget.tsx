@@ -7,7 +7,14 @@ import { Trash2, Eye, EyeOff, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { EventGallery } from "@/lib/db/schema/eventGalleries";
+type EventGallery = {
+  id: string;
+  eventId: string;
+  imageUrl: string;
+  caption?: string;
+  isActive: boolean;
+  order: string;
+};
 import {
   deleteEventGallery,
   toggleGalleryStatus,
@@ -34,7 +41,7 @@ export function GalleryManagerWithWidget({
       const result = await createEventGallery({
         eventId,
         imageUrl,
-        caption: caption || null,
+        caption: caption || undefined,
         isActive: true,
         order: "0",
       });
