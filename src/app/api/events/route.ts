@@ -1,7 +1,5 @@
 import { hasAuth } from "@/helpers/hasAuth";
-import { db } from "@/lib/db";
-import { events } from "@/lib/db/schema/events";
-import { desc } from "drizzle-orm";
+import { createEvent, getAllEvents } from "@/actions/events";
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDesignations = ["Director", "Assistant Director"];
@@ -61,26 +59,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newEvent = await db
-      .insert(events)
-      .values({
-        title,
-        venue,
-        description,
-        type,
-        needAttendance: needAttendance ?? false,
-        startingDate: new Date(startingDate),
-        endingDate: new Date(endingDate),
-        allowedMembers,
-        featuredImage: featuredImage || null,
-        allowedDepartments: allowedDepartments || [],
-        allowedDesignations: allowedDesignations || [],
-        notes: notes || "",
-        prId: null,
-      })
-      .returning();
+    const result = await createEvent({
+      title,
+      venue,
+      description,
+      type,
+      needAttendance: needAttendance ?? false,
+      startingDate: new Date(startingDate),
+      endingDate: new Date(endingDate),
+      allowedMembers,
+      featuredImage: featuredImage || undefined,
+      allowedDepartments: allowedDepartments || [],
+      allowedDesignations: allowedDesignations || [],
+      notes: notes || "",
+    });
 
-    return NextResponse.json(newEvent[0], { status: 201 });
+    if (result.success) {
+      return NextResponse.json(result.data, { status: 201 });
+    } else {
+      return NextResponse.json({ error: result.error }, { status: 500 });
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -88,12 +86,13 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const allEvents = await db
-      .select()
-      .from(events)
-      .orderBy(desc(events.createdAt));
+    const result = await getAllEvents();
 
-    return NextResponse.json(allEvents, { status: 200 });
+    if (result.success) {
+      return NextResponse.json(result.data, { status: 200 });
+    } else {
+      return NextResponse.json({ error: result.error }, { status: 500 });
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

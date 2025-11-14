@@ -1,7 +1,6 @@
 import { hasAuth } from "@/helpers/hasAuth";
-import { db } from "@/lib/db";
-import { events } from "@/lib/db/schema/events";
-import { eq } from "drizzle-orm";
+import dbConnect from "@/lib/dbConnect";
+import Event from "@/model/Event";
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDesignations = ["Director", "Assistant Director"];
@@ -12,17 +11,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const event = await db
-      .select()
-      .from(events)
-      .where(eq(events.id, params.id))
-      .limit(1);
+    await dbConnect();
+    
+    const event = await Event.findById(params.id).lean();
 
-    if (event.length === 0) {
+    if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
-    return NextResponse.json(event[0], { status: 200 });
+    return NextResponse.json(event, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -45,17 +42,16 @@ export async function DELETE(
   }
 
   try {
-    const deletedEvent = await db
-      .delete(events)
-      .where(eq(events.id, params.id))
-      .returning();
+    await dbConnect();
+    
+    const deletedEvent = await Event.findByIdAndDelete(params.id).lean();
 
-    if (deletedEvent.length === 0) {
+    if (!deletedEvent) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
     return NextResponse.json(
-      { message: "Event deleted successfully", event: deletedEvent[0] },
+      { message: "Event deleted successfully", event: deletedEvent },
       { status: 200 }
     );
   } catch (error: any) {
@@ -90,8 +86,10 @@ export async function PATCH(
   }
 
   try {
-    // Remove the 'id' field from body if it exists to avoid conflicts
-    const { id, ...updateData } = body;
+    await dbConnect();
+    
+    // Remove the '_id' field from body if it exists to avoid conflicts
+    const { _id, id, ...updateData } = body;
     
     // Convert date strings to Date objects if they exist
     const processedData: any = { ...updateData };
@@ -102,17 +100,19 @@ export async function PATCH(
       processedData.endingDate = new Date(processedData.endingDate);
     }
     
-    const updatedEvent = await db
-      .update(events)
-      .set({ ...processedData, updatedAt: new Date() })
-      .where(eq(events.id, params.id))
-      .returning();
+    processedData.lastUpdate = new Date();
+    
+    const updatedEvent = await Event.findByIdAndUpdate(
+      params.id,
+      processedData,
+      { new: true }
+    ).lean();
 
-    if (updatedEvent.length === 0) {
+    if (!updatedEvent) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
-    return NextResponse.json(updatedEvent[0], { status: 200 });
+    return NextResponse.json(updatedEvent, { status: 200 });
   } catch (error: any) {
     console.error("Error updating event:", error);
     return NextResponse.json({ 

@@ -1,4 +1,3 @@
-import { findRelevantContent, } from "@/lib/ai/embedding";
 import { querySchedule } from "@/lib/ai/scheduleTool";
 import { google } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
