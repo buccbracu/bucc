@@ -10,7 +10,15 @@ import event2 from "/public/images/events/bucc-event2.jpg";
 import event3 from "/public/images/events/bucc-event3.jpg";
 import event4 from "/public/images/events/bucc-event4.jpg";
 import event5 from "/public/images/events/bucc-event5.jpg";
-import type { Event } from "@/lib/db/schema/events";
+type Event = {
+  id: string;
+  title: string;
+  description: string;
+  startingDate: Date;
+  endingDate: Date;
+  type: string;
+  featuredImage?: string | null;
+};
 
 interface AboutUsPageProps {
   upcomingEvents: Event[];

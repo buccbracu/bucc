@@ -18,6 +18,7 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 
@@ -63,72 +64,74 @@ export default function ActionButtons() {
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetDescription>
-                <div className="flex h-svh flex-col justify-between">
-                  <div className="mt-10 flex w-full grow flex-col items-start space-y-4 text-lg">
-                    {menus.map((menu, index) =>
-                      menu.childrens ? (
-                        <DropdownMenu key={index}>
-                          <DropdownMenuTrigger asChild>
-                            <p className="cursor-pointer font-semibold">
-                              {menu.title}
-                            </p>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start">
-                            {menu.childrens.map((child, index) => (
-                              <DropdownMenuItem key={index}>
-                                <Link
-                                  onClick={() => {
-                                    setIsSheetOpen(false);
-                                  }}
-                                  href={child.path}
-                                >
-                                  <p>{child.title}</p>
-                                </Link>
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      ) : (
-                        <Link
-                          onClick={() => {
-                            setIsSheetOpen(false);
-                          }}
-                          key={index}
-                          href={menu.path}
-                        >
-                          <p className="font-semibold">{menu.title}</p>
-                        </Link>
-                      ),
-                    )}
-                  </div>
-                  {!user ? (
-                    <div className="mb-12 flex w-full flex-row items-center justify-center gap-2 text-lg font-semibold md:hidden">
-                      <Button className="text-md w-full" variant="secondary">
-                        <Link
-                          onClick={() => {
-                            setIsSheetOpen(false);
-                          }}
-                          href={"/login"}
-                        >
-                          Login
-                        </Link>
-                      </Button>
-                      <Button className="text-md w-full bg-[#127cc1] text-white hover:bg-[#1f4864] dark:hover:bg-[#1f4864]">
-                        <Link
-                          onClick={() => {
-                            setIsSheetOpen(false);
-                          }}
-                          href={"/registration"}
-                        >
-                          Register
-                        </Link>
-                      </Button>
-                    </div>
-                  ) : null}
-                </div>
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              <SheetDescription className="sr-only">
+                Navigation menu
               </SheetDescription>
             </SheetHeader>
+            <div className="flex h-svh flex-col justify-between">
+              <div className="mt-10 flex w-full grow flex-col items-start space-y-4 text-lg">
+                {menus.map((menu, index) =>
+                  menu.childrens ? (
+                    <DropdownMenu key={index}>
+                      <DropdownMenuTrigger asChild>
+                        <p className="cursor-pointer font-semibold">
+                          {menu.title}
+                        </p>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        {menu.childrens.map((child, index) => (
+                          <DropdownMenuItem key={index}>
+                            <Link
+                              onClick={() => {
+                                setIsSheetOpen(false);
+                              }}
+                              href={child.path}
+                            >
+                              <p>{child.title}</p>
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <Link
+                      onClick={() => {
+                        setIsSheetOpen(false);
+                      }}
+                      key={index}
+                      href={menu.path}
+                    >
+                      <p className="font-semibold">{menu.title}</p>
+                    </Link>
+                  ),
+                )}
+              </div>
+              {!user ? (
+                <div className="mb-12 flex w-full flex-row items-center justify-center gap-2 text-lg font-semibold md:hidden">
+                  <Button className="text-md w-full" variant="secondary">
+                    <Link
+                      onClick={() => {
+                        setIsSheetOpen(false);
+                      }}
+                      href={"/login"}
+                    >
+                      Login
+                    </Link>
+                  </Button>
+                  <Button className="text-md w-full bg-[#127cc1] text-white hover:bg-[#1f4864] dark:hover:bg-[#1f4864]">
+                    <Link
+                      onClick={() => {
+                        setIsSheetOpen(false);
+                      }}
+                      href={"/registration"}
+                    >
+                      Register
+                    </Link>
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           </SheetContent>
         </Sheet>
       </div>
