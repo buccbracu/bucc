@@ -1,24 +1,34 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { eventGalleries, type NewEventGallery, type UpdateEventGallery } from "@/lib/db/schema/eventGalleries";
-import { eq, and, desc } from "drizzle-orm";
+import dbConnect from "@/lib/dbConnect";
+import EventGallery from "@/model/EventGallery";
 import { revalidatePath } from "next/cache";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 
+export type NewEventGallery = {
+  eventId: string;
+  imageUrl: string;
+  caption?: string;
+  isActive?: boolean;
+  order?: string;
+};
+
+export type UpdateEventGallery = Partial<NewEventGallery>;
+
 export async function getEventGalleries(eventId: string, includeInactive = false) {
   try {
-    const conditions = includeInactive
-      ? eq(eventGalleries.eventId, eventId)
-      : and(eq(eventGalleries.eventId, eventId), eq(eventGalleries.isActive, true));
-
-    const galleries = await db
-      .select()
-      .from(eventGalleries)
-      .where(conditions)
-      .orderBy(eventGalleries.order, desc(eventGalleries.createdAt));
+    await dbConnect();
     
-    return { success: true, data: galleries };
+    const query: any = { eventId };
+    if (!includeInactive) {
+      query.isActive = true;
+    }
+
+    const galleries = await EventGallery.find(query)
+      .sort({ order: 1, createdAt: -1 })
+      .lean();
+    
+    return { success: true, data: JSON.parse(JSON.stringify(galleries)) };
   } catch (error) {
     console.error("Error fetching event galleries:", error);
     return { success: false, error: "Failed to fetch event galleries" };
@@ -27,13 +37,13 @@ export async function getEventGalleries(eventId: string, includeInactive = false
 
 export async function getAllActiveGalleries() {
   try {
-    const galleries = await db
-      .select()
-      .from(eventGalleries)
-      .where(eq(eventGalleries.isActive, true))
-      .orderBy(desc(eventGalleries.createdAt));
+    await dbConnect();
     
-    return { success: true, data: galleries };
+    const galleries = await EventGallery.find({ isActive: true })
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    return { success: true, data: JSON.parse(JSON.stringify(galleries)) };
   } catch (error) {
     console.error("Error fetching active galleries:", error);
     return { success: false, error: "Failed to fetch active galleries" };
@@ -42,16 +52,15 @@ export async function getAllActiveGalleries() {
 
 export async function createEventGallery(data: NewEventGallery) {
   try {
-    const [gallery] = await db
-      .insert(eventGalleries)
-      .values(data)
-      .returning();
+    await dbConnect();
+    
+    const gallery = await EventGallery.create(data);
     
     revalidatePath("/gallery");
     revalidatePath(`/gallery/${data.eventId}`);
     revalidatePath("/dashboard/gallery");
     
-    return { success: true, data: gallery };
+    return { success: true, data: JSON.parse(JSON.stringify(gallery)) };
   } catch (error) {
     console.error("Error creating event gallery:", error);
     return { success: false, error: "Failed to create event gallery" };
@@ -60,17 +69,25 @@ export async function createEventGallery(data: NewEventGallery) {
 
 export async function updateEventGallery(id: string, data: UpdateEventGallery) {
   try {
-    const [gallery] = await db
-      .update(eventGalleries)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(eventGalleries.id, id))
-      .returning();
+    await dbConnect();
+    
+    const gallery = await EventGallery.findByIdAndUpdate(
+      id,
+      { ...data, updatedAt: new Date() },
+      { new: true }
+    ).lean();
+    
+    if (!gallery) {
+      return { success: false, error: "Gallery not found" };
+    }
     
     revalidatePath("/gallery");
-    revalidatePath(`/gallery/${gallery.eventId}`);
+    if ('eventId' in gallery && gallery.eventId) {
+      revalidatePath(`/gallery/${gallery.eventId}`);
+    }
     revalidatePath("/dashboard/gallery");
     
-    return { success: true, data: gallery };
+    return { success: true, data: JSON.parse(JSON.stringify(gallery)) };
   } catch (error) {
     console.error("Error updating event gallery:", error);
     return { success: false, error: "Failed to update event gallery" };
@@ -79,13 +96,18 @@ export async function updateEventGallery(id: string, data: UpdateEventGallery) {
 
 export async function deleteEventGallery(id: string) {
   try {
-    const [deleted] = await db
-      .delete(eventGalleries)
-      .where(eq(eventGalleries.id, id))
-      .returning();
+    await dbConnect();
+    
+    const deleted = await EventGallery.findByIdAndDelete(id).lean();
+    
+    if (!deleted) {
+      return { success: false, error: "Gallery not found" };
+    }
     
     revalidatePath("/gallery");
-    revalidatePath(`/gallery/${deleted.eventId}`);
+    if ('eventId' in deleted && deleted.eventId) {
+      revalidatePath(`/gallery/${deleted.eventId}`);
+    }
     revalidatePath("/dashboard/gallery");
     
     return { success: true };
@@ -97,17 +119,25 @@ export async function deleteEventGallery(id: string) {
 
 export async function toggleGalleryStatus(id: string, isActive: boolean) {
   try {
-    const [gallery] = await db
-      .update(eventGalleries)
-      .set({ isActive, updatedAt: new Date() })
-      .where(eq(eventGalleries.id, id))
-      .returning();
+    await dbConnect();
+    
+    const gallery = await EventGallery.findByIdAndUpdate(
+      id,
+      { isActive, updatedAt: new Date() },
+      { new: true }
+    ).lean();
+    
+    if (!gallery) {
+      return { success: false, error: "Gallery not found" };
+    }
     
     revalidatePath("/gallery");
-    revalidatePath(`/gallery/${gallery.eventId}`);
+    if ('eventId' in gallery && gallery.eventId) {
+      revalidatePath(`/gallery/${gallery.eventId}`);
+    }
     revalidatePath("/dashboard/gallery");
     
-    return { success: true, data: gallery };
+    return { success: true, data: JSON.parse(JSON.stringify(gallery)) };
   } catch (error) {
     console.error("Error toggling gallery status:", error);
     return { success: false, error: "Failed to toggle gallery status" };
@@ -116,6 +146,8 @@ export async function toggleGalleryStatus(id: string, isActive: boolean) {
 
 export async function uploadGalleryImage(formData: FormData) {
   try {
+    await dbConnect();
+    
     const file = formData.get("file") as File;
     const eventId = formData.get("eventId") as string;
     const caption = formData.get("caption") as string;
@@ -126,22 +158,19 @@ export async function uploadGalleryImage(formData: FormData) {
 
     const imageUrl = await uploadToCloudinary(file, "gallery");
     
-    const [gallery] = await db
-      .insert(eventGalleries)
-      .values({
-        eventId,
-        imageUrl,
-        caption: caption || null,
-        isActive: true,
-        order: "0",
-      })
-      .returning();
+    const gallery = await EventGallery.create({
+      eventId,
+      imageUrl,
+      caption: caption || null,
+      isActive: true,
+      order: "0",
+    });
     
     revalidatePath("/gallery");
     revalidatePath(`/gallery/${eventId}`);
     revalidatePath("/dashboard/gallery");
     
-    return { success: true, data: gallery };
+    return { success: true, data: JSON.parse(JSON.stringify(gallery)) };
   } catch (error) {
     console.error("Error uploading gallery image:", error);
     return { success: false, error: "Failed to upload image" };

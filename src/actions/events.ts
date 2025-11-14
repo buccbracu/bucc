@@ -1,17 +1,36 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { events, type NewEvent, type Event } from "@/lib/db/schema/events";
-import { eq, desc } from "drizzle-orm";
+import dbConnect from "@/lib/dbConnect";
+import Event from "@/model/Event";
+import EventGallery from "@/model/EventGallery";
+
+export type NewEvent = {
+  title: string;
+  venue: string;
+  description: string;
+  featuredImage?: string;
+  eventUrl?: string;
+  type: string;
+  needAttendance?: boolean;
+  startingDate: Date;
+  endingDate: Date;
+  allowedMembers: string;
+  allowedDepartments?: string[];
+  allowedDesignations?: string[];
+  notes?: string;
+  prId?: string;
+  showInGallery?: boolean;
+};
 
 export async function getAllEvents() {
   try {
-    const allEvents = await db
-      .select()
-      .from(events)
-      .orderBy(desc(events.createdAt));
+    await dbConnect();
     
-    return { success: true, data: allEvents };
+    const allEvents = await Event.find()
+      .sort({ createdDate: -1 })
+      .lean();
+    
+    return { success: true, data: JSON.parse(JSON.stringify(allEvents)) };
   } catch (error) {
     console.error("Error fetching events:", error);
     return { success: false, error: "Failed to fetch events" };
@@ -20,30 +39,29 @@ export async function getAllEvents() {
 
 export async function getAllEventsWithGalleryCounts(includeInactive = false) {
   try {
-    const { eventGalleries } = await import("@/lib/db/schema/eventGalleries");
-    const { sql, count } = await import("drizzle-orm");
+    await dbConnect();
     
-    const allEvents = await db
-      .select({
-        event: events,
-        galleryCount: count(eventGalleries.id),
+    const allEvents = await Event.find()
+      .sort({ createdDate: -1 })
+      .lean();
+    
+    const eventsWithCounts = await Promise.all(
+      allEvents.map(async (event: any) => {
+        const query: any = { eventId: event._id };
+        if (!includeInactive) {
+          query.isActive = true;
+        }
+        const galleryCount = await EventGallery.countDocuments(query);
+        return {
+          ...event,
+          galleryCount,
+        };
       })
-      .from(events)
-      .leftJoin(
-        eventGalleries,
-        includeInactive
-          ? sql`${events.id} = ${eventGalleries.eventId}`
-          : sql`${events.id} = ${eventGalleries.eventId} AND ${eventGalleries.isActive} = true`
-      )
-      .groupBy(events.id)
-      .orderBy(desc(events.createdAt));
+    );
     
     return { 
       success: true, 
-      data: allEvents.map(row => ({
-        ...row.event,
-        galleryCount: Number(row.galleryCount)
-      }))
+      data: JSON.parse(JSON.stringify(eventsWithCounts))
     };
   } catch (error) {
     console.error("Error fetching events with gallery counts:", error);
@@ -53,17 +71,15 @@ export async function getAllEventsWithGalleryCounts(includeInactive = false) {
 
 export async function getEventById(id: string) {
   try {
-    const event = await db
-      .select()
-      .from(events)
-      .where(eq(events.id, id))
-      .limit(1);
+    await dbConnect();
     
-    if (event.length === 0) {
+    const event = await Event.findById(id).lean();
+    
+    if (!event) {
       return { success: false, error: "Event not found" };
     }
     
-    return { success: true, data: event[0] };
+    return { success: true, data: JSON.parse(JSON.stringify(event)) };
   } catch (error) {
     console.error("Error fetching event:", error);
     return { success: false, error: "Failed to fetch event" };
@@ -72,12 +88,11 @@ export async function getEventById(id: string) {
 
 export async function createEvent(data: NewEvent) {
   try {
-    const newEvent = await db
-      .insert(events)
-      .values(data)
-      .returning();
+    await dbConnect();
     
-    return { success: true, data: newEvent[0] };
+    const newEvent = await Event.create(data);
+    
+    return { success: true, data: JSON.parse(JSON.stringify(newEvent)) };
   } catch (error) {
     console.error("Error creating event:", error);
     return { success: false, error: "Failed to create event" };
@@ -86,17 +101,19 @@ export async function createEvent(data: NewEvent) {
 
 export async function updateEvent(id: string, data: Partial<NewEvent>) {
   try {
-    const updatedEvent = await db
-      .update(events)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(events.id, id))
-      .returning();
+    await dbConnect();
     
-    if (updatedEvent.length === 0) {
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { ...data, lastUpdate: new Date() },
+      { new: true }
+    ).lean();
+    
+    if (!updatedEvent) {
       return { success: false, error: "Event not found" };
     }
     
-    return { success: true, data: updatedEvent[0] };
+    return { success: true, data: JSON.parse(JSON.stringify(updatedEvent)) };
   } catch (error) {
     console.error("Error updating event:", error);
     return { success: false, error: "Failed to update event" };
@@ -105,16 +122,15 @@ export async function updateEvent(id: string, data: Partial<NewEvent>) {
 
 export async function deleteEvent(id: string) {
   try {
-    const deletedEvent = await db
-      .delete(events)
-      .where(eq(events.id, id))
-      .returning();
+    await dbConnect();
     
-    if (deletedEvent.length === 0) {
+    const deletedEvent = await Event.findByIdAndDelete(id).lean();
+    
+    if (!deletedEvent) {
       return { success: false, error: "Event not found" };
     }
     
-    return { success: true, data: deletedEvent[0] };
+    return { success: true, data: JSON.parse(JSON.stringify(deletedEvent)) };
   } catch (error) {
     console.error("Error deleting event:", error);
     return { success: false, error: "Failed to delete event" };
@@ -123,36 +139,37 @@ export async function deleteEvent(id: string) {
 
 export async function getFeaturedEvent() {
   try {
+    await dbConnect();
+    
     const now = new Date();
-    const allEvents = await db
-      .select()
-      .from(events)
-      .orderBy(desc(events.startingDate));
+    const allEvents = await Event.find()
+      .sort({ startingDate: -1 })
+      .lean();
 
     // Find ongoing events
     const ongoingEvents = allEvents.filter(
-      (event) =>
+      (event: any) =>
         new Date(event.startingDate) <= now &&
         new Date(event.endingDate) >= now
     );
 
     // If there's an ongoing event, return the most recent one
     if (ongoingEvents.length > 0) {
-      return { success: true, data: ongoingEvents[0] };
+      return { success: true, data: JSON.parse(JSON.stringify(ongoingEvents[0])) };
     }
 
     // Otherwise, find the closest upcoming event
     const upcomingEvents = allEvents.filter(
-      (event) => new Date(event.startingDate) > now
+      (event: any) => new Date(event.startingDate) > now
     );
 
     if (upcomingEvents.length > 0) {
       // Sort by starting date ascending to get the closest one
       upcomingEvents.sort(
-        (a, b) =>
+        (a: any, b: any) =>
           new Date(a.startingDate).getTime() - new Date(b.startingDate).getTime()
       );
-      return { success: true, data: upcomingEvents[0] };
+      return { success: true, data: JSON.parse(JSON.stringify(upcomingEvents[0])) };
     }
 
     // No ongoing or upcoming events
@@ -165,19 +182,184 @@ export async function getFeaturedEvent() {
 
 export async function toggleEventGalleryVisibility(id: string, showInGallery: boolean) {
   try {
-    const updatedEvent = await db
-      .update(events)
-      .set({ showInGallery, updatedAt: new Date() })
-      .where(eq(events.id, id))
-      .returning();
+    await dbConnect();
+    
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { showInGallery, lastUpdate: new Date() },
+      { new: true }
+    ).lean();
 
-    if (updatedEvent.length === 0) {
+    if (!updatedEvent) {
       return { success: false, error: "Event not found" };
     }
 
-    return { success: true, data: updatedEvent[0] };
+    return { success: true, data: JSON.parse(JSON.stringify(updatedEvent)) };
   } catch (error) {
     console.error("Error toggling event gallery visibility:", error);
     return { success: false, error: "Failed to toggle event gallery visibility" };
+  }
+}
+
+export async function getTodayEvents() {
+  try {
+    await dbConnect();
+    
+    const allEvents = await Event.find()
+      .sort({ createdDate: -1 })
+      .lean();
+    
+    if (allEvents.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    const now = new Date();
+
+    // Find all ongoing events
+    const ongoingEvents = allEvents.filter((event: any) => {
+      const startDate = new Date(event.startingDate);
+      const endDate = new Date(event.endingDate);
+      return now >= startDate && now <= endDate;
+    });
+
+    // Find all upcoming events happening today
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date(now);
+    todayEnd.setHours(23, 59, 59, 999);
+    
+    const upcomingEvents = allEvents.filter((event: any) => {
+      const startDate = new Date(event.startingDate);
+      return startDate >= now && startDate >= todayStart && startDate <= todayEnd;
+    });
+
+    // Combine ongoing and upcoming events
+    const todayEvents = [...ongoingEvents];
+    upcomingEvents.forEach((event: any) => {
+      if (!todayEvents.find((e: any) => e._id?.toString() === event._id?.toString())) {
+        todayEvents.push(event);
+      }
+    });
+
+    // Sort by starting date
+    todayEvents.sort((a: any, b: any) => {
+      return new Date(a.startingDate).getTime() - new Date(b.startingDate).getTime();
+    });
+
+    // Map to banner format
+    const mappedEvents = todayEvents.map((event: any) => ({
+      id: event._id,
+      title: event.title,
+      imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+      targetUrl: event.eventUrl || `/events/${event._id}`,
+      isActive: true,
+      eventDate: event.startingDate,
+      eventEndDate: event.endingDate,
+      description: event.description,
+      location: event.venue,
+      createdAt: event.createdDate,
+    }));
+
+    return { success: true, data: JSON.parse(JSON.stringify(mappedEvents)) };
+  } catch (error) {
+    console.error("Error fetching today's events:", error);
+    return { success: false, error: "Failed to fetch today's events" };
+  }
+}
+
+export async function getActiveEvent() {
+  try {
+    await dbConnect();
+    
+    const allEvents = await Event.find()
+      .sort({ createdDate: -1 })
+      .lean();
+    
+    if (allEvents.length === 0) {
+      return { success: true, data: null };
+    }
+
+    const now = new Date();
+
+    // Priority 1: Find ongoing events
+    const ongoingEvents = allEvents.filter((event: any) => {
+      const startDate = new Date(event.startingDate);
+      const endDate = new Date(event.endingDate);
+      return now >= startDate && now <= endDate;
+    });
+
+    if (ongoingEvents.length > 0) {
+      // Return the one ending soonest
+      ongoingEvents.sort((a: any, b: any) => {
+        return new Date(a.endingDate).getTime() - new Date(b.endingDate).getTime();
+      });
+      
+      const event = ongoingEvents[0];
+      return { 
+        success: true, 
+        data: JSON.parse(JSON.stringify({
+          id: event._id,
+          title: event.title,
+          imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+          targetUrl: event.eventUrl || `/events/${event._id}`,
+          isActive: true,
+          eventDate: event.startingDate,
+          eventEndDate: event.endingDate,
+          description: event.description,
+          location: event.venue,
+          createdAt: event.createdDate,
+        }))
+      };
+    }
+
+    // Priority 2: Find upcoming events
+    const upcomingEvents = allEvents.filter((event: any) => {
+      return new Date(event.startingDate) >= now;
+    });
+
+    if (upcomingEvents.length > 0) {
+      // Return the next one (earliest)
+      upcomingEvents.sort((a: any, b: any) => {
+        return new Date(a.startingDate).getTime() - new Date(b.startingDate).getTime();
+      });
+      
+      const event = upcomingEvents[0];
+      return { 
+        success: true, 
+        data: JSON.parse(JSON.stringify({
+          id: event._id,
+          title: event.title,
+          imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+          targetUrl: event.eventUrl || `/events/${event._id}`,
+          isActive: true,
+          eventDate: event.startingDate,
+          eventEndDate: event.endingDate,
+          description: event.description,
+          location: event.venue,
+          createdAt: event.createdDate,
+        }))
+      };
+    }
+
+    // Priority 3: Return the most recent event
+    const event = allEvents[0];
+    return { 
+      success: true, 
+      data: JSON.parse(JSON.stringify({
+        id: event._id,
+        title: event.title,
+        imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+        targetUrl: event.eventUrl || `/events/${event._id}`,
+        isActive: true,
+        eventDate: event.startingDate,
+        eventEndDate: event.endingDate,
+        description: event.description,
+        location: event.venue,
+        createdAt: event.createdDate,
+      }))
+    };
+  } catch (error) {
+    console.error("Error fetching active event:", error);
+    return { success: false, error: "Failed to fetch active event" };
   }
 }
