@@ -1,5 +1,5 @@
 import EventsTimeline from "@/components/events/EventsTimeline";
-import { getAllEventBanners } from "@/actions/eventBanners";
+import { getAllEvents } from "@/actions/events";
 
 export const metadata = {
   title: "Events | BRAC University Computer Club",
@@ -7,13 +7,29 @@ export const metadata = {
 };
 
 export default async function EventsPage() {
-  const bannersResult = await getAllEventBanners();
+  const eventsResult = await getAllEvents();
 
-  const bannerEvents = bannersResult.success ? bannersResult.data ?? [] : [];
+  // Map Event data to match EventBanner format expected by EventsTimeline
+  const events = eventsResult.success && eventsResult.data 
+    ? eventsResult.data.map((event: any) => ({
+        _id: event._id,
+        title: event.title,
+        imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+        targetUrl: `/events/${event._id}`,
+        isActive: true,
+        eventDate: event.startingDate,
+        eventEndDate: event.endingDate,
+        description: event.description,
+        location: event.venue,
+        tags: [],
+        category: event.type,
+        isExclusive: false,
+      }))
+    : [];
 
   return (
     <div className="min-h-screen bg-background">
-      <EventsTimeline events={bannerEvents} />
+      <EventsTimeline events={events} />
     </div>
   );
 }

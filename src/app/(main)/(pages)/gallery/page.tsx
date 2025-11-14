@@ -2,18 +2,36 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getAllEventsWithGalleryCounts } from "@/actions/events";
+import { getAllEvents } from "@/actions/events";
 import { getEventGalleries } from "@/actions/eventGalleries";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
 import { EventCard } from "@/components/gallery/EventCard";
 import { Input } from "@/components/ui/input";
 import { Calendar, MapPin, Images, Search } from "lucide-react";
-import type { Event } from "@/lib/db/schema/events";
-import type { EventGallery } from "@/lib/db/schema/eventGalleries";
+type EventBanner = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  isActive: boolean;
+  eventDate: Date | null;
+  eventEndDate: Date | null;
+  description?: string;
+  location?: string;
+  category?: string;
+};
+
+type EventGallery = {
+  id: string;
+  eventId: string;
+  imageUrl: string;
+  caption?: string;
+  isActive: boolean;
+};
 
 export default function Gallery() {
   const router = useRouter();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventBanner[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [images, setImages] = useState<EventGallery[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,18 +40,38 @@ export default function Gallery() {
 
   useEffect(() => {
     async function loadEvents() {
-      const result = await getAllEventsWithGalleryCounts(false);
+      const result = await getAllEvents();
+      
       if (result.success && result.data) {
-        // Filter events that should show in gallery
-        const visibleEvents = result.data.filter(
-          (event: any) => event.showInGallery !== false
+        // Filter for events that should show in gallery
+        const galleryEvents = result.data.filter(
+          (event: any) => {
+            if (!event.showInGallery) return false;
+            // Show all events (completed, ongoing, and upcoming)
+            return true;
+          }
         );
-        setEvents(visibleEvents);
 
-        // Extract counts from the data
+        // Map events to EventBanner format
+        const mappedEvents = galleryEvents.map((event: any) => ({
+          id: event._id,
+          title: event.title,
+          imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+          targetUrl: `/events/${event._id}`,
+          isActive: true,
+          eventDate: event.startingDate,
+          eventEndDate: event.endingDate,
+          description: event.description,
+          location: event.venue,
+          category: event.type,
+        }));
+
+        setEvents(mappedEvents);
+
+        // Set gallery count to 0 for all events
         const counts: Record<string, number> = {};
-        visibleEvents.forEach((event: any) => {
-          counts[event.id] = event.galleryCount || 0;
+        mappedEvents.forEach((event: EventBanner) => {
+          counts[event.id] = 0;
         });
         setGalleryCount(counts);
       }
@@ -82,9 +120,9 @@ export default function Gallery() {
     const query = searchQuery.toLowerCase();
     return (
       event.title.toLowerCase().includes(query) ||
-      event.venue.toLowerCase().includes(query) ||
-      event.type.toLowerCase().includes(query) ||
-      event.description.toLowerCase().includes(query)
+      (event.location && event.location.toLowerCase().includes(query)) ||
+      (event.category && event.category.toLowerCase().includes(query)) ||
+      (event.description && event.description.toLowerCase().includes(query))
     );
   });
 
@@ -95,7 +133,7 @@ export default function Gallery() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Event Gallery</h1>
             <p className="text-muted-foreground">
-              Browse photos from our events. Click on any event to view its gallery.
+              Browse photos from our events - completed, ongoing, and upcoming. Click on any event to view its gallery.
             </p>
           </div>
 
@@ -149,7 +187,8 @@ export default function Gallery() {
           {events.length === 0 && (
             <div className="text-center py-12">
               <Images className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">No events available yet.</p>
+              <p className="text-muted-foreground">No events with galleries yet.</p>
+              <p className="text-sm text-muted-foreground mt-2">Check back soon for event photos!</p>
             </div>
           )}
         </>
@@ -170,12 +209,14 @@ export default function Gallery() {
                 <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    <span>{new Date(selectedEvent.startingDate).toLocaleDateString()}</span>
+                    <span>{selectedEvent.eventDate ? new Date(selectedEvent.eventDate).toLocaleDateString() : 'Date TBA'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>{selectedEvent.venue}</span>
-                  </div>
+                  {selectedEvent.location && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      <span>{selectedEvent.location}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <Images className="w-4 h-4" />
                     <span>{images.length} {images.length === 1 ? "photo" : "photos"}</span>

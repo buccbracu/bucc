@@ -1,13 +1,9 @@
-import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import AnnouncementBar from "@/components/navbar/announcement-bar";
 import Navbar from "@/components/navbar/Navbar";
 import EventBannerCarousel from "@/components/EventBannerCarousel";
 import Providers from "@/util/Providers";
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
-
-const font = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "BRAC University Computer Club | Upgrade Yourself",
@@ -35,18 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${font.className} overflow-x-hidden`}>
-        <Providers>
-          <AnnouncementBar />
-          <Navbar />
-          <EventBannerCarousel />
-          <main className="relative">
-            {children}
-          </main>
-          <Footer />
-        </Providers>
-      </body>
-    </html>
+    <>
+      <Providers>
+        <AnnouncementBar />
+        <Navbar />
+        <EventBannerCarousel />
+        <main className="relative">
+          {children}
+        </main>
+        <Footer />
+      </Providers>
+    </>
   );
 }

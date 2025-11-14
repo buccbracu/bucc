@@ -14,8 +14,8 @@ export default async function AboutUs() {
   // Filter upcoming events
   const now = new Date();
   const upcomingEvents = allEvents
-    .filter((event) => new Date(event.startingDate) > now)
-    .sort((a, b) => new Date(a.startingDate).getTime() - new Date(b.startingDate).getTime())
+    .filter((event: any) => new Date(event.startingDate) > now)
+    .sort((a: any, b: any) => new Date(a.startingDate).getTime() - new Date(b.startingDate).getTime())
     .slice(0, 3);
   
   return <AboutUsPage upcomingEvents={upcomingEvents} />;
