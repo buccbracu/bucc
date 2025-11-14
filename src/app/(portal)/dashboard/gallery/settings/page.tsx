@@ -9,7 +9,18 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save } from "lucide-react";
-import type { GallerySettings } from "@/lib/db/schema/gallerySettings";
+type GallerySettings = {
+  id: string;
+  isGalleryEnabled: boolean;
+  galleryTitle?: string;
+  galleryDescription?: string;
+  showEventCount: boolean;
+  showPhotoCount: boolean;
+  cardsPerRow?: string;
+  enableLightbox: boolean;
+  showCaptions: boolean;
+  featuredEventIds?: string[];
+};
 
 export default function GallerySettingsPage() {
   const router = useRouter();

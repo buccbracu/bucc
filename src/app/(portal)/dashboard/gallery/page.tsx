@@ -11,8 +11,26 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Plus, Calendar, MapPin, Images, Settings, Search } from "lucide-react";
-import type { Event } from "@/lib/db/schema/events";
-import type { EventGallery } from "@/lib/db/schema/eventGalleries";
+type Event = {
+  id: string;
+  title: string;
+  venue: string;
+  description: string;
+  featuredImage?: string;
+  type: string;
+  startingDate: Date;
+  endingDate: Date;
+  showInGallery?: boolean;
+};
+
+type EventGallery = {
+  id: string;
+  eventId: string;
+  imageUrl: string;
+  caption?: string;
+  isActive: boolean;
+  order: string;
+};
 
 export default function GalleryDashboard() {
   const router = useRouter();
