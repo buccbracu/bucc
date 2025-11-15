@@ -6,8 +6,9 @@ export const metadata = {
   description: "Explore past and upcoming events organized by BUCC",
 };
 
-// Enable ISR with 60 second revalidation
+// Static generation with revalidation
 export const revalidate = 60;
+export const dynamic = 'force-static';
 
 export default async function EventsPage() {
   const eventsResult = await getAllEvents();

@@ -7,8 +7,9 @@ export const metadata = {
     "Learn about BUCC's mission, vision, and journey since 2001. Discover how we empower tech enthusiasts and shape future leaders in technology.",
 };
 
-// Enable ISR with 120 second revalidation (events change less frequently here)
+// Static generation with revalidation
 export const revalidate = 120;
+export const dynamic = 'force-static';
 
 export default async function AboutUs() {
   const eventsResult = await getAllEvents();
