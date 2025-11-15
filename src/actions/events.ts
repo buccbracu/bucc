@@ -27,8 +27,10 @@ export async function getAllEvents() {
     await dbConnect();
     
     const allEvents = await Event.find()
+      .select('-attendance -notes') // Exclude heavy fields
       .sort({ createdDate: -1 })
-      .lean();
+      .lean()
+      .exec();
     
     return { success: true, data: JSON.parse(JSON.stringify(allEvents)) };
   } catch (error) {
@@ -42,22 +44,24 @@ export async function getAllEventsWithGalleryCounts(includeInactive = false) {
     await dbConnect();
     
     const allEvents = await Event.find()
+      .select('-attendance -notes') // Exclude heavy fields
       .sort({ createdDate: -1 })
-      .lean();
+      .lean()
+      .exec();
     
-    const eventsWithCounts = await Promise.all(
-      allEvents.map(async (event: any) => {
-        const query: any = { eventId: event._id };
-        if (!includeInactive) {
-          query.isActive = true;
-        }
-        const galleryCount = await EventGallery.countDocuments(query);
-        return {
-          ...event,
-          galleryCount,
-        };
-      })
-    );
+    // Use aggregation for better performance
+    const query: any = includeInactive ? {} : { isActive: true };
+    const galleryCounts = await EventGallery.aggregate([
+      { $match: query },
+      { $group: { _id: "$eventId", count: { $sum: 1 } } }
+    ]);
+    
+    const countMap = new Map(galleryCounts.map(g => [g._id.toString(), g.count]));
+    
+    const eventsWithCounts = allEvents.map((event: any) => ({
+      ...event,
+      galleryCount: countMap.get(event._id.toString()) || 0,
+    }));
     
     return { 
       success: true, 

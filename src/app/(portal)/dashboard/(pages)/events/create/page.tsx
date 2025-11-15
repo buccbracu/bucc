@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Heading from "@/components/portal/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,11 +64,12 @@ export default function CreateEvent() {
   const [eventUrl, setEventUrl] = useState("");
   const studentIDs:string[] = [];
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [createBanner, setCreateBanner] = useState(false);
   const [bannerUrl, setBannerUrl] = useState("");
 
   // Handle image upload
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setIsUploading(true);
@@ -83,10 +84,10 @@ export default function CreateEvent() {
         setIsUploading(false);
       }
     }
-  };
+  }, []);
 
   // Handle image delete
-  const handleImageDelete = async () => {
+  const handleImageDelete = useCallback(async () => {
     if (featuredImage) {
       const publicId = extractPublicId(featuredImage);
       try {
@@ -105,10 +106,11 @@ export default function CreateEvent() {
         toast.error("Failed to delete image. Please try again.");
       }
     }
-  };
+  }, [featuredImage]);
 
   // Submit event data
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitting) return;
     // Validate required fields
     if (!title || !venue || !description || !type || !startingDate || !endingDate || !allowedMembers) {
       toast.error("Please fill in all required fields");
@@ -142,6 +144,7 @@ export default function CreateEvent() {
       attendance: studentIDs,
     };
 
+    setIsSubmitting(true);
     try {
       const res = await fetch("/api/events", {
         method: "POST",
@@ -186,8 +189,14 @@ export default function CreateEvent() {
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to create event. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }, [
+    title, venue, description, featuredImage, eventUrl, type, needAttendance,
+    startingDate, endingDate, allowedMembers, allowedDepartments, allowedDesignations,
+    notes, createBanner, bannerUrl, router, isSubmitting
+  ]);
 
   return (
     <>
@@ -377,7 +386,9 @@ export default function CreateEvent() {
             </>
           )}
 
-          <Button onClick={handleSubmit}>Create Event</Button>
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Event"}
+          </Button>
         </div>
       </div>
     </>

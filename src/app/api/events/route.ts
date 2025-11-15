@@ -89,7 +89,12 @@ export async function GET() {
     const result = await getAllEvents();
 
     if (result.success) {
-      return NextResponse.json(result.data, { status: 200 });
+      return NextResponse.json(result.data, { 
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+        },
+      });
     } else {
       return NextResponse.json({ error: result.error }, { status: 500 });
     }

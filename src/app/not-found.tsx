@@ -1,6 +1,9 @@
 import Link from "next/link";
 import "./not-found.css";
 
+// Static page - no revalidation needed
+export const dynamic = 'force-static';
+
 export default function NotFound() {
   return (
     <div className="not-found-container">

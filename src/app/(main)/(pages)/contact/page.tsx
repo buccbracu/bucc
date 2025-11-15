@@ -18,6 +18,9 @@ export const metadata = {
     "Get in touch with BRAC University Computer Club. We are here to answer your questions and help you get involved.",
 };
 
+// Static page - no revalidation needed
+export const revalidate = false;
+
 export default function Contact() {
   return (
     <div className="min-h-[calc(100vh-140px)]">

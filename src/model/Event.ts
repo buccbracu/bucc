@@ -72,6 +72,13 @@ const EventSchema = new mongoose.Schema(
     timestamps: { createdAt: "createdDate", updatedAt: "lastUpdate" },
   },
 );
+// Indexes for better query performance
 EventSchema.index({ title: "text" });
+EventSchema.index({ createdDate: -1 });
+EventSchema.index({ startingDate: 1 });
+EventSchema.index({ endingDate: 1 });
+EventSchema.index({ showInGallery: 1 });
+EventSchema.index({ type: 1 });
+
 const Event = mongoose.models.Event || mongoose.model("Event", EventSchema);
 export default Event;

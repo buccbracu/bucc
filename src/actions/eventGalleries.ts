@@ -25,8 +25,10 @@ export async function getEventGalleries(eventId: string, includeInactive = false
     }
 
     const galleries = await EventGallery.find(query)
+      .select('eventId imageUrl caption isActive order createdAt') // Only select needed fields
       .sort({ order: 1, createdAt: -1 })
-      .lean();
+      .lean()
+      .exec();
     
     return { success: true, data: JSON.parse(JSON.stringify(galleries)) };
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getAllEventsWithGalleryCounts, toggleEventGalleryVisibility } from "@/actions/events";
 import { getEventGalleries } from "@/actions/eventGalleries";
@@ -73,21 +73,20 @@ export default function GalleryDashboard() {
     loadGallery();
   }, [selectedEventId]);
 
-  const handleEventClick = (eventId: string) => {
+  const handleEventClick = useCallback((eventId: string) => {
     setSelectedEventId(eventId);
-  };
+  }, []);
 
-  const handleBackToEvents = () => {
+  const handleBackToEvents = useCallback(() => {
     setSelectedEventId(null);
-    // Reload events to update counts
     router.refresh();
-  };
+  }, [router]);
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = useCallback(() => {
     router.push("/dashboard/events/create");
-  };
+  }, [router]);
 
-  const handleRefreshGallery = async () => {
+  const handleRefreshGallery = useCallback(async () => {
     if (!selectedEventId) return;
     
     // Reload gallery images
@@ -114,7 +113,18 @@ export default function GalleryDashboard() {
       });
       setGalleryCount(counts);
     }
-  };
+  }, [selectedEventId]);
+
+  const filteredEvents = useMemo(() => {
+    if (!searchQuery) return events;
+    const query = searchQuery.toLowerCase();
+    return events.filter((event) =>
+      event.title.toLowerCase().includes(query) ||
+      event.venue.toLowerCase().includes(query) ||
+      event.type.toLowerCase().includes(query) ||
+      event.description.toLowerCase().includes(query)
+    );
+  }, [events, searchQuery]);
 
   if (loading && events.length === 0) {
     return (
@@ -166,40 +176,13 @@ export default function GalleryDashboard() {
             </div>
             {searchQuery && (
               <p className="text-sm text-muted-foreground mt-2">
-                Found {events.filter((event) => {
-                  const query = searchQuery.toLowerCase();
-                  return (
-                    event.title.toLowerCase().includes(query) ||
-                    event.venue.toLowerCase().includes(query) ||
-                    event.type.toLowerCase().includes(query) ||
-                    event.description.toLowerCase().includes(query)
-                  );
-                }).length} {events.filter((event) => {
-                  const query = searchQuery.toLowerCase();
-                  return (
-                    event.title.toLowerCase().includes(query) ||
-                    event.venue.toLowerCase().includes(query) ||
-                    event.type.toLowerCase().includes(query) ||
-                    event.description.toLowerCase().includes(query)
-                  );
-                }).length === 1 ? "event" : "events"}
+                Found {filteredEvents.length} {filteredEvents.length === 1 ? "event" : "events"}
               </p>
             )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events
-              .filter((event) => {
-                if (!searchQuery) return true;
-                const query = searchQuery.toLowerCase();
-                return (
-                  event.title.toLowerCase().includes(query) ||
-                  event.venue.toLowerCase().includes(query) ||
-                  event.type.toLowerCase().includes(query) ||
-                  event.description.toLowerCase().includes(query)
-                );
-              })
-              .map((event) => {
+            {filteredEvents.map((event) => {
                 const imageCount = galleryCount[event.id] || 0;
 
                 return (
@@ -213,16 +196,7 @@ export default function GalleryDashboard() {
               })}
           </div>
 
-          {events.filter((event) => {
-            if (!searchQuery) return true;
-            const query = searchQuery.toLowerCase();
-            return (
-              event.title.toLowerCase().includes(query) ||
-              event.venue.toLowerCase().includes(query) ||
-              event.type.toLowerCase().includes(query) ||
-              event.description.toLowerCase().includes(query)
-            );
-          }).length === 0 && events.length > 0 && (
+          {filteredEvents.length === 0 && events.length > 0 && (
             <div className="text-center py-12 border rounded-lg">
               <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground mb-2">No events found matching &quot;{searchQuery}&quot;</p>

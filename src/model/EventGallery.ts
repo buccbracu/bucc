@@ -30,6 +30,11 @@ const EventGallerySchema = new mongoose.Schema(
   }
 );
 
+// Indexes for better query performance
+EventGallerySchema.index({ eventId: 1, isActive: 1 });
+EventGallerySchema.index({ eventId: 1, order: 1, createdAt: -1 });
+EventGallerySchema.index({ isActive: 1, createdAt: -1 });
+
 const EventGallery =
   mongoose.models.EventGallery ||
   mongoose.model("EventGallery", EventGallerySchema);

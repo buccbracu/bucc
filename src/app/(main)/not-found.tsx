@@ -1,5 +1,8 @@
 import Animated404 from "@/components/ui/animated-404";
 
+// Static page - no revalidation needed
+export const dynamic = 'force-static';
+
 export default function NotFound() {
   return (
     <Animated404

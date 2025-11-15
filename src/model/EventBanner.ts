@@ -54,6 +54,11 @@ const EventBannerSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for better query performance
+EventBannerSchema.index({ isActive: 1, createdAt: -1 });
+EventBannerSchema.index({ isActive: 1, eventDate: 1 });
+EventBannerSchema.index({ isActive: 1, eventEndDate: 1 });
+
 const EventBanner =
   mongoose.models.EventBanner ||
   mongoose.model("EventBanner", EventBannerSchema);
