@@ -243,9 +243,9 @@ html:not(.dark) .world-404 .wall-404::before {
   background: rgba(0, 0, 0, 0.7);
   border-radius: 1rem;
   backdrop-filter: blur(10px);
-  max-width: 500px;
-  margin: 0 1rem;
-  transform: translateY(-25vh);
+  max-width: 90%;
+  width: 500px;
+  margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -348,15 +348,18 @@ html:not(.dark) .home-button-404:hover {
 /* Responsive */
 @media (max-width: 768px) {
   .content-overlay-404 {
-    transform: translateY(-18vh);
+    max-width: 85%;
+    padding: 1.75rem 1.5rem;
   }
 
   .error-title-404 {
-    font-size: 2rem;
+    font-size: 2.25rem;
+    margin-bottom: 0.875rem;
   }
 
   .error-message-404 {
     font-size: 1rem;
+    margin-bottom: 1.75rem;
   }
 
   .rail-404 .stamp-404 {
@@ -382,8 +385,85 @@ html:not(.dark) .home-button-404:hover {
 
 @media (max-width: 480px) {
   .content-overlay-404 {
-    transform: translateY(-12vh);
-    padding: 1.5rem;
+    max-width: 90%;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .error-title-404 {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  .error-message-404 {
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .home-button-404 {
+    padding: 0.625rem 1.75rem;
+    font-size: 0.9375rem;
+  }
+
+  .rail-404 .stamp-404 {
+    width: 120px;
+    height: 120px;
+    font-size: 4rem;
+  }
+
+  .world-404 .box-404 {
+    width: 120px;
+    height: 120px;
+  }
+
+  .world-404 .wall-404 {
+    width: 120px;
+    height: 120px;
+  }
+
+  .world-404 .wall-404::before {
+    font-size: 4rem;
+  }
+
+  .world-404 .wall-404:nth-child(1) {
+    transform: translateZ(60px);
+  }
+
+  .world-404 .wall-404:nth-child(2) {
+    transform: rotateX(180deg) translateZ(60px);
+  }
+
+  .world-404 .wall-404:nth-child(3) {
+    transform: rotateX(90deg) translateZ(60px);
+  }
+
+  .world-404 .wall-404:nth-child(4) {
+    transform: rotateX(-90deg) translateZ(60px);
+  }
+
+  .world-404 .wall-404:nth-child(5) {
+    transform: rotateY(90deg) translateZ(60px);
+  }
+
+  .world-404 .wall-404:nth-child(6) {
+    transform: rotateY(-90deg) translateZ(60px);
+  }
+
+  @keyframes slide404 {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-120px);
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .content-overlay-404 {
+    max-width: 92%;
+    padding: 1.25rem 1rem;
   }
 
   .error-title-404 {
@@ -394,32 +474,8 @@ html:not(.dark) .home-button-404:hover {
     font-size: 0.875rem;
   }
 
-  .rail-404 .stamp-404 {
-    width: 100px;
-    height: 100px;
-    font-size: 3rem;
-  }
-
-  .world-404 .box-404 {
-    width: 100px;
-    height: 100px;
-  }
-
-  .world-404 .wall-404 {
-    width: 100px;
-    height: 100px;
-  }
-
-  .world-404 .wall-404::before {
-    font-size: 3rem;
-  }
-
-  @keyframes slide404 {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-100px);
-    }
+  .home-button-404 {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
   }
 }

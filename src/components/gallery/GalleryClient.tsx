@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useTransition, memo } from "react";
+import dynamic from "next/dynamic";
 import { getEventGalleries } from "@/actions/eventGalleries";
-import { GalleryGrid } from "@/components/gallery/GalleryGrid";
+import { GalleryGridSkeleton } from "@/components/gallery/GalleryGridSkeleton";
 import { EventCard } from "@/components/gallery/EventCard";
 import { Input } from "@/components/ui/input";
 import { Calendar, MapPin, Images, Search } from "lucide-react";
+
+const GalleryGrid = dynamic(() => import("@/components/gallery/GalleryGrid").then(mod => ({ default: mod.GalleryGrid })), {
+  loading: () => <GalleryGridSkeleton />,
+  ssr: false,
+});
 
 type EventBanner = {
   id: string;
@@ -34,6 +40,7 @@ export default function GalleryClient({ initialEvents }: { initialEvents: EventB
   const [images, setImages] = useState<EventGallery[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     async function loadGallery() {
@@ -50,10 +57,12 @@ export default function GalleryClient({ initialEvents }: { initialEvents: EventB
   }, [selectedEventId]);
 
   const handleEventClick = useCallback((eventId: string) => {
-    setSelectedEventId(eventId);
-    setTimeout(() => {
-      document.getElementById("gallery-section")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    startTransition(() => {
+      setSelectedEventId(eventId);
+      setTimeout(() => {
+        document.getElementById("gallery-section")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    });
   }, []);
 
   const handleBackToEvents = useCallback(() => {
@@ -167,9 +176,7 @@ export default function GalleryClient({ initialEvents }: { initialEvents: EventB
           })()}
 
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Loading gallery...</p>
-            </div>
+            <GalleryGridSkeleton />
           ) : (
             <GalleryGrid images={images} />
           )}

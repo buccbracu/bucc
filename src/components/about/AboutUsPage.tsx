@@ -1,8 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ExternalLink, Sparkles, Star, Calendar } from "lucide-react";
+import { ArrowRight, ExternalLink, Star, Calendar } from "lucide-react";
 import aboutUsImage from "/public/images/homepage/bucc-about-us.jpg";
 import ebImage from "/public/images/homepage/Executive Body 2025.jpeg";
 import event1 from "/public/images/events/bucc-event1.jpg";
@@ -78,6 +79,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
             alt="BUCC Executive Body"
             fill
             className="object-cover scale-105 animate-[scale_20s_ease-in-out_infinite]"
+            priority
+            quality={85}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[#1f4864]/95 via-[#127cc1]/90 to-[#1f4864]/95" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
@@ -129,6 +133,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                     alt={stat.label}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                    quality={75}
+                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-80 mix-blend-multiply`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -208,6 +215,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                     height={500}
                     alt="BUCC Community"
                     className="w-full rounded-3xl object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    quality={80}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                   <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-[#1f4864]/80 via-transparent to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -247,6 +257,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                     alt={img.alt}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                    quality={75}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
                   <div className="absolute top-4 left-4">
@@ -302,6 +315,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                     alt={event.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                    quality={75}
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1f4864]/95 via-[#1f4864]/60 to-transparent" />
                   {/* Animated gradient overlay */}
@@ -360,6 +376,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
           <div className="grid gap-8 md:grid-cols-3">
             {[
               {
+                id: "mission",
                 title: "Our Mission",
                 description:
                   "To provide BRAC University students a platform to engage in Computer Science and Technology programs regardless of their department, fostering a community that grows together.",
@@ -367,6 +384,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                 gradient: "from-blue-600 to-cyan-500",
               },
               {
+                id: "vision",
                 title: "Our Vision",
                 description:
                   "To innovate, impact, and inspire the next generation of tech leaders through visionary, imaginative, and efficient collaboration.",
@@ -374,15 +392,16 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                 gradient: "from-purple-600 to-pink-500",
               },
               {
+                id: "values",
                 title: "Our Values",
                 description:
                   "Excellence, Innovation, Collaboration, and Continuous Learning. We believe in promoting creativity and preparing students to lead the next generation.",
                 image: event3,
                 gradient: "from-orange-600 to-red-500",
               },
-            ].map((value, index) => (
+            ].map((value) => (
               <div
-                key={index}
+                key={value.id}
                 className="group relative overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-3"
               >
                 <div className="relative h-96">
@@ -391,6 +410,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
                     alt={value.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                    quality={75}
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-br ${value.gradient} opacity-70 mix-blend-multiply`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
@@ -422,37 +444,42 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
             <div className="space-y-12">
               {[
                 {
+                  id: "2001",
                   year: "2001",
                   title: "Foundation",
                   description:
                     "BUCC was established as the first computer club at BRAC University, laying the foundation for a vibrant tech community.",
                 },
                 {
+                  id: "2005-2010",
                   year: "2005-2010",
                   title: "Growth & Expansion",
                   description:
                     "Expanded our activities with regular workshops, programming contests, and tech talks, growing our member base significantly.",
                 },
                 {
+                  id: "2015",
                   year: "2015",
                   title: "National Recognition",
                   description:
                     "BUCC members started winning national programming competitions, putting BRAC University on the tech map of Bangladesh.",
                 },
                 {
+                  id: "2020",
                   year: "2020",
                   title: "Digital Transformation",
                   description:
                     "Adapted to virtual events during the pandemic, reaching more students and organizing successful online workshops.",
                 },
                 {
+                  id: "2024-present",
                   year: "2024-Present",
                   title: "Innovation & Impact",
                   description:
                     "Continuing to innovate with AI/ML workshops, industry partnerships, and creating opportunities for students globally.",
                 },
               ].map((milestone, index) => (
-                <div key={index} className="flex gap-8 group">
+                <div key={milestone.id} className="flex gap-8 group">
                   <div className="flex flex-col items-center">
                     <div className="relative h-16 w-16 rounded-2xl shadow-lg ring-4 ring-white dark:ring-gray-900 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-gradient-to-br from-[#1f4864] to-[#127cc1] flex items-center justify-center">
                       <span className="text-2xl font-bold text-white">{index + 1}</span>
@@ -491,6 +518,9 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
             alt="BUCC Community"
             fill
             className="object-cover scale-105"
+            loading="lazy"
+            quality={80}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[#1f4864]/95 via-[#127cc1]/90 to-[#1f4864]/95" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(18,124,193,0.3),transparent_70%)]" />

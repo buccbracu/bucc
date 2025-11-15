@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
+import dynamic from "next/dynamic";
 import { Plus, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
 import {
   getAllEventBanners,
@@ -25,7 +26,11 @@ type EventBanner = {
   createdAt: Date;
 };
 import Image from "next/image";
-import ImageUploader from "./ImageUploader";
+
+const ImageUploader = dynamic(() => import("./ImageUploader"), {
+  loading: () => <div className="h-32 bg-muted animate-pulse rounded-lg" />,
+  ssr: false,
+});
 
 export default function EventBannersManager() {
   const [banners, setBanners] = useState<EventBanner[]>([]);
@@ -59,7 +64,7 @@ export default function EventBannersManager() {
     setIsLoading(false);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.imageUrl) {
@@ -96,18 +101,18 @@ export default function EventBannersManager() {
     } else {
       alert("Failed to create event banner: " + (result.error || "Unknown error"));
     }
-  }
+  }, [formData, tagInput]);
 
-  function handleAddTag() {
+  const handleAddTag = useCallback(() => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
       setFormData({ ...formData, tags: [...formData.tags, tagInput.trim()] });
       setTagInput("");
     }
-  }
+  }, [formData, tagInput]);
 
-  function handleRemoveTag(tagToRemove: string) {
+  const handleRemoveTag = useCallback((tagToRemove: string) => {
     setFormData({ ...formData, tags: formData.tags.filter(tag => tag !== tagToRemove) });
-  }
+  }, [formData]);
 
   async function handleToggleStatus(id: string, currentStatus: boolean) {
     const result = await toggleEventBannerStatus(id, !currentStatus);
@@ -381,6 +386,9 @@ export default function EventBannersManager() {
                     alt={banner.title}
                     fill
                     className="object-cover rounded-lg"
+                    loading="lazy"
+                    quality={75}
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
 

@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { getAllEventsWithGalleryCounts, toggleEventGalleryVisibility } from "@/actions/events";
 import { getEventGalleries } from "@/actions/eventGalleries";
-import { GalleryManager } from "@/components/gallery/GalleryManager";
 import { EventCard } from "@/components/gallery/EventCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Plus, Calendar, MapPin, Images, Settings, Search } from "lucide-react";
+
+const GalleryManager = dynamic(() => import("@/components/gallery/GalleryManager").then(mod => ({ default: mod.GalleryManager })), {
+  loading: () => <div className="h-[400px] animate-pulse bg-muted rounded-lg" />,
+  ssr: false,
+});
 type Event = {
   id: string;
   title: string;
@@ -34,6 +39,7 @@ type EventGallery = {
 
 export default function GalleryDashboard() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [images, setImages] = useState<EventGallery[]>([]);
@@ -74,7 +80,9 @@ export default function GalleryDashboard() {
   }, [selectedEventId]);
 
   const handleEventClick = useCallback((eventId: string) => {
-    setSelectedEventId(eventId);
+    startTransition(() => {
+      setSelectedEventId(eventId);
+    });
   }, []);
 
   const handleBackToEvents = useCallback(() => {

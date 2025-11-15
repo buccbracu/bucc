@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X } from "lucide-react";
 import { getTodayEvents } from "@/actions/events";
 type EventBanner = {
   id: string;
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
-export default function EventBannerCarousel() {
+const EventBannerCarousel = memo(function EventBannerCarousel() {
   const pathname = usePathname();
   const [banners, setBanners] = useState<EventBanner[]>([]);
   const [isVisible, setIsVisible] = useState(true);
@@ -125,7 +125,7 @@ export default function EventBannerCarousel() {
           className="w-full"
         >
           <CarouselContent>
-            {banners.map((banner) => {
+            {banners.map((banner, index) => {
               const { isOngoing, isUpcoming } = getEventStatus(banner);
               
               return (
@@ -142,7 +142,9 @@ export default function EventBannerCarousel() {
                         alt={banner.title}
                         fill
                         className="object-cover"
-                        priority
+                        priority={index === 0}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        quality={85}
                         sizes="100vw"
                       />
                       {/* Gradient overlay */}
@@ -201,4 +203,6 @@ export default function EventBannerCarousel() {
       </div>
     </div>
   );
-}
+});
+
+export default EventBannerCarousel;

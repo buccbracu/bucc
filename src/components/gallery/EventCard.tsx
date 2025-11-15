@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, memo } from "react";
 import Image from "next/image";
 import { Calendar, MapPin, Images } from "lucide-react";
 type Event = {
@@ -32,7 +33,8 @@ function isEventBanner(event: Event | EventBanner): event is EventBanner {
   return 'imageUrl' in event;
 }
 
-export function EventCard({ event, imageCount, onClick }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event, imageCount, onClick }: EventCardProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
   const imageUrl = isEventBanner(event) ? event.imageUrl : event.featuredImage;
   const eventDate = isEventBanner(event) 
     ? (event.eventDate ? new Date(event.eventDate) : null)
@@ -45,13 +47,21 @@ export function EventCard({ event, imageCount, onClick }: EventCardProps) {
       className="group cursor-pointer rounded-lg overflow-hidden border hover:shadow-lg transition-all duration-300"
     >
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
+        {!isLoaded && imageUrl && (
+          <div className="absolute inset-0 bg-muted animate-pulse" />
+        )}
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt={event.title}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-300"
+            className={`object-cover transition-all duration-300 ${
+              isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
+            }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            onLoad={() => setIsLoaded(true)}
+            loading="lazy"
+            quality={75}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -85,4 +95,4 @@ export function EventCard({ event, imageCount, onClick }: EventCardProps) {
       </div>
     </div>
   );
-}
+});

@@ -11,8 +11,26 @@ const connection: ConnectionObject = {};
 const { MONGODB_URI, MONGODB_DB } = process.env;
 
 async function dbConnect(): Promise<void> {
-  if (connection.isConnected) {
+  // Check if already connected (readyState 1 = connected)
+  if (connection.isConnected === 1) {
     console.log("Using existing connection");
+    return;
+  }
+
+  // Check if mongoose is already connected
+  if (mongoose.connection.readyState === 1) {
+    connection.isConnected = 1;
+    console.log("Using existing mongoose connection");
+    return;
+  }
+
+  // If connecting, wait for it
+  if (mongoose.connection.readyState === 2) {
+    console.log("Connection in progress, waiting...");
+    await new Promise((resolve) => {
+      mongoose.connection.once('connected', resolve);
+    });
+    connection.isConnected = 1;
     return;
   }
 

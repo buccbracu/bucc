@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +19,7 @@ type EventBanner = {
   createdAt: Date;
 };
 
-export default function EventBanner() {
+const EventBanner = memo(function EventBanner() {
   const pathname = usePathname();
   const [banner, setBanner] = useState<EventBanner | null>(null);
   const [isVisible, setIsVisible] = useState(true);
@@ -81,6 +81,7 @@ export default function EventBanner() {
               fill
               className="object-cover"
               priority
+              quality={85}
               sizes="100vw"
             />
             {/* Gradient overlay for better text visibility */}
@@ -130,4 +131,6 @@ export default function EventBanner() {
       </div>
     </div>
   );
-}
+});
+
+export default EventBanner;

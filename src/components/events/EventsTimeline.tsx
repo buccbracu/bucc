@@ -339,35 +339,31 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                   } flex-col gap-8 transition-all duration-300`}
                 >
                   {/* Active Line Segment - Desktop */}
-                  <Fragment key="active-line-desktop">
-                    {isActive && (
-                      <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary via-primary to-primary hidden md:block z-[5] animate-pulse" />
-                    )}
-                  </Fragment>
+                  {isActive && (
+                    <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary via-primary to-primary hidden md:block z-[5] animate-pulse" />
+                  )}
                   
                   {/* Active Line Segment - Mobile */}
-                  <Fragment key="active-line-mobile">
-                    {isActive && (
-                      <div className="absolute left-4 top-0 w-0.5 h-full bg-gradient-to-b from-primary via-primary to-primary md:hidden z-[5] animate-pulse" />
-                    )}
-                  </Fragment>
+                  {isActive && (
+                    <div className="absolute left-4 top-0 w-0.5 h-full bg-gradient-to-b from-primary via-primary to-primary md:hidden z-[5] animate-pulse" />
+                  )}
 
                   {/* Timeline Dot - Desktop */}
-                  <div key="dot-desktop" className={`absolute left-1/2 transform -translate-x-1/2 rounded-full border-4 border-background z-10 hidden md:block shadow-lg transition-all duration-300 ${
+                  <div className={`absolute left-1/2 transform -translate-x-1/2 rounded-full border-4 border-background z-10 hidden md:block shadow-lg transition-all duration-300 ${
                     isActive 
                       ? "w-8 h-8 bg-primary ring-4 ring-primary/30" 
                       : "w-6 h-6 bg-primary/60"
                   }`} />
                   
                   {/* Timeline Dot - Mobile */}
-                  <div key="dot-mobile" className={`absolute left-4 transform -translate-x-1/2 rounded-full border-2 border-background z-10 md:hidden shadow-lg transition-all duration-300 ${
+                  <div className={`absolute left-4 transform -translate-x-1/2 rounded-full border-2 border-background z-10 md:hidden shadow-lg transition-all duration-300 ${
                     isActive 
                       ? "w-5 h-5 bg-primary ring-2 ring-primary/30" 
                       : "w-4 h-4 bg-primary/60"
                   }`} />
 
                   {/* Content */}
-                  <div key="content" className={`w-full md:w-[calc(50%-3rem)] pl-12 md:pl-0 ${isLeft ? "md:text-right" : "md:text-left"}`}>
+                  <div className={`w-full md:w-[calc(50%-3rem)] pl-12 md:pl-0 ${isLeft ? "md:text-right" : "md:text-left"}`}>
                     {isEventBanner(event) ? (
                       <div
                         className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
@@ -384,48 +380,40 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          <Fragment key="status-ongoing">
-                            {status === "ongoing" && (
-                              <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                                Ongoing Now
-                              </div>
-                            )}
-                          </Fragment>
-                          <Fragment key="status-upcoming">
-                            {status === "upcoming" && (
-                              <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                                Upcoming
-                              </div>
-                            )}
-                          </Fragment>
+                          {status === "ongoing" && (
+                            <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
+                              Ongoing Now
+                            </div>
+                          )}
+                          {status === "upcoming" && (
+                            <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                              Upcoming
+                            </div>
+                          )}
                         </div>
                         {/* Event Details */}
                         <div className="p-6">
                           {/* Status and Tags Row */}
                           <div className="flex flex-wrap items-center gap-2 mb-3">
                             {/* Status Badge */}
-                            <span key="status" className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
+                            <span className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
                               {getEventStatus(event).label}
                             </span>
                             
                             {/* Exclusive Badge */}
-                            <Fragment key="exclusive">
-                              {event.isExclusive && (
-                                <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-                                  <Sparkles className="w-3 h-3" />
-                                  Exclusive
-                                </span>
-                              )}
-                            </Fragment>
+                            {event.isExclusive && (
+                              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+                                <Sparkles className="w-3 h-3" />
+                                Exclusive
+                              </span>
+                            )}
                             
                             {/* Category Badge */}
-                            <Fragment key="category">
-                              {event.category && (
-                                <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                  {event.category}
-                                </span>
-                              )}
-                            </Fragment>
+                            {event.category && (
+                              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                                {event.category}
+                              </span>
+                            )}
                           </div>
 
                           <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
@@ -454,7 +442,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                           )}
 
                           <div className="flex flex-col gap-2 mb-4">
-                            <div key="date-info" className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar className="w-4 h-4" />
                               <span>{formatDate(event.eventDate)}</span>
                               {event.eventEndDate && (
@@ -462,14 +450,12 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                               )}
                             </div>
 
-                            <Fragment key="location-info">
-                              {event.location && (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <MapPin className="w-4 h-4" />
-                                  <span>{event.location}</span>
-                                </div>
-                              )}
-                            </Fragment>
+                            {event.location && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4" />
+                                <span>{event.location}</span>
+                              </div>
+                            )}
                           </div>
 
                           <Link
@@ -505,20 +491,16 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                               <Calendar className="w-20 h-20 text-primary/40" />
                             </div>
                           )}
-                          <Fragment key="status-ongoing-mongo">
-                            {status === "ongoing" && (
-                              <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                                Ongoing Now
-                              </div>
-                            )}
-                          </Fragment>
-                          <Fragment key="status-upcoming-mongo">
-                            {status === "upcoming" && (
-                              <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                                Upcoming
-                              </div>
-                            )}
-                          </Fragment>
+                          {status === "ongoing" && (
+                            <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
+                              Ongoing Now
+                            </div>
+                          )}
+                          {status === "upcoming" && (
+                            <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                              Upcoming
+                            </div>
+                          )}
                         </div>
 
                         {/* Event Details */}
@@ -526,37 +508,31 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                         {/* Status and Tags Row */}
                         <div className="flex flex-wrap items-center gap-2 mb-3">
                           {/* Status Badge */}
-                          <span key="status" className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
+                          <span className={`${getEventStatus(event).color} text-white text-xs px-3 py-1 rounded-full font-semibold`}>
                             {getEventStatus(event).label}
                           </span>
                           
                           {/* Exclusive Badge */}
-                          <Fragment key="exclusive">
-                            {isEventBanner(event) && event.isExclusive && (
-                              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" />
-                                Exclusive
-                              </span>
-                            )}
-                          </Fragment>
+                          {isEventBanner(event) && event.isExclusive && (
+                            <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+                              <Sparkles className="w-3 h-3" />
+                              Exclusive
+                            </span>
+                          )}
                           
                           {/* Category Badge */}
-                          <Fragment key="category">
-                            {isEventBanner(event) && event.category && (
-                              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                {event.category}
-                              </span>
-                            )}
-                          </Fragment>
+                          {isEventBanner(event) && event.category && (
+                            <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                              {event.category}
+                            </span>
+                          )}
                           
                           {/* Type Badge for Mongo Events */}
-                          <Fragment key="type">
-                            {isMongoEvent(event) && (
-                              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                {event.type}
-                              </span>
-                            )}
-                          </Fragment>
+                          {isMongoEvent(event) && (
+                            <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                              {event.type}
+                            </span>
+                          )}
                         </div>
 
                         <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
@@ -585,7 +561,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                         )}
 
                         <div className="flex flex-col gap-2 mb-4">
-                          <div key="date-info" className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Calendar className="w-4 h-4" />
                             {isEventBanner(event) ? (
                               <>
@@ -601,29 +577,25 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                             )}
                           </div>
 
-                          <Fragment key="location-info">
-                            {isEventBanner(event) && event.location && (
+                          {isEventBanner(event) && event.location && (
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <MapPin className="w-4 h-4" />
+                              <span>{event.location}</span>
+                            </div>
+                          )}
+
+                          {isMongoEvent(event) && (
+                            <>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <MapPin className="w-4 h-4" />
-                                <span>{event.location}</span>
+                                <span>{event.venue}</span>
                               </div>
-                            )}
-                          </Fragment>
-
-                          <Fragment key="mongo-info">
-                            {isMongoEvent(event) && (
-                              <>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <MapPin className="w-4 h-4" />
-                                  <span>{event.venue}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Users className="w-4 h-4" />
-                                  <span>{event.allowedMembers}</span>
-                                </div>
-                              </>
-                            )}
-                          </Fragment>
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Users className="w-4 h-4" />
+                                <span>{event.allowedMembers}</span>
+                              </div>
+                            </>
+                          )}
                         </div>
 
                         {isEventBanner(event) && (
@@ -643,7 +615,7 @@ export default function EventsTimeline({ events }: EventsTimelineProps) {
                   </div>
 
                   {/* Spacer for alignment */}
-                  <div key="spacer" className="hidden md:block w-[calc(50%-3rem)]" />
+                  <div className="hidden md:block w-[calc(50%-3rem)]" />
                 </div>
               );
             })}

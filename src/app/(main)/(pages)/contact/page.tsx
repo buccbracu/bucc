@@ -1,4 +1,4 @@
-import ContactForm from "@/components/contact/ContactForm";
+import dynamic from "next/dynamic";
 import { buccSocials } from "@/constants/buccInfo";
 import {
   Facebook,
@@ -11,6 +11,11 @@ import {
   Youtube,
 } from "lucide-react";
 import Link from "next/link";
+
+const ContactForm = dynamic(() => import("@/components/contact/ContactForm"), {
+  loading: () => <div className="h-[400px] animate-pulse bg-muted rounded-lg" />,
+  ssr: false,
+});
 
 export const metadata = {
   title: "Contact Us | BUCC",
@@ -99,11 +104,13 @@ export default function Contact() {
               <h2 className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                 Connect With Us
               </h2>
-              <div className="grid grid-cols-5 gap-4">
+              <div className="flex flex-wrap gap-3">
                 <Link
                   href={buccSocials.facebook}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg bg-blue-100 px-4 py-2 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+                  aria-label="Facebook"
                 >
                   <Facebook className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -113,7 +120,9 @@ export default function Contact() {
                 <Link
                   href={buccSocials.linkedin}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg bg-blue-100 px-4 py-2 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+                  aria-label="LinkedIn"
                 >
                   <Linkedin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -123,7 +132,9 @@ export default function Contact() {
                 <Link
                   href={buccSocials.instagram}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg bg-blue-100 px-4 py-2 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+                  aria-label="Instagram"
                 >
                   <Instagram className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -133,7 +144,9 @@ export default function Contact() {
                 <Link
                   href={buccSocials.youtube}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg bg-blue-100 px-4 py-2 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+                  aria-label="YouTube"
                 >
                   <Youtube className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -143,7 +156,9 @@ export default function Contact() {
                 <Link
                   href={buccSocials.github}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg bg-blue-100 px-4 py-2 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+                  aria-label="GitHub"
                 >
                   <Github className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">

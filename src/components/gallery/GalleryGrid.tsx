@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 type EventGallery = {
@@ -13,8 +13,76 @@ interface GalleryGridProps {
   images: EventGallery[];
 }
 
+const LazyImage = memo(({ image, onClick }: { image: EventGallery; onClick: () => void }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={imgRef}
+      className="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
+      onClick={onClick}
+    >
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-muted animate-pulse" />
+      )}
+      {isVisible && (
+        <Image
+          src={image.imageUrl}
+          alt={image.caption || "Gallery image"}
+          fill
+          className={`object-cover transition-all duration-300 ${
+            isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
+          }`}
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          onLoad={() => setIsLoaded(true)}
+          loading="lazy"
+          quality={75}
+        />
+      )}
+      {image.caption && isLoaded && (
+        <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+          {image.caption}
+        </div>
+      )}
+    </div>
+  );
+});
+
+LazyImage.displayName = "LazyImage";
+
 export function GalleryGrid({ images }: GalleryGridProps) {
   const [selectedImage, setSelectedImage] = useState<EventGallery | null>(null);
+
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedImage]);
 
   if (images.length === 0) {
     return (
@@ -28,24 +96,11 @@ export function GalleryGrid({ images }: GalleryGridProps) {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {images.map((image) => (
-          <div
+          <LazyImage
             key={image.id}
-            className="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
+            image={image}
             onClick={() => setSelectedImage(image)}
-          >
-            <Image
-              src={image.imageUrl}
-              alt={image.caption || "Gallery image"}
-              fill
-              className="object-cover transition-transform group-hover:scale-110"
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            />
-            {image.caption && (
-              <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                {image.caption}
-              </div>
-            )}
-          </div>
+          />
         ))}
       </div>
 
@@ -55,8 +110,9 @@ export function GalleryGrid({ images }: GalleryGridProps) {
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
             onClick={() => setSelectedImage(null)}
+            aria-label="Close"
           >
             <X className="w-8 h-8" />
           </button>
@@ -67,6 +123,8 @@ export function GalleryGrid({ images }: GalleryGridProps) {
               fill
               className="object-contain"
               sizes="100vw"
+              quality={90}
+              priority
             />
             {selectedImage.caption && (
               <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 text-white text-center">
