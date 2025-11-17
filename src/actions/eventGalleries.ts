@@ -30,7 +30,12 @@ export async function getEventGalleries(eventId: string, includeInactive = false
       .lean()
       .exec();
     
-    return { success: true, data: JSON.parse(JSON.stringify(galleries)) };
+    const galleriesWithId = galleries.map((gallery: any) => ({
+      ...gallery,
+      id: gallery._id.toString(),
+    }));
+    
+    return { success: true, data: JSON.parse(JSON.stringify(galleriesWithId)) };
   } catch (error) {
     console.error("Error fetching event galleries:", error);
     return { success: false, error: "Failed to fetch event galleries" };

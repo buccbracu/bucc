@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Calendar, MapPin, Images } from "lucide-react";
 type Event = {
@@ -33,7 +33,7 @@ function isEventBanner(event: Event | EventBanner): event is EventBanner {
   return 'imageUrl' in event;
 }
 
-export const EventCard = memo(function EventCard({ event, imageCount, onClick }: EventCardProps) {
+export function EventCard({ event, imageCount, onClick }: EventCardProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const imageUrl = isEventBanner(event) ? event.imageUrl : event.featuredImage;
   const eventDate = isEventBanner(event) 
@@ -41,9 +41,22 @@ export const EventCard = memo(function EventCard({ event, imageCount, onClick }:
     : new Date(event.startingDate);
   const location = isEventBanner(event) ? event.location : event.venue;
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClick();
+  };
+
   return (
     <div
-      onClick={onClick}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       className="group cursor-pointer rounded-lg overflow-hidden border hover:shadow-lg transition-all duration-300"
     >
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
@@ -55,7 +68,7 @@ export const EventCard = memo(function EventCard({ event, imageCount, onClick }:
             src={imageUrl}
             alt={event.title}
             fill
-            className={`object-cover transition-all duration-300 ${
+            className={`object-cover transition-all duration-300 pointer-events-none ${
               isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
             }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -95,4 +108,4 @@ export const EventCard = memo(function EventCard({ event, imageCount, onClick }:
       </div>
     </div>
   );
-});
+}

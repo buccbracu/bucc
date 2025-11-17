@@ -11,6 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Plus, Calendar, MapPin, Images, Settings, Search } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const GalleryManager = dynamic(() => import("@/components/gallery/GalleryManager").then(mod => ({ default: mod.GalleryManager })), {
   loading: () => <div className="h-[400px] animate-pulse bg-muted rounded-lg" />,
@@ -46,6 +53,8 @@ export default function GalleryDashboard() {
   const [loading, setLoading] = useState(true);
   const [galleryCount, setGalleryCount] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     async function loadEvents() {
@@ -191,17 +200,17 @@ export default function GalleryDashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvents.map((event) => {
-                const imageCount = galleryCount[event.id] || 0;
+              const imageCount = galleryCount[event.id] || 0;
 
-                return (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    imageCount={imageCount}
-                    onClick={() => handleEventClick(event.id)}
-                  />
-                );
-              })}
+              return (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  imageCount={imageCount}
+                  onClick={() => handleEventClick(event.id)}
+                />
+              );
+            })}
           </div>
 
           {filteredEvents.length === 0 && events.length > 0 && (
@@ -262,7 +271,8 @@ export default function GalleryDashboard() {
                     ? { ...e, showInGallery: !show }
                     : e
                 ));
-                alert("Failed to update visibility");
+                setErrorMessage("Failed to update visibility");
+                setErrorDialogOpen(true);
               }
             };
 
@@ -317,6 +327,19 @@ export default function GalleryDashboard() {
           )}
         </div>
       )}
+
+      {/* Error Dialog */}
+      <Dialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+            <DialogDescription>{errorMessage}</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setErrorDialogOpen(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

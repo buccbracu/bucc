@@ -24,6 +24,7 @@ type EventBanner = {
   description?: string;
   location?: string;
   category?: string;
+  galleryCount?: number;
 };
 
 type EventGallery = {
@@ -114,7 +115,7 @@ export default function GalleryClient({ initialEvents }: { initialEvents: EventB
               <EventCard
                 key={event.id}
                 event={event}
-                imageCount={0}
+                imageCount={event.galleryCount || 0}
                 onClick={() => handleEventClick(event.id)}
               />
             ))}

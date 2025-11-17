@@ -7,6 +7,23 @@ import { Trash2, Eye, EyeOff, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 type EventGallery = {
   id: string;
   eventId: string;
@@ -33,6 +50,10 @@ export function GalleryManager({ eventId, images, onRefresh }: GalleryManagerPro
   const [caption, setCaption] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,20 +96,28 @@ export function GalleryManager({ eventId, images, onRefresh }: GalleryManagerPro
         // Clear success message after 3 seconds
         setTimeout(() => setSuccessMessage(null), 3000);
       } else {
-        alert("❌ " + (result.error || "Failed to upload image"));
+        setErrorMessage(result.error || "Failed to upload image");
+        setErrorDialogOpen(true);
       }
     } catch (error) {
       console.error("Upload error:", error);
-      alert("❌ Failed to upload image");
+      setErrorMessage("Failed to upload image");
+      setErrorDialogOpen(true);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this image?")) return;
+  const handleDeleteClick = (id: string) => {
+    setImageToDelete(id);
+    setDeleteDialogOpen(true);
+  };
 
-    const result = await deleteEventGallery(id);
+  const handleDeleteConfirm = async () => {
+    if (!imageToDelete) return;
+
+    const result = await deleteEventGallery(imageToDelete);
+    
     if (result.success) {
       setSuccessMessage("✅ Image deleted successfully!");
       router.refresh();
@@ -97,12 +126,17 @@ export function GalleryManager({ eventId, images, onRefresh }: GalleryManagerPro
       }
       setTimeout(() => setSuccessMessage(null), 3000);
     } else {
-      alert("❌ Failed to delete image");
+      setErrorMessage(result.error || "Failed to delete image");
+      setErrorDialogOpen(true);
     }
+    
+    setDeleteDialogOpen(false);
+    setImageToDelete(null);
   };
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {
     const result = await toggleGalleryStatus(id, !currentStatus);
+    
     if (result.success) {
       const status = !currentStatus ? "active" : "inactive";
       setSuccessMessage(`✅ Image marked as ${status}!`);
@@ -112,7 +146,8 @@ export function GalleryManager({ eventId, images, onRefresh }: GalleryManagerPro
       }
       setTimeout(() => setSuccessMessage(null), 3000);
     } else {
-      alert("❌ Failed to update status");
+      setErrorMessage(result.error || "Failed to update status");
+      setErrorDialogOpen(true);
     }
   };
 
@@ -196,7 +231,7 @@ export function GalleryManager({ eventId, images, onRefresh }: GalleryManagerPro
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => handleDelete(image.id)}
+                  onClick={() => handleDeleteClick(image.id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -215,6 +250,40 @@ export function GalleryManager({ eventId, images, onRefresh }: GalleryManagerPro
           <p className="text-muted-foreground">No images uploaded yet</p>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Image</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this image? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Error Dialog */}
+      <Dialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+            <DialogDescription>{errorMessage}</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setErrorDialogOpen(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

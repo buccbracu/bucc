@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import GalleryClient from "@/components/gallery/GalleryClient";
 import { EventCardSkeleton } from "@/components/gallery/EventCardSkeleton";
-import { getAllEvents } from "@/actions/events";
+import { getAllEventsWithGalleryCounts } from "@/actions/events";
 
 export const metadata = {
   title: "Gallery | BRAC University Computer Club",
@@ -32,22 +32,23 @@ function GalleryLoadingSkeleton() {
 }
 
 async function GalleryContent() {
-  const result = await getAllEvents();
+  const result = await getAllEventsWithGalleryCounts(false);
   
   const events = result.success && result.data
     ? result.data
         .filter((event: any) => event.showInGallery)
         .map((event: any) => ({
-          id: event._id,
+          id: event._id?.toString() || event.id,
           title: event.title,
           imageUrl: event.featuredImage || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
-          targetUrl: `/events/${event._id}`,
+          targetUrl: `/events/${event._id || event.id}`,
           isActive: true,
           eventDate: event.startingDate,
           eventEndDate: event.endingDate,
           description: event.description,
           location: event.venue,
           category: event.type,
+          galleryCount: event.galleryCount || 0,
         }))
     : [];
 
