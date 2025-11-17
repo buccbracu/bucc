@@ -123,7 +123,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
             {stats.map((stat, index) => (
               <div
-                key={index}
+                key={`stat-${stat.label}-${index}`}
                 className="group relative overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:scale-105 hover:shadow-2xl"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
@@ -247,7 +247,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
           <div className="grid gap-4 grid-cols-1 md:grid-cols-4 auto-rows-[200px]">
             {galleryImages.map((img, index) => (
               <Link
-                key={index}
+                key={`gallery-${img.title}-${index}`}
                 href="/gallery"
                 className={`group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${img.span}`}
               >
@@ -305,7 +305,7 @@ export default function AboutUsPage({ upcomingEvents }: AboutUsPageProps) {
           <div className="grid gap-8 md:grid-cols-3">
             {eventsToShow.map((event, index) => (
               <div
-                key={event.id}
+                key={`event-${event.id}-${index}`}
                 className="group relative overflow-hidden rounded-3xl shadow-xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-3"
                 style={{ animationDelay: `${index * 150}ms` }}
               >

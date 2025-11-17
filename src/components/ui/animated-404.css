@@ -27,7 +27,7 @@ html:not(.dark) .animated-404-container {
 /* Dark mode (explicit) */
 :root.dark .animated-404-container,
 .dark .animated-404-container {
-  background: #000;
+  background: hsl(215, 30%, 11%);
 }
 
 .animated-404-container div {
@@ -86,6 +86,9 @@ html:not(.dark) .rail-404 .stamp-404 {
 }
 
 .world-404 {
+  position: absolute;
+  bottom: 35%;
+  left: 15%;
   transform: rotateX(-30deg) rotateY(-30deg);
 }
 
@@ -246,6 +249,7 @@ html:not(.dark) .world-404 .wall-404::before {
   max-width: 90%;
   width: 500px;
   margin: 0 auto;
+  margin-top: -30vh;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
