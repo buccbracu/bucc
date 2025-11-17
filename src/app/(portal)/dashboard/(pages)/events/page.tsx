@@ -106,30 +106,6 @@ export default function MyEvents() {
   };
 
   const columns = [
-    {
-      header: "Object ID",
-      accessorKey: "_id",
-      cell: ({ row }: any) => {
-        const eventId = row.original._id || row.original.id;
-        return (
-          <div className="flex items-center space-x-2">
-            <span className="max-w-[150px] truncate">{eventId || 'N/A'}</span>
-            {eventId && (
-              <Button
-                size="icon"
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(eventId);
-                  toast.success("Copied Object ID to clipboard!");
-                }}
-              >
-                📋
-              </Button>
-            )}
-          </div>
-        );
-      },
-    },
     { header: "Title", accessorKey: "title" },
     { header: "Venue", accessorKey: "venue" },
     { header: "Type", accessorKey: "type" },
