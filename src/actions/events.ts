@@ -3,6 +3,8 @@
 import dbConnect from "@/lib/dbConnect";
 import Event from "@/model/Event";
 import EventGallery from "@/model/EventGallery";
+import { revalidatePath } from "next/cache";
+import { createEventBanner, updateEventBanner, getEventBannerByEventId, deleteEventBanner } from "@/actions/eventBanners";
 
 export type NewEvent = {
   title: string;
@@ -60,6 +62,7 @@ export async function getAllEventsWithGalleryCounts(includeInactive = false) {
     
     const eventsWithCounts = allEvents.map((event: any) => ({
       ...event,
+      id: event._id.toString(),
       galleryCount: countMap.get(event._id.toString()) || 0,
     }));
     
@@ -96,6 +99,33 @@ export async function createEvent(data: NewEvent) {
     
     const newEvent = await Event.create(data);
     
+    // Automatically create an event banner if the event has a featured image
+    if (newEvent.featuredImage) {
+      try {
+        await createEventBanner({
+          title: newEvent.title,
+          imageUrl: newEvent.featuredImage,
+          targetUrl: newEvent.eventUrl || `/events/${newEvent._id}`,
+          isActive: true,
+          eventDate: newEvent.startingDate,
+          eventEndDate: newEvent.endingDate,
+          description: newEvent.description,
+          location: newEvent.venue,
+          tags: [newEvent.type],
+          category: newEvent.type,
+          isExclusive: false,
+          eventId: newEvent._id.toString(),
+        });
+        console.log(`Created banner for event ${newEvent._id}`);
+      } catch (bannerError) {
+        console.error("Error creating event banner:", bannerError);
+        // Don't fail the event creation if banner creation fails
+      }
+    }
+    
+    revalidatePath("/");
+    revalidatePath("/events");
+    
     return { success: true, data: JSON.parse(JSON.stringify(newEvent)) };
   } catch (error) {
     console.error("Error creating event:", error);
@@ -117,6 +147,41 @@ export async function updateEvent(id: string, data: Partial<NewEvent>) {
       return { success: false, error: "Event not found" };
     }
     
+    // Update or create the event banner
+    if (updatedEvent.featuredImage) {
+      try {
+        const bannerResult = await getEventBannerByEventId(id);
+        
+        const bannerData = {
+          title: updatedEvent.title,
+          imageUrl: updatedEvent.featuredImage,
+          targetUrl: updatedEvent.eventUrl || `/events/${updatedEvent._id}`,
+          eventDate: updatedEvent.startingDate,
+          eventEndDate: updatedEvent.endingDate,
+          description: updatedEvent.description,
+          location: updatedEvent.venue,
+          tags: [updatedEvent.type],
+          category: updatedEvent.type,
+        };
+        
+        if (bannerResult.success && bannerResult.data) {
+          // Update existing banner
+          await updateEventBanner(bannerResult.data._id, bannerData);
+        } else {
+          // Create new banner if it doesn't exist
+          await createEventBanner({
+            ...bannerData,
+            isActive: true,
+            isExclusive: false,
+            eventId: id,
+          });
+        }
+      } catch (bannerError) {
+        console.error("Error updating event banner:", bannerError);
+        // Don't fail the event update if banner update fails
+      }
+    }
+    
     return { success: true, data: JSON.parse(JSON.stringify(updatedEvent)) };
   } catch (error) {
     console.error("Error updating event:", error);
@@ -133,6 +198,24 @@ export async function deleteEvent(id: string) {
     if (!deletedEvent) {
       return { success: false, error: "Event not found" };
     }
+    
+    // Delete the associated event banner if it exists
+    try {
+      const bannerResult = await getEventBannerByEventId(id);
+      if (bannerResult.success && bannerResult.data) {
+        await deleteEventBanner(bannerResult.data.id);
+        console.log(`Deleted associated banner for event ${id}`);
+      }
+    } catch (bannerError) {
+      console.error("Error deleting event banner:", bannerError);
+      // Don't fail the event deletion if banner deletion fails
+    }
+    
+    // Revalidate paths to update the UI
+    revalidatePath("/");
+    revalidatePath("/events");
+    revalidatePath("/dashboard/events");
+    revalidatePath("/dashboard/event-banners");
     
     return { success: true, data: JSON.parse(JSON.stringify(deletedEvent)) };
   } catch (error) {

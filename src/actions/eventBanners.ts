@@ -16,6 +16,7 @@ export type NewEventBanner = {
   tags?: string[];
   category?: string;
   isExclusive?: boolean;
+  eventId?: string;
 };
 
 export type UpdateEventBanner = Partial<NewEventBanner>;
@@ -36,7 +37,7 @@ export async function getActiveEventBanner() {
     const now = new Date();
 
     // Priority 1: Find ongoing events (event_date <= now <= event_end_date)
-    const ongoingEvents = banners.filter((banner) => {
+    const ongoingEvents = banners.filter((banner: any) => {
       if (!banner.eventDate || !banner.eventEndDate) return false;
       const eventDate = new Date(banner.eventDate);
       const eventEndDate = new Date(banner.eventEndDate);
@@ -45,45 +46,48 @@ export async function getActiveEventBanner() {
 
     // If there are ongoing events, return the one ending soonest
     if (ongoingEvents.length > 0) {
-      ongoingEvents.sort((a, b) => {
+      ongoingEvents.sort((a: any, b: any) => {
         const endA = new Date(a.eventEndDate!).getTime();
         const endB = new Date(b.eventEndDate!).getTime();
         return endA - endB; // Ascending order (ending soonest first)
       });
-      return { success: true, data: JSON.parse(JSON.stringify(ongoingEvents[0])) };
+      const banner = { ...ongoingEvents[0], id: (ongoingEvents[0] as any)._id.toString() };
+      return { success: true, data: JSON.parse(JSON.stringify(banner)) };
     }
 
     // Priority 2: Find upcoming events (event_date >= now)
-    const upcomingEvents = banners.filter((banner) => {
+    const upcomingEvents = banners.filter((banner: any) => {
       if (!banner.eventDate) return false;
       return new Date(banner.eventDate) >= now;
     });
 
     // If there are upcoming events, return the next one (earliest)
     if (upcomingEvents.length > 0) {
-      upcomingEvents.sort((a, b) => {
+      upcomingEvents.sort((a: any, b: any) => {
         const dateA = new Date(a.eventDate!).getTime();
         const dateB = new Date(b.eventDate!).getTime();
         return dateA - dateB; // Ascending order (earliest first)
       });
-      return { success: true, data: JSON.parse(JSON.stringify(upcomingEvents[0])) };
+      const banner = { ...upcomingEvents[0], id: (upcomingEvents[0] as any)._id.toString() };
+      return { success: true, data: JSON.parse(JSON.stringify(banner)) };
     }
 
     // Priority 3: If no ongoing or upcoming events, return the most recent one
-    return { success: true, data: JSON.parse(JSON.stringify(banners[0])) };
+    const banner = { ...banners[0], id: (banners[0] as any)._id.toString() };
+    return { success: true, data: JSON.parse(JSON.stringify(banner)) };
   } catch (error) {
     console.error("Error fetching active event banner:", error);
     return { success: false, error: "Failed to fetch event banner" };
   }
 }
 
-export async function getTodayEventBanners() {
+export async function getUpcomingEventBanners() {
   try {
     await dbConnect();
     
-    // Get all active banners
+    // Get all active banners sorted by event date
     const banners = await EventBanner.find({ isActive: true })
-      .sort({ createdAt: -1 })
+      .sort({ eventDate: 1 })
       .lean();
     
     if (banners.length === 0) {
@@ -92,48 +96,68 @@ export async function getTodayEventBanners() {
 
     const now = new Date();
 
-    // Find all ongoing events (event started in the past and hasn't ended yet)
-    const ongoingEvents = banners.filter((banner) => {
+    // Priority 1: Find all ongoing events (currently happening)
+    const ongoingEvents = banners.filter((banner: any) => {
       if (!banner.eventDate || !banner.eventEndDate) return false;
       const eventDate = new Date(banner.eventDate);
       const eventEndDate = new Date(banner.eventEndDate);
-      // Event is ongoing if it started before now and ends after now
       return now >= eventDate && now <= eventEndDate;
     });
 
-    // Find all upcoming events happening today
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date(now);
-    todayEnd.setHours(23, 59, 59, 999);
-    
-    const upcomingEvents = banners.filter((banner) => {
+    // If there are ongoing events, return all of them
+    if (ongoingEvents.length > 0) {
+      const transformedEvents = ongoingEvents.map((banner: any) => ({
+        ...banner,
+        id: banner._id.toString(),
+      }));
+      return { success: true, data: JSON.parse(JSON.stringify(transformedEvents)) };
+    }
+
+    // Priority 2: Find all upcoming events (in the future)
+    const upcomingEvents = banners.filter((banner: any) => {
       if (!banner.eventDate) return false;
       const eventDate = new Date(banner.eventDate);
-      // Event is upcoming today if it starts later today
-      return eventDate >= now && eventDate >= todayStart && eventDate <= todayEnd;
+      return eventDate > now;
     });
 
-    // Combine ongoing and upcoming events, remove duplicates
-    const todayEvents = [...ongoingEvents];
-    upcomingEvents.forEach(event => {
-      if (!todayEvents.find(e => e._id?.toString() === event._id?.toString())) {
-        todayEvents.push(event);
-      }
+    if (upcomingEvents.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    // Get the earliest event date (first one since already sorted)
+    const earliestEventDate = new Date(upcomingEvents[0].eventDate);
+    
+    // Get all events that start on the same day as the earliest event
+    // Compare using date components to avoid timezone issues
+    const earliestYear = earliestEventDate.getFullYear();
+    const earliestMonth = earliestEventDate.getMonth();
+    const earliestDay = earliestEventDate.getDate();
+    
+    const eventsOnSameDay = upcomingEvents.filter((banner: any) => {
+      const eventDate = new Date(banner.eventDate);
+      return (
+        eventDate.getFullYear() === earliestYear &&
+        eventDate.getMonth() === earliestMonth &&
+        eventDate.getDate() === earliestDay
+      );
     });
 
-    // Sort by event date (earliest first)
-    todayEvents.sort((a, b) => {
-      const dateA = new Date(a.eventDate!).getTime();
-      const dateB = new Date(b.eventDate!).getTime();
-      return dateA - dateB;
-    });
+    // Transform _id to id
+    const transformedEvents = eventsOnSameDay.map((banner: any) => ({
+      ...banner,
+      id: banner._id.toString(),
+    }));
 
-    return { success: true, data: JSON.parse(JSON.stringify(todayEvents)) };
+    return { success: true, data: JSON.parse(JSON.stringify(transformedEvents)) };
   } catch (error) {
-    console.error("Error fetching today's event banners:", error);
-    return { success: false, error: "Failed to fetch today's event banners" };
+    console.error("Error fetching upcoming event banners:", error);
+    return { success: false, error: "Failed to fetch upcoming event banners" };
   }
+}
+
+// Keep the old function name for backward compatibility
+export async function getTodayEventBanners() {
+  return getUpcomingEventBanners();
 }
 
 export async function getAllEventBanners() {
@@ -144,7 +168,13 @@ export async function getAllEventBanners() {
       .sort({ createdAt: -1 })
       .lean();
     
-    return { success: true, data: JSON.parse(JSON.stringify(banners)) };
+    // Transform _id to id for frontend compatibility
+    const transformedBanners = banners.map((banner: any) => ({
+      ...banner,
+      id: banner._id.toString(),
+    }));
+    
+    return { success: true, data: JSON.parse(JSON.stringify(transformedBanners)) };
   } catch (error) {
     console.error("Error fetching event banners:", error);
     return { success: false, error: "Failed to fetch event banners" };
@@ -156,11 +186,12 @@ export async function createEventBanner(data: NewEventBanner) {
     await dbConnect();
     
     const banner = await EventBanner.create(data);
+    const transformedBanner = { ...banner.toObject(), id: banner._id.toString() };
     
     revalidatePath("/");
     revalidatePath("/dashboard/event-banners");
     
-    return { success: true, data: JSON.parse(JSON.stringify(banner)) };
+    return { success: true, data: JSON.parse(JSON.stringify(transformedBanner)) };
   } catch (error) {
     console.error("Error creating event banner:", error);
     return { success: false, error: "Failed to create event banner" };
@@ -177,10 +208,16 @@ export async function updateEventBanner(id: string, data: UpdateEventBanner) {
       { new: true }
     ).lean();
     
+    if (!banner) {
+      return { success: false, error: "Banner not found" };
+    }
+    
+    const transformedBanner = { ...banner, id: (banner as any)._id.toString() };
+    
     revalidatePath("/");
     revalidatePath("/dashboard/event-banners");
     
-    return { success: true, data: JSON.parse(JSON.stringify(banner)) };
+    return { success: true, data: JSON.parse(JSON.stringify(transformedBanner)) };
   } catch (error) {
     console.error("Error updating event banner:", error);
     return { success: false, error: "Failed to update event banner" };
@@ -213,12 +250,37 @@ export async function toggleEventBannerStatus(id: string, isActive: boolean) {
       { new: true }
     ).lean();
     
+    if (!banner) {
+      return { success: false, error: "Banner not found" };
+    }
+    
+    const transformedBanner = { ...banner, id: (banner as any)._id.toString() };
+    
     revalidatePath("/");
     revalidatePath("/dashboard/event-banners");
     
-    return { success: true, data: JSON.parse(JSON.stringify(banner)) };
+    return { success: true, data: JSON.parse(JSON.stringify(transformedBanner)) };
   } catch (error) {
     console.error("Error toggling event banner status:", error);
     return { success: false, error: "Failed to toggle event banner status" };
+  }
+}
+
+export async function getEventBannerByEventId(eventId: string) {
+  try {
+    await dbConnect();
+    
+    const banner = await EventBanner.findOne({ eventId }).lean();
+    
+    if (!banner) {
+      return { success: false, error: "Banner not found" };
+    }
+    
+    const transformedBanner = { ...banner, id: (banner as any)._id.toString() };
+    
+    return { success: true, data: JSON.parse(JSON.stringify(transformedBanner)) };
+  } catch (error) {
+    console.error("Error fetching event banner by eventId:", error);
+    return { success: false, error: "Failed to fetch event banner" };
   }
 }

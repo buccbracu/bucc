@@ -48,6 +48,11 @@ const EventBannerSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
+    eventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+      required: false,
+    },
   },
   {
     timestamps: true,
