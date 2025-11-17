@@ -22,7 +22,6 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
-import { createEventBanner } from "@/actions/eventBanners";
 
 const eventTypes = [
   "Workshop",
@@ -65,8 +64,6 @@ export default function CreateEvent() {
   const studentIDs:string[] = [];
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [createBanner, setCreateBanner] = useState(false);
-  const [bannerUrl, setBannerUrl] = useState("");
 
   // Handle image upload
   const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,16 +114,6 @@ export default function CreateEvent() {
       return;
     }
 
-    if (createBanner && !featuredImage) {
-      toast.error("Please upload an event banner image to create a homepage banner");
-      return;
-    }
-
-    if (createBanner && !bannerUrl) {
-      toast.error("Please provide a target URL for the event banner");
-      return;
-    }
-
     const data = {
       title,
       venue,
@@ -159,32 +146,6 @@ export default function CreateEvent() {
       }
 
       toast.success("Event created successfully!");
-
-      // Create event banner if checkbox is checked
-      if (createBanner && featuredImage) {
-        const bannerData = {
-          title,
-          imageUrl: featuredImage,
-          targetUrl: bannerUrl,
-          isActive: true,
-          eventDate: new Date(startingDate),
-          eventEndDate: new Date(endingDate),
-          description,
-          location: venue,
-          tags: [type],
-          category: type,
-          isExclusive: false,
-        };
-
-        const bannerResult = await createEventBanner(bannerData as any);
-        
-        if (bannerResult.success) {
-          toast.success("Event banner created successfully!");
-        } else {
-          toast.error("Event created but failed to create banner: " + (bannerResult.error || "Unknown error"));
-        }
-      }
-
       router.back();
     } catch (error) {
       console.error("Error:", error);
@@ -195,7 +156,7 @@ export default function CreateEvent() {
   }, [
     title, venue, description, featuredImage, eventUrl, type, needAttendance,
     startingDate, endingDate, allowedMembers, allowedDepartments, allowedDesignations,
-    notes, createBanner, bannerUrl, router, isSubmitting
+    notes, router, isSubmitting
   ]);
 
   return (
@@ -304,30 +265,6 @@ export default function CreateEvent() {
             />
             <label>Need Attendance</label>
           </div>
-
-          <h2 className="text-lg font-semibold">Create Homepage Banner?</h2>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={createBanner}
-              onChange={(e) => setCreateBanner(e.target.checked)}
-            />
-            <label>Also create event banner for homepage</label>
-          </div>
-
-          {createBanner && (
-            <>
-              <Input
-                placeholder="Banner Target URL (e.g., https://example.com/event)"
-                value={bannerUrl}
-                onChange={(e) => setBannerUrl(e.target.value)}
-                className="w-full rounded border p-2"
-              />
-              <p className="text-sm text-gray-500">
-                This URL will be linked when users click the banner on the homepage
-              </p>
-            </>
-          )}
 
           <h2 className="text-lg font-semibold">Starting Date & Time</h2>
           <Input
