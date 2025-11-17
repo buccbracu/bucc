@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { getTodayEvents } from "@/actions/events";
+import { getUpcomingEventBanners } from "@/actions/eventBanners";
 type EventBanner = {
   id: string;
   title: string;
@@ -39,13 +39,46 @@ const EventBannerCarousel = memo(function EventBannerCarousel() {
 
   useEffect(() => {
     async function fetchBanners() {
-      const result = await getTodayEvents();
+      const result = await getUpcomingEventBanners();
       if (result.success && result.data) {
         setBanners(result.data);
       }
       setIsLoading(false);
     }
+    
+    // Initial fetch
     fetchBanners();
+    
+    // Refetch every 5 minutes to get updated events
+    const interval = setInterval(fetchBanners, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // Refetch when pathname changes (e.g., after creating an event)
+  useEffect(() => {
+    async function refetchBanners() {
+      const result = await getUpcomingEventBanners();
+      if (result.success && result.data) {
+        setBanners(result.data);
+      }
+    }
+    refetchBanners();
+  }, [pathname]);
+
+  // Refetch when user returns to the tab
+  useEffect(() => {
+    async function handleVisibilityChange() {
+      if (!document.hidden) {
+        const result = await getUpcomingEventBanners();
+        if (result.success && result.data) {
+          setBanners(result.data);
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   useEffect(() => {
@@ -162,12 +195,13 @@ const EventBannerCarousel = memo(function EventBannerCarousel() {
                       </div>
                       
                       {isOngoing && (
-                        <div className="absolute top-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-10 animate-pulse">
-                          Ongoing Now
+                        <div className="absolute top-6 left-6 bg-black/60 backdrop-blur-md text-white px-4 py-2.5 rounded-full text-base font-bold shadow-2xl z-10 flex items-center gap-2.5 border border-white/10">
+                          <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse shadow-lg shadow-blue-500/50" />
+                          Live
                         </div>
                       )}
                       {!isOngoing && isUpcoming && (
-                        <div className="absolute top-6 left-6 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-10">
+                        <div className="absolute top-6 left-6 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-2xl z-10 backdrop-blur-md border-2 border-white/20">
                           Upcoming Event
                         </div>
                       )}
@@ -191,7 +225,7 @@ const EventBannerCarousel = memo(function EventBannerCarousel() {
       <div className="mt-3 text-center">
         {banners.length > 1 && (
           <p className="text-sm text-muted-foreground mb-2">
-            {banners.length} events happening today
+            {banners.length} upcoming events
           </p>
         )}
         <Link 
