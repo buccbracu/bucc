@@ -31,6 +31,21 @@ export const json = {
         },
         {
           type: "text",
+          name: "question2.5",
+          title: "Facebook Profile Link",
+          isRequired: true,
+          requiredErrorText: "This field is required",
+          validators: [
+            {
+              type: "regex",
+              text: "Enter a valid facebook profile link",
+              regex: "^(https?:\/\/)?(www\.)?facebook\.com\/([A-Za-z0-9\.]+|profile\.php\?id=\d+)(\/)?$",
+            },
+          ],
+          placeholder: "https://www.facebook.com/me",
+        },
+        {
+          type: "text",
           name: "question3",
           title: "G-Suite Email",
           isRequired: true,
