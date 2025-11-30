@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Heading from "@/components/portal/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,19 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
+
+const eventTypes = [
+  "Workshop",
+  "Seminar",
+  "Conference",
+  "Meetup",
+  "Hackathon",
+  "Training",
+  "Webinar",
+  "Competition",
+  "Social Event",
+  "Other",
+];
 
 export default function CreateEvent() {
   const router = useRouter();
@@ -47,11 +60,13 @@ export default function CreateEvent() {
     }[]
   >([]);
   const [notes, setNotes] = useState("");
+  const [eventUrl, setEventUrl] = useState("");
   const studentIDs:string[] = [];
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle image upload
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setIsUploading(true);
@@ -66,10 +81,10 @@ export default function CreateEvent() {
         setIsUploading(false);
       }
     }
-  };
+  }, []);
 
   // Handle image delete
-  const handleImageDelete = async () => {
+  const handleImageDelete = useCallback(async () => {
     if (featuredImage) {
       const publicId = extractPublicId(featuredImage);
       try {
@@ -88,19 +103,27 @@ export default function CreateEvent() {
         toast.error("Failed to delete image. Please try again.");
       }
     }
-  };
+  }, [featuredImage]);
 
   // Submit event data
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitting) return;
+    // Validate required fields
+    if (!title || !venue || !description || !type || !startingDate || !endingDate || !allowedMembers) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     const data = {
       title,
       venue,
       description,
       featuredImage: featuredImage || null,
+      eventUrl: eventUrl || null,
       type,
       needAttendance,
-      startingDate: new Date(startingDate),
-      endingDate: new Date(endingDate),
+      startingDate: new Date(startingDate).toISOString(),
+      endingDate: new Date(endingDate).toISOString(),
       allowedMembers,
       allowedDepartments: allowedDepartments.map((d) => d.value),
       allowedDesignations: allowedDesignations.map((d) => d.value),
@@ -108,6 +131,7 @@ export default function CreateEvent() {
       attendance: studentIDs,
     };
 
+    setIsSubmitting(true);
     try {
       const res = await fetch("/api/events", {
         method: "POST",
@@ -116,26 +140,34 @@ export default function CreateEvent() {
       });
 
       if (!res.ok) {
-        toast.error("Failed to create event");
-      } else {
-        toast.success("Event created successfully!");
-        router.back();
+        const errorData = await res.json();
+        toast.error(errorData.error || errorData.message || "Failed to create event");
+        return;
       }
+
+      toast.success("Event created successfully!");
+      router.back();
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to create event. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }, [
+    title, venue, description, featuredImage, eventUrl, type, needAttendance,
+    startingDate, endingDate, allowedMembers, allowedDepartments, allowedDesignations,
+    notes, router, isSubmitting
+  ]);
 
   return (
-    <main>
+    <>
       <Heading
         headingText="Create Event"
         subHeadingText="Plan and publish your event"
       />
-      <div className="flex min-h-screen w-full flex-row items-start justify-center gap-6">
+      <div className="flex w-full flex-col gap-6 lg:flex-row">
         {/* Left Panel */}
-        <div className="flex w-2/3 flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6">
           <Input
             placeholder="Event Title"
             value={title}
@@ -165,7 +197,7 @@ export default function CreateEvent() {
         </div>
 
         {/* Right Panel */}
-        <div className="flex w-1/3 flex-col gap-6 rounded-md border p-4">
+        <div className="flex w-full flex-col gap-6 rounded-md border p-4 lg:w-80">
           <h2 className="text-lg font-semibold">Event Banner</h2>
           {featuredImage ? (
             <div className="relative w-full">
@@ -197,11 +229,32 @@ export default function CreateEvent() {
           )}
 
           <h2 className="text-lg font-semibold">Event Type</h2>
-          <Input
-            placeholder="Type (e.g. Seminar, Workshop)"
+          <Select
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onValueChange={(value) => setType(value)}
+          >
+            <SelectTrigger className="w-full rounded border p-2">
+              <SelectValue placeholder="Select Event Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {eventTypes.map((eventType) => (
+                <SelectItem key={eventType} value={eventType}>
+                  {eventType}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <h2 className="text-lg font-semibold">Event URL (Optional)</h2>
+          <Input
+            placeholder="Event registration/details URL (e.g., https://example.com/event)"
+            value={eventUrl}
+            onChange={(e) => setEventUrl(e.target.value)}
+            className="w-full rounded border p-2"
           />
+          <p className="text-sm text-gray-500">
+            This URL will be used when users click the event banner on the homepage
+          </p>
 
           <h2 className="text-lg font-semibold">Attendance Required?</h2>
           <div className="flex items-center gap-2">
@@ -270,9 +323,11 @@ export default function CreateEvent() {
             </>
           )}
 
-          <Button onClick={handleSubmit}>Create Event</Button>
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Event"}
+          </Button>
         </div>
       </div>
-    </main>
+    </>
   );
 }

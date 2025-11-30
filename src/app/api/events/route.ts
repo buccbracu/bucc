@@ -1,14 +1,11 @@
 import { hasAuth } from "@/helpers/hasAuth";
-import dbConnect from "@/lib/dbConnect";
-import Event from "@/model/Event";
+import { createEvent, getAllEvents } from "@/actions/events";
 import { NextRequest, NextResponse } from "next/server";
 
 const permittedDesignations = ["Director", "Assistant Director"];
 const permittedDepartments = ["Press Release and Publications"];
 
 export async function POST(request: NextRequest) {
-  await dbConnect();
-
   const { session, isPermitted } = await hasAuth(
     permittedDesignations,
     permittedDepartments,
@@ -45,7 +42,6 @@ export async function POST(request: NextRequest) {
       allowedDepartments,
       allowedDesignations,
       notes,
-      attendance, // <-- receive attendance from body
     } = body;
 
     if (
@@ -63,19 +59,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Optional: Validate attendance
-    if (
-      attendance &&
-      (!Array.isArray(attendance) ||
-        !attendance.every((a) => typeof a === "number"))
-    ) {
-      return NextResponse.json(
-        { error: "Attendance must be an array of numbers" },
-        { status: 400 },
-      );
-    }
-
-    const newEvent = new Event({
+    const result = await createEvent({
       title,
       venue,
       description,
@@ -84,17 +68,17 @@ export async function POST(request: NextRequest) {
       startingDate: new Date(startingDate),
       endingDate: new Date(endingDate),
       allowedMembers,
-      featuredImage: featuredImage || null,
-      allowedDepartments,
-      allowedDesignations,
+      featuredImage: featuredImage || undefined,
+      allowedDepartments: allowedDepartments || [],
+      allowedDesignations: allowedDesignations || [],
       notes: notes || "",
-      attendance: attendance || [], // <-- set attendance if provided, otherwise empty
-      prId: null, // initially no PR attached
     });
 
-    const savedEvent = await newEvent.save();
-
-    return NextResponse.json(savedEvent, { status: 201 });
+    if (result.success) {
+      return NextResponse.json(result.data, { status: 201 });
+    } else {
+      return NextResponse.json({ error: result.error }, { status: 500 });
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -102,10 +86,18 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    await dbConnect();
+    const result = await getAllEvents();
 
-    const events = await Event.find().sort({ createdDate: -1 }); // Sort newest first
-    return NextResponse.json(events, { status: 200 });
+    if (result.success) {
+      return NextResponse.json(result.data, { 
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+        },
+      });
+    } else {
+      return NextResponse.json({ error: result.error }, { status: 500 });
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -69,6 +69,7 @@ const getBlogs = async () => {
 const deleteBlog = async (blogId: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blog/${blogId}`, {
     method: "DELETE",
+    credentials: "include",
   });
 
   return res.json();
@@ -93,6 +94,7 @@ const deletePR = async (id: string) => {
     `${process.env.NEXT_PUBLIC_API_URL}/press-releases/${id}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
   if (!res.ok) throw new Error("Failed to delete PR");
@@ -112,8 +114,13 @@ const getEvent = async (id: string) => {
 const deleteEvent = async (id: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`, {
     method: "DELETE",
+    credentials: "include",
   });
-  if (!res.ok) throw new Error("Failed to delete event");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    const errorMessage = errorData.message || errorData.error || `Failed to delete event (${res.status})`;
+    throw new Error(errorMessage);
+  }
   return res.json();
 }
 

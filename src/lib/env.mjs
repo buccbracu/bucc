@@ -7,7 +7,6 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    DATABASE_URL: z.string().min(1),
     MONGODB_URI: z.string().url(),
     MONGODB_DB: z.string(),
     AUTH_SECRET: z.string(),
@@ -37,7 +36,6 @@ export const env = createEnv({
     NEXT_PUBLIC_FIREBASE_SERVICE_KEY: z.string(),
   },
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
     MONGODB_URI: process.env.MONGODB_URI,
     MONGODB_DB: process.env.MONGODB_DB,
     AUTH_SECRET: process.env.AUTH_SECRET,
