@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (studentID) {
-      dbConnect();
+      await dbConnect();
       const evaluationData = await MemberEBAssessment.findOne({ studentId: studentID });
 
 
