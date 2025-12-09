@@ -35,13 +35,7 @@ export const json = {
           title: "Facebook Profile Link",
           isRequired: true,
           requiredErrorText: "This field is required",
-          validators: [
-            {
-              type: "regex",
-              text: "Enter a valid facebook profile link",
-              regex: "^(https?:\/\/)?(www\.)?facebook\.com\/([A-Za-z0-9\.]+|profile\.php\?id=\d+)(\/)?$",
-            },
-          ],
+         
           placeholder: "https://www.facebook.com/me",
         },
         {
