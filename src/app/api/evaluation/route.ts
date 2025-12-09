@@ -1,3 +1,4 @@
+import dbConnect from "@/lib/dbConnect";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import PreregMemberInfo from "@/model/PreregMemberInfo";
 import { NextRequest, NextResponse } from "next/server";
@@ -110,7 +111,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (studentID) {
-      const evaluationData = await MemberEBAssessment.findOne({ studentId: parseInt(studentID) });
+      const evaluationData = await MemberEBAssessment.findOne({ studentId: studentID });
       if (evaluationData) {
         return NextResponse.json(
           { message: "Evaluation already submitted" },
