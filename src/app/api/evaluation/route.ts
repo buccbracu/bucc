@@ -111,7 +111,10 @@ export async function GET(request: NextRequest) {
     }
 
     if (studentID) {
+      dbConnect();
       const evaluationData = await MemberEBAssessment.findOne({ studentId: studentID });
+
+
       if (evaluationData) {
         return NextResponse.json(
           { message: "Evaluation already submitted" },
