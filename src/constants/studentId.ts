@@ -49,5 +49,7 @@ const recruitmentIds = [
   // Newly added
   "22301279",
   "22301206",
+  // Newly added
+  "22301342"
 ];
 export default recruitmentIds;
