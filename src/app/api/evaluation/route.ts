@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { studentId, gSuiteEmail, name, responseObject, firstChoice } = body;
-
+    await dbConnect();
     const memberEB = await MemberEBAssessment.findOne({
       studentId: studentId,
     });
