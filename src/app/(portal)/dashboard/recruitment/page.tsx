@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import EvaluationStats from "./EvaluationStats";
+import recruitmentIds from "@/constants/studentId";
 
 const permittedDepartments = [
   ...departments.map((department) => department.title),
@@ -149,15 +150,18 @@ export default function Evaluations() {
     return <div>Error fetching evaluations</div>;
   }
 
-  const { designation, buccDepartment }: any = session?.data?.user;
+  const { designation, buccDepartment, studentId }: any = session?.data?.user;
+  const permitted = (permittedDepartments.includes(buccDepartment) && permittedDesignations.includes(designation)) || recruitmentIds.includes(studentId);
+  // if (
+  //   !permittedDepartments.includes(buccDepartment) ||
+  //   !permittedDesignations.includes(designation)
+  // ) {
+  //   return <div>You are not authorized to visit this page!</div>;
+  // }
 
-  if (
-    !permittedDepartments.includes(buccDepartment) ||
-    !permittedDesignations.includes(designation)
-  ) {
-    return <div>You are not authorized to visit this page!</div>;
+  if (!permitted) {
+     return <div>You are not authorized to visit this page!</div>;
   }
-
   return (
     <div className="">
       <Heading headingText="Evaluations" subHeadingText="All evaluations" />

@@ -1,3 +1,4 @@
+import recruitmentIds from "@/constants/studentId";
 import { hasAuth } from "@/helpers/hasAuth";
 import MemberEBAssessment from "@/model/MemberEBAssessment";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,7 +7,7 @@ const permittedDesignations = ["Director", "Assistant Director"];
 
 export async function GET(request: NextRequest) {
   try {
-    const { session, isPermitted } = await hasAuth(permittedDesignations);
+    const { session, isPermitted } = await hasAuth(permittedDesignations, [], recruitmentIds);
 
     if (!session || !isPermitted) {
       return NextResponse.json(

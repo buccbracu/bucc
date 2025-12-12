@@ -19,6 +19,7 @@ export const alwaysPermittedDepartments = [
 export async function hasAuth(
   permittedDesignations: string[] = [],
   permittedDepartments: string[] = [],
+  permittedStudentIds: string[] = [],
 ) {
   await dbConnect();
 
@@ -33,6 +34,7 @@ export async function hasAuth(
 
   const userDesignation = session.user.designation.toLowerCase();
   const userDepartment = session.user.buccDepartment.toLowerCase();
+  const userStudentId = session.user.studentId.toLowerCase();
 
   // Check if user belongs to the always permitted designations or departments
   if (
@@ -42,6 +44,8 @@ export async function hasAuth(
   ) {
     return { session, isPermitted: true };
   }
+
+  
 
   // If specific permitted designations are provided, check them
   if (permittedDesignations.length > 0) {
@@ -62,6 +66,14 @@ export async function hasAuth(
       isPermitted = false;
     }
   }
+
+  if (permittedStudentIds.length > 0) {
+    if (permittedStudentIds.includes(userStudentId)) {
+      return {session, isPermitted: true};
+    }
+  }
+
+ 
 
   return { session, isPermitted };
 }

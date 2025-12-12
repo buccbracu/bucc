@@ -1,3 +1,4 @@
+import recruitmentIds from "@/constants/studentId";
 import {
   BookKey,
   BookUser,
@@ -141,6 +142,7 @@ const menus = [
       "Director",
       "Assistant Director",
     ],
+    access_studentId: recruitmentIds,
   },
   {
     title: "Ongoing Events",
