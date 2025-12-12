@@ -52,7 +52,6 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
 
     return (isDepartmentMatch && isDesignationMatch) || isStudentIdMatch;
   });
-  console.log(filteredMenus)
 
   return (
     <div
