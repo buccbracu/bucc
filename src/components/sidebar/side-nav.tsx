@@ -23,7 +23,7 @@ interface NavProps {
     path: string;
     access_department: string[];
     access_designation: string[];
-    access_studentId: string[];
+    access_studentId?: string[];
   }[];
 }
 
