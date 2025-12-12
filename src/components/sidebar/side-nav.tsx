@@ -23,6 +23,7 @@ interface NavProps {
     path: string;
     access_department: string[];
     access_designation: string[];
+    access_studentId: string[];
   }[];
 }
 
@@ -30,11 +31,12 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
   const pathName = usePathname();
   const session = useSession();
 
-  const { designation, buccDepartment } = session.data?.user || {};
+  const { designation, buccDepartment, studentId } = session.data?.user || {};
 
   const filteredMenus = menus.filter((menu) => {
     const userDepartment = buccDepartment;
     const userDesignation = designation;
+    const userStudentId = studentId;
 
     const isDepartmentMatch =
       !menu.access_department ||
@@ -46,8 +48,11 @@ export function SideNav({ menus, isCollapsed }: NavProps) {
         .map((desig) => desig)
         .includes(userDesignation || "");
 
-    return isDepartmentMatch && isDesignationMatch;
+    const isStudentIdMatch = (menu.access_studentId || []).includes(userStudentId || "");
+
+    return (isDepartmentMatch && isDesignationMatch) || isStudentIdMatch;
   });
+  console.log(filteredMenus)
 
   return (
     <div
