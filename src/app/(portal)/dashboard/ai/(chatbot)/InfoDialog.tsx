@@ -31,8 +31,8 @@ export default function InfoDialog({ title, trigger }: InfoDialogProps) {
               data.
             </p>
             <p className="mt-4">
-              The system is built on a <strong> PostgreSQL</strong> database
-              hosted as a Docker container on <strong>DigitalOcean</strong>,
+              The system is built on a <strong> MongoDB</strong> database
+              hosted on <strong>MongoDB Atlas</strong>,
               providing reliable and scalable storage for the application.
             </p>
             <p className="mt-4">

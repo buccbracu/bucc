@@ -42,6 +42,7 @@ export default function MyEvents() {
     type: "",
   });
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const {
     data: events = [],
@@ -57,20 +58,31 @@ export default function MyEvents() {
     onSuccess: () => {
       toast.success("Event deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["events"] });
+      setIsDeleteDialogOpen(false);
+      setSelectedEventId(null);
     },
-    onError: () => {
-      toast.error("Failed to delete event.");
+    onError: (error: any) => {
+      const errorMessage = error.message || "Failed to delete event.";
+      if (errorMessage.includes("Unauthorized") || errorMessage.includes("401")) {
+        toast.error("You don't have permission to delete this event. Only Directors or Assistant Directors in Press Release and Publications can delete events.");
+      } else {
+        toast.error(errorMessage);
+      }
+      setIsDeleteDialogOpen(false);
     },
   });
 
   const handleDelete = () => {
     if (selectedEventId) {
       deleteEventMutation.mutate(selectedEventId);
-      setSelectedEventId(null);
     }
   };
 
   const handleEdit = (eventId: string) => {
+    if (!eventId) {
+      toast.error("Event ID is missing. Cannot edit this event.");
+      return;
+    }
     window.location.href = `/dashboard/events/edit/${eventId}`;
   };
 
@@ -94,25 +106,6 @@ export default function MyEvents() {
   };
 
   const columns = [
-    {
-      header: "Object ID",
-      accessorKey: "_id",
-      cell: ({ row }: any) => (
-        <div className="flex items-center space-x-2">
-          <span className="max-w-[150px] truncate">{row.original._id}</span>
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={() => {
-              navigator.clipboard.writeText(row.original._id);
-              toast.success("Copied Object ID to clipboard!");
-            }}
-          >
-            📋
-          </Button>
-        </div>
-      ),
-    },
     { header: "Title", accessorKey: "title" },
     { header: "Venue", accessorKey: "venue" },
     { header: "Type", accessorKey: "type" },
@@ -125,62 +118,76 @@ export default function MyEvents() {
     {
       header: "Actions",
       accessorKey: "actions",
-      cell: ({ row }: any) => (
-        <div className="flex space-x-2">
-          <EventDialog
-          event={row.original}
-          triggerButton={
-            <Button variant="default" size="sm">
-              View
-            </Button>
-          }
-        />
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => handleEdit(row.original._id)}
-          >
-            Edit
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => setSelectedEventId(row.original._id)}
-              >
-                Delete
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="h-fit">
-              <DialogHeader>
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this event? This action cannot
-                  be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="secondary"
-                  onClick={() => setSelectedEventId(null)}
-                >
-                  Cancel
+      cell: ({ row }: any) => {
+        const eventId = row.original._id || row.original.id;
+        return (
+          <div className="flex space-x-2">
+            <EventDialog
+              event={row.original}
+              triggerButton={
+                <Button variant="default" size="sm">
+                  View
                 </Button>
+              }
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => handleEdit(eventId)}
+              disabled={!eventId}
+            >
+              Edit
+            </Button>
+            <Dialog 
+              open={isDeleteDialogOpen && selectedEventId === eventId}
+              onOpenChange={(open) => {
+                setIsDeleteDialogOpen(open);
+                if (open) {
+                  setSelectedEventId(eventId);
+                } else {
+                  setSelectedEventId(null);
+                }
+              }}
+            >
+              <DialogTrigger asChild>
                 <Button
                   variant="destructive"
-                  onClick={handleDelete}
-                  disabled={deleteEventMutation.status === "pending"}
+                  size="sm"
+                  disabled={!eventId}
                 >
-                  {deleteEventMutation.status === "pending"
-                    ? "Deleting..."
-                    : "Delete"}
+                  Delete
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      ),
+              </DialogTrigger>
+              <DialogContent className="h-fit">
+                <DialogHeader>
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this event? This action cannot
+                    be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setSelectedEventId(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={deleteEventMutation.status === "pending"}
+                  >
+                    {deleteEventMutation.status === "pending"
+                      ? "Deleting..."
+                      : "Delete"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        );
+      },
     },
   ];
 

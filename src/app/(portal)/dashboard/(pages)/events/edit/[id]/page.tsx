@@ -50,6 +50,7 @@ export default function EditEvent() {
   const [endingDate, setEndingDate] = useState(""); 
   const [isUploading, setIsUploading] = useState(false);
   const [notes, setNotes] = useState("Hello");
+  const [eventUrl, setEventUrl] = useState("");
   const [attendanceFile, setAttendanceFile] = useState<File | null>(null);
   const [allowedMembers, setAllowedMembers] = useState("");
   const [allowedDepartments, setAllowedDepartments] = useState<
@@ -90,6 +91,7 @@ const [allowedDesignations, setAllowedDesignations] = useState<
       );
       setStudentIDs(data.attendance || []);
       setNotes(data.notes || "");
+      setEventUrl(data.eventUrl || "");
       setAllowedDesignations(
     data.allowedDesignations?.map((des: string) => ({
       value: des,
@@ -178,10 +180,11 @@ const [allowedDesignations, setAllowedDesignations] = useState<
       venue,
       description,
       featuredImage,
+      eventUrl: eventUrl || null,
       type,
       needAttendance,
-      startingDate: new Date(startingDate),
-      endingDate: new Date(endingDate),
+      startingDate: startingDate || null,
+      endingDate: endingDate || null,
       allowedDepartments: allowedDepartments.map((dept) => dept.value),
       allowedDesignations: allowedDesignations.map(
         (des) => des.value,
@@ -201,7 +204,9 @@ const [allowedDesignations, setAllowedDesignations] = useState<
       });
 
       if (!res.ok) {
-        toast.error("Failed to update event");
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Update failed:", errorData);
+        toast.error(`Failed to update event: ${errorData.error || "Unknown error"}`);
       } else {
         toast.success("Event updated successfully!");
         router.back();
@@ -324,6 +329,17 @@ const [allowedDesignations, setAllowedDesignations] = useState<
             value={type}
             onChange={(e) => setType(e.target.value)}
           />
+
+          <h2 className="text-lg font-semibold">Event URL (Optional)</h2>
+          <Input
+            placeholder="Event registration/details URL (e.g., https://bitbattles.bracucc.org/)"
+            value={eventUrl}
+            onChange={(e) => setEventUrl(e.target.value)}
+            className="w-full rounded border p-2"
+          />
+          <p className="text-sm text-gray-500">
+            This URL will be used when users click the event banner on the homepage
+          </p>
 
           <h2 className="text-lg font-semibold">Attendance Required?</h2>
           <div className="flex items-center gap-2">

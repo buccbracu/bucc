@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import BRACUDepartments from "@/constants/BRACUDepartments";
-import { intakeInfo } from "@/constants/buccInfo";
+import { useIntakeInfo } from "@/hooks/useIntakeInfo";
 import { registrationSchema } from "@/schemas/registrationSchema";
 import { ChangeEvent, FormEvent, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -22,9 +22,10 @@ import { z } from "zod";
 type FormData = z.infer<typeof registrationSchema>;
 
 export default function Registration() {
+  const { intakeInfo, loading } = useIntakeInfo();
   const registrationActive =
-    intakeInfo.isIntakeActive &&
-    intakeInfo.intakeStartDate <= new Date().toISOString().split("T")[0];
+    intakeInfo?.isIntakeActive &&
+    intakeInfo?.intakeStartDate <= new Date().toISOString().split("T")[0];
 
   const [isPending, startTransition] = useTransition();
   const [isRegistered, setIsRegistered] = useState(false);
@@ -96,6 +97,14 @@ export default function Registration() {
     });
   };
 
+  if (loading) {
+    return (
+      <div className="flex min-h-[calc(100vh-140px)] items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
   if (!registrationActive) {
     return <IntakeInactive />;
   }
@@ -111,7 +120,7 @@ export default function Registration() {
           </h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Fill out the form to complete the pre registration for{" "}
-            {intakeInfo.intakeName}.
+            {intakeInfo?.intakeName}.
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>

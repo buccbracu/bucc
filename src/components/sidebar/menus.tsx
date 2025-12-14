@@ -13,10 +13,41 @@ import {
   UsersRound,
   Vault,
   Brain,
-  Megaphone
+  Megaphone,
+  Images,
+  Home
 } from "lucide-react";
 
 const menus = [
+  {
+    title: "Return to Home",
+    path: "/",
+    icon: Home,
+    variant: "ghost",
+    access_department: [
+      "Advisors Body",
+      "Governing Body",
+      "Communication and Marketing",
+      "Creative",
+      "Event Management",
+      "Finance",
+      "Human Resources",
+      "Press Release and Publications",
+      "Research and Development",
+    ],
+    access_designation: [
+      "Advisor",
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+      "Senior Executive",
+      "Executive",
+      "General Member",
+    ],
+  },
   {
     title: "Dashboard",
     path: "/dashboard",
@@ -227,6 +258,47 @@ const menus = [
     access_department: [
       "Governing Body",
       "Event Management",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ],
+  },
+  {
+    title: "Event Banners",
+    path: "/dashboard/event-banners",
+    icon: Megaphone,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Event Management",
+      "Communication and Marketing",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ],
+  },
+  {
+    title: "Gallery",
+    path: "/dashboard/gallery",
+    icon: Images,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Event Management",
+      "Communication and Marketing",
+      "Creative",
       "Research and Development",
     ],
     access_designation: [
