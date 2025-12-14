@@ -60,6 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.designation = token.designation as string;
         session.user.buccDepartment = token.buccDepartment as string;
         session.user.image = token.image as string;
+        session.user.studentId = token.studentId as string;
       }
       return session;
     },
@@ -71,6 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token.designation = user.designation;
       token.buccDepartment = user.buccDepartment;
       token.image = user.profileImage;
+      token.studentId = user.studentId;
       return token;
     },
   },

@@ -31,6 +31,15 @@ export const json = {
         },
         {
           type: "text",
+          name: "question2.5",
+          title: "Facebook Profile Link",
+          isRequired: true,
+          requiredErrorText: "This field is required",
+         
+          placeholder: "https://www.facebook.com/me",
+        },
+        {
+          type: "text",
           name: "question3",
           title: "G-Suite Email",
           isRequired: true,

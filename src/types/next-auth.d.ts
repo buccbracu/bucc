@@ -12,6 +12,7 @@ declare module "next-auth" {
       image: string;
       designation: string;
       buccDepartment: string;
+      studentId: string;
     };
   }
 }

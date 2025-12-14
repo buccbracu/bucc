@@ -1,7 +1,9 @@
+import recruitmentIds from "@/constants/studentId";
 import {
   BookKey,
   BookUser,
   Calendar,
+  CalendarClock,
   FileDown,
   LayoutDashboard,
   Newspaper,
@@ -152,6 +154,31 @@ const menus = [
     title: "Recruitment",
     path: "/dashboard/recruitment",
     icon: UserSearch,
+    variant: "ghost",
+    access_department: [
+      "Governing Body",
+      "Communication and Marketing",
+      "Creative",
+      "Event Management",
+      "Finance",
+      "Human Resources",
+      "Press Release and Publications",
+      "Research and Development",
+    ],
+    access_designation: [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ],
+    access_studentId: recruitmentIds,
+  },
+  {
+    title: "Ongoing Events",
+    path: "/dashboard/ongoing-events",
+    icon: CalendarClock,
     variant: "ghost",
     access_department: [
       "Governing Body",

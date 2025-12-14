@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import EvaluationStats from "./EvaluationStats";
 import IntakeStatusToggle from "@/components/recruitment/IntakeStatusToggle";
+import recruitmentIds from "@/constants/studentId";
 
 const permittedDepartments = [
   ...departments.map((department) => department.title),
@@ -193,13 +194,17 @@ export default function Evaluations() {
     return <div>Error fetching evaluations</div>;
   }
 
-  const { designation, buccDepartment }: any = session?.data?.user;
+  const { designation, buccDepartment, studentId }: any = session?.data?.user;
+  const permitted = (permittedDepartments.includes(buccDepartment) && permittedDesignations.includes(designation)) || recruitmentIds.includes(studentId);
+  // if (
+  //   !permittedDepartments.includes(buccDepartment) ||
+  //   !permittedDesignations.includes(designation)
+  // ) {
+  //   return <div>You are not authorized to visit this page!</div>;
+  // }
 
-  if (
-    !permittedDepartments.includes(buccDepartment) ||
-    !permittedDesignations.includes(designation)
-  ) {
-    return <div>You are not authorized to visit this page!</div>;
+  if (!permitted) {
+     return <div>You are not authorized to visit this page!</div>;
   }
 
   const canCleanup = [
@@ -209,6 +214,7 @@ export default function Evaluations() {
     "Treasurer",
     "Director",
   ].includes(designation);
+
 
   return (
     <div className="">
