@@ -67,3 +67,8 @@ scripts/seed-mock-press-releases.mjs
 scripts/seed-pr-account.mjs
 scripts/create-test-admin.mjs
 scripts/seed-demo-events.mjs
+scripts/seed-pr-director.mjs
+scripts/seed-senior-executive.mjs
+scripts/create-intake.mjs
+scripts/seed-recruitment-data.mjs
+-+

@@ -10,7 +10,8 @@
     "db:seed-events": "node scripts/seed-events-mongodb.mjs",
     "db:seed-banners": "node scripts/seed-event-banners-mongodb.mjs",
     "db:seed-pr-account": "node scripts/seed-pr-account.mjs",
-    "db:seed-press-releases": "node scripts/seed-mock-press-releases.mjs"
+    "db:seed-press-releases": "node scripts/seed-mock-press-releases.mjs",
+    "db:seed-recruitment": "node scripts/seed-recruitment-data.mjs"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
