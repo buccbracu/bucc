@@ -107,8 +107,9 @@ const EventBannerCarousel = memo(function EventBannerCarousel() {
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  // Don't show banner on events page or 404 page
-  if (pathname === "/events" || is404 || isLoading || banners.length === 0 || !isVisible) {
+  // Don't show banner on events page, login, registration, evaluation, or 404 page
+  const excludedPaths = ["/events", "/login", "/registration", "/evaluation"];
+  if (excludedPaths.includes(pathname) || is404 || isLoading || banners.length === 0 || !isVisible) {
     return null;
   }
 
