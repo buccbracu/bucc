@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { intakeInfo } from "@/constants/buccInfo";
+import { useIntakeInfo } from "@/hooks/useIntakeInfo";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 export default function EvaluationForm() {
   const router = useRouter();
+  const { intakeInfo, loading: intakeLoading } = useIntakeInfo();
   const [studentID, setStudentID] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -63,14 +64,22 @@ export default function EvaluationForm() {
     }
   };
 
-  if (!intakeInfo.isEvaluationActive) {
+  if (intakeLoading) {
+    return (
+      <div className="flex min-h-[calc(100vh-140px)] items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!intakeInfo?.isEvaluationActive) {
     return <IntakeInactive />;
   }
 
   return (
     <div>
       <h1 className="mt-6 text-center text-xl font-bold tracking-tight md:text-3xl">
-        BUCC Written Evaluation Form - {intakeInfo.intakeName}
+        BUCC Written Evaluation Form - {intakeInfo?.intakeName}
       </h1>
 
       {showForm ? (

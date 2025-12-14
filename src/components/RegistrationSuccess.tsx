@@ -1,7 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { buccSocials, intakeInfo } from "@/constants/buccInfo";
+import { buccSocials } from "@/constants/buccInfo";
+import { useIntakeInfo } from "@/hooks/useIntakeInfo";
 // import confettiData from "@/lottie/confetti.json";
 // import Lottie from "lottie-react";
 import { CircleCheckBig } from "lucide-react";
@@ -11,6 +12,11 @@ import { Button } from "./ui/button";
 
 export default function RegistrationSuccess() {
   const router = useRouter();
+  const { intakeInfo, loading } = useIntakeInfo();
+
+  if (loading || !intakeInfo) {
+    return null;
+  }
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4">
       {/* Confetti animation removed
