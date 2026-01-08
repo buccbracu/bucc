@@ -1,17 +1,17 @@
 import coAdvisor2Image from "/public/images/people/advisors/Ateya-Ahmed-Subarna.jpeg";
-import advisorImage from "/public/images/people/advisors/Annajiat-Alim-Rasel.jpeg";
+import advisorImage from "/public/images/people/advisors/Md-Tawhid-Anwar.jpg";
 import coAdvisor1Image from "/public/images/people/advisors/Arif-Shakil.jpeg";
 
 const advisorsData = [
   {
-    name: "Annajiat Alim Rasel",
+    name: "Md. Tawhid Anwar",
     designation: "Advisor",
     bracu_designation: "Senior Lecturer",
     image: advisorImage,
-    bio: "Annajiat Alim Rasel is a key advisor for BUCC, bringing a wealth of knowledge and experience. He holds an M.Sc. in Computer Science and Engineering from BRAC University and serves as a Senior Lecturer and Undergraduate Coordinator in the CSE Department. His role extends beyond teaching; he actively supports BUCC and the IEEE Computer Society Student Branch as a faculty advisor. He has a rich background in competitive programming, having participated in and coached ACM ICPC competitions. His journey with BRAC University began in 2009, starting as a Lab Tutor and Research Intern, and has since become a cornerstone of the department.",
-    linkedin: "https://www.linkedin.com/in/annajiat",
+    bio: "Md. Tawhid Anwar is a Senior Lecturer at BRAC University’s Department of Computer Science and Engineering, where he has transitioned from a stellar student to a distinguished faculty member. An alumnus with highest distinction, he was the Valedictorian of the 15th Convocation and a recipient of the Chancellor’s Gold Medal. His excellence in the classroom is reflected in his receipt of both the University (2022) and Department (2024) Best Teaching Awards. Beyond teaching, he serves as a Faculty Co-Advisor for the Entrepreneurship Development Forum and conducts research in Artificial Intelligence, Machine Learning, and data-driven analysis.",
+    linkedin: "https://bd.linkedin.com/in/md-tawhid-anwar",
     website:
-      "https://cse.sds.bracu.ac.bd/faculty_profile/145/mr_annajiat_alim_rasel",
+      "https://cse.sds.bracu.ac.bd/faculty_profile/28/md_tawhid_anwar",
   },
 ];
 
@@ -32,7 +32,7 @@ const coAdvisorsData = [
     image: coAdvisor2Image,
     bio: "Ateya Ahmed Subarna is a Lecturer at the Department of Computer Science and Engineering, BRAC University.Her major interest sectors are Natural Language Processing (NLP), Health Informatics, Artificial Intelligence, and Machine Learning.She has worked on projects that bridge language and technology to make digital tools in a way more inclusive and meaningful for people.  She inspires students to explore new ideas and think creatively with her strong  background in research and teaching.She is determined to guide the club members with her enthusiasm and experience, helping them grow in both technical and research fields as the co-advisor of the BRAC University Computer Club (BUCC). Her mentorship continues to motivate students to dream bigger, innovate, and make a lasting impact through technology.",
     linkedin: "https://www.linkedin.com/in/ateya-subarna-0a9180389/",
-    website:"https://cse.sds.bracu.ac.bd/faculty_profile/270/ateya_ahmed_subarna",
+    website: "https://cse.sds.bracu.ac.bd/faculty_profile/270/ateya_ahmed_subarna",
   },
 ];
 
