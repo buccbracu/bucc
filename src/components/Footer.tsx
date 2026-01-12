@@ -77,44 +77,7 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (!navbar_menus_paths.includes(path)) {
-    return (
-      <div className="h-[55px] border-t py-4 dark:border-gray-700">
-        <div className="container flex flex-col items-center justify-between gap-2 pb-3 md:flex-row">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            <Link href="/" className="text-blue-500 dark:text-blue-400">
-              &copy; BUCC
-            </Link>{" "}
-            {new Date().getFullYear()} - All rights reserved
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            Made with ❤️ by{" "}
-            <a
-              href="/about/bucc-web-team"
-              className="text-blue-500 dark:text-blue-400"
-            >
-              BUCC R&D Web Team 2024
-            </a>
-          </div>
-          <div className="hidden md:block">
-            <a
-              href="/about/privacy-policy"
-              className="text-sm text-gray-500 dark:text-gray-400"
-            >
-              Privacy Policy
-            </a>
-
-            <a
-              href="/about/terms-of-service"
-              className="ml-4 text-sm text-gray-500 dark:text-gray-400"
-            >
-              Terms of Service
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Always show full footer for consistency
 
   return (
     <div className="relative bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">

@@ -18,6 +18,10 @@ const EventSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    eventUrl: {
+      type: String,
+      required: false,
+    },
     type: {
       type: String,
       required: true,
@@ -59,11 +63,22 @@ const EventSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    showInGallery: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: { createdAt: "createdDate", updatedAt: "lastUpdate" },
   },
 );
+// Indexes for better query performance
 EventSchema.index({ title: "text" });
+EventSchema.index({ createdDate: -1 });
+EventSchema.index({ startingDate: 1 });
+EventSchema.index({ endingDate: 1 });
+EventSchema.index({ showInGallery: 1 });
+EventSchema.index({ type: 1 });
+
 const Event = mongoose.models.Event || mongoose.model("Event", EventSchema);
 export default Event;

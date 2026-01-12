@@ -50,4 +50,25 @@ src/lib/firebase/firebase-service-key.json
 
 certificates
 
-GEMINI.md
+
+scripts/seed-test-events.mjs
+docs-and-tests/verify-setup.mjs
+scripts/clear-events.mjs
+scripts/seed-today-event-banners.mjs
+scripts/seed-today-events.mjs
+docs-and-tests/test-carousel-integration.mjs
+scripts/create-custom-day-events.mjs
+scripts/test-carousel-events.mjs
+scripts/check-events.mjs
+
+scripts/seed-events-mongodb.mjs
+scripts/seed-event-banners-mongodb.mjs
+scripts/seed-mock-press-releases.mjs
+scripts/seed-pr-account.mjs
+scripts/create-test-admin.mjs
+scripts/seed-demo-events.mjs
+scripts/seed-pr-director.mjs
+scripts/seed-senior-executive.mjs
+scripts/create-intake.mjs
+scripts/seed-recruitment-data.mjs
+-+

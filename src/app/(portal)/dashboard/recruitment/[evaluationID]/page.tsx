@@ -74,7 +74,16 @@ export default function Evaluation({ params }: PageProps) {
     return <SpinnerComponent />;
   }
 
-  const responseObject = JSON.parse(evaluationData.responseObject);
+  let responseObject;
+  try {
+    // Check if responseObject is already an object or needs parsing
+    responseObject = typeof evaluationData.responseObject === 'string' 
+      ? JSON.parse(evaluationData.responseObject)
+      : evaluationData.responseObject;
+  } catch (error) {
+    console.error("Error parsing responseObject:", error);
+    responseObject = null;
+  }
 
   const hasValidResponse = (name: string) => {
     if (!responseObject) return false;

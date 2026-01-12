@@ -1,27 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import Intake from "@/model/Intake"; 
+import Intake from "@/model/Intake";
 
-export async function POST(req: NextRequest) {
-  await dbConnect();
-
+export async function GET(request: NextRequest) {
   try {
-    const { intakeName, intakeStartDate, intakeEndDate, isIntakeActive, isEvaluationActive } = await req.json();
+    await dbConnect();
 
-    const newIntake = new Intake({
-      intakeName,
-      intakeStartDate,
-      intakeEndDate,
-      isIntakeActive,
-      isEvaluationActive,
-    });
+    // Find the most recent active intake
+    const intake = await Intake.findOne().sort({ intakeStartDate: -1 });
 
-    await newIntake.save();
+    if (!intake) {
+      return NextResponse.json(
+        { error: "No intake found" },
+        { status: 404 }
+      );
+    }
 
-    return NextResponse.json({ message: 'Intake created successfully', intake: newIntake }, { status: 201 });
+    return NextResponse.json(intake);
   } catch (error: any) {
-    console.error('Error creating intake:', error);
-    return NextResponse.json({ message: 'Failed to create intake', error: error.message }, { status: 500 });
+    console.error("Error fetching intake:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch intake" },
+      { status: 500 }
+    );
   }
 }
-
