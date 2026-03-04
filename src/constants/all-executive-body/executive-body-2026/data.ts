@@ -110,7 +110,7 @@ const ExecutiveBody2026 = [
     image: KZawadImage,
     facebookURL: "#",
     linkedinURL: "#",
-    gitHubURL: "#",
+    gitHubURL: null,
   },
 
   // // Creative Department
