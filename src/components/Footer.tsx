@@ -133,10 +133,10 @@ const Footer = () => {
               </div>
               <div className="my-4 text-center md:text-left">
                 <p className="mb-1">
-                  <strong>Contact Number:</strong> +8801756020067
+                  <strong>Contact Number:</strong> +8801732644303
                 </p>
                 <p className="mb-1">
-                  <strong>Email:</strong> 
+                  <strong>Email:</strong>
                 </p>
                 <p className="mb-1">
                   <strong>For Business:</strong> marketing.bucc@g.bracu.ac.bd
