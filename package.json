@@ -88,8 +88,12 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
+    "@types/jest": "^30.0.0",
     "@types/katex": "^0.16.7",
     "@types/lodash": "^4.17.13",
     "@types/node": "20.17.30",
@@ -103,6 +107,8 @@
     "drizzle-kit": "^0.30.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "pg": "^8.13.1",
     "postcss": "^8",
     "prettier": "^3.3.0",
