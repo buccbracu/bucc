@@ -11,6 +11,8 @@ const advisors = [...advisorsData, ...coAdvisorsData];
 const GBs = EBs.filter((eb) => eb.department === "Governing Body");
 
 export default function CurrentPanel() {
+  const currentYear = new Date().getFullYear();
+  
   return (
     <div className="flex h-full w-full flex-col items-center justify-center space-y-8 px-10 py-16 md:px-20">
       <div className="flex flex-col items-center">
@@ -71,7 +73,7 @@ export default function CurrentPanel() {
       {/* View Full Panel Button */}
       <div className="mt-8 flex justify-center">
         <Button className="inline-flex h-12 items-center justify-center rounded-md bg-[#127cc1] px-8 text-sm font-medium text-white shadow transition-colors hover:bg-[#1f4864] disabled:pointer-events-none disabled:opacity-50">
-          <Link href="/about/executive-body">Full Executive Body 2025</Link>
+          <Link href="/about/executive-body">Full Executive Body {currentYear}</Link>
         </Button>
       </div>
     </div>
