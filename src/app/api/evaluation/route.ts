@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
     const evaluationID = url.searchParams.get("evaluationID");
 
     if (evaluationID) {
-      const evaluationData = await PreregMemberInfo.findById(evaluationID);
+      const evaluationData = await MemberEBAssessment.findById(evaluationID);
       if (evaluationData) {
         return NextResponse.json(evaluationData, { status: 200 });
       }
