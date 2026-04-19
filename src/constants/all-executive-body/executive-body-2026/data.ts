@@ -328,7 +328,7 @@ const ExecutiveBody2026 = [
     fullName: "MD. Mushroor Mutakin Khan",
     nickName: "Mushroor",
     department: "Press Release and Publications",
-    designation: "Director",
+    designation: "Assistant Director",
     image: MushroorImage,
     facebookURL: "#",
     linkedinURL: "#",
