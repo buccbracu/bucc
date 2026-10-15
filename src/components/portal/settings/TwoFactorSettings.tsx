@@ -40,10 +40,12 @@ export default function TwoFactorSettings() {
 
       if (error) {
         toast.error(error.message || "Failed to generate 2FA setup");
-      } else if (data) {
+      } else if (data && "totpURI" in data) {
         setTotpData(data);
         setStep("verifying");
         toast.success("TOTP key generated. Scan the QR code to continue.");
+      } else {
+        toast.error("Unsupported two-factor method response");
       }
     } catch (err) {
       toast.error("An unexpected error occurred");
