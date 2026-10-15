@@ -31,7 +31,7 @@ import MultipleSelector from "@/components/ui/multiple-selector";
 import SKILLS_LIST from "@/constants/skills";
 
 export default function EditProfile() {
-  const { user, refreshUser } = useUser();
+  const { user, setUser, refreshUser } = useUser();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<any>(null);
 
@@ -61,7 +61,11 @@ export default function EditProfile() {
 
       if (res.ok) {
         toast.success("Profile updated successfully");
-        setFormData(null);
+        const data = await res.json();
+        if (data?.user) {
+          setUser((prev: any) => ({ ...prev, ...data.user }));
+          setFormData((prev: any) => ({ ...prev, ...data.user }));
+        }
         await refreshUser();
       } else {
         const err = await res.json();

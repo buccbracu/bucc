@@ -20,7 +20,17 @@ export function useSession(): any {
       data,
       error,
       status: isPending ? "loading" : data ? "authenticated" : "unauthenticated",
-      update: async () => data,
+      update: async () => {
+        try {
+          if (session.refetch) {
+            await session.refetch();
+          }
+          const fresh = await authClient.getSession();
+          return fresh?.data || data;
+        } catch {
+          return data;
+        }
+      },
     };
   } catch (e) {
     // Catch any useContext errors from Better Auth client during SSG

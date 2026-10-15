@@ -17,7 +17,7 @@ import { Globe, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function PublicProfileSettings() {
-  const { user, refreshUser } = useUser();
+  const { user, setUser, refreshUser } = useUser();
   const [loading, setLoading] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [formData, setFormData] = useState<any>(null);
@@ -98,7 +98,11 @@ export default function PublicProfileSettings() {
 
       if (res.ok) {
         toast.success("Public profile settings updated successfully");
-        setFormData(null);
+        const data = await res.json();
+        if (data?.user) {
+          setUser((prev: any) => ({ ...prev, ...data.user }));
+          setFormData((prev: any) => ({ ...prev, ...data.user }));
+        }
         await refreshUser();
       } else {
         const err = await res.json();
