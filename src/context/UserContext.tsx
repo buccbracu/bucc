@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export interface User {
   name: string;
@@ -36,11 +37,20 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = async () => {
-    if (update) {
-      const newSession = await update();
-      if (newSession?.user) {
-        setUser(newSession.user);
+    try {
+      if (update) {
+        const newSession = await update();
+        if (newSession?.user) {
+          setUser(newSession.user);
+          return;
+        }
       }
+      const fresh = await authClient.getSession();
+      if (fresh?.data?.user) {
+        setUser(fresh.data.user);
+      }
+    } catch (e) {
+      console.error("Failed to refresh user:", e);
     }
   };
 
