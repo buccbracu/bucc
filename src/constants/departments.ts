@@ -2,7 +2,7 @@ const cnmImage = "/images/departments/cnm.jpeg";
 const creativeImage = "/images/departments/creative.jpeg";
 const emImage = "/images/departments/em.jpeg";
 const financeImage = "/images/departments/finance.jpeg";
-const hrImage = "/images/departments/hr.jpeg";
+const hrImage = "/images/departments/hr.jpg";
 const prImage = "/images/departments/pr.jpeg";
 const rndImage = "/images/departments/rnd.jpeg";
 
