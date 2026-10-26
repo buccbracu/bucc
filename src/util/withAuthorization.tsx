@@ -27,7 +27,10 @@ const withAuthorization = (
     }
 
     const user = sessionData?.user;
-    const isAlumni = user?.memberStatus === "Alumni";
+      const isAlumni = 
+      user?.memberStatus?.toLowerCase() === "alumni" || 
+      user?.designation?.toLowerCase() === "alumni" ||
+      (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
     if (isAlumni) {
       return (
         <div className="p-8 text-center text-muted-foreground font-serif text-lg mt-20">
@@ -38,29 +41,16 @@ const withAuthorization = (
     const userDepartment = user?.buccDepartment || "";
     const userDesignation = user?.designation || "";
 
-    // Always permitted roles
-    const alwaysPermittedRoles = [
-      {
-        department: "Research and Development",
-        designations: ["Director", "Assistant Director"],
-      },
-      {
-        department: "Governing Body",
-        designations: [
-          "President",
-          "Vice President",
-          "General Secretary",
-          "Treasurer",
-        ],
-      },
-    ];
+    // Always permitted roles (All Executive Body and Governing Body members across all departments)
+    const isEB = !isAlumni && ["Director", "Assistant Director"].includes(userDesignation);
+    const isGB = !isAlumni && [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+    ].includes(userDesignation);
 
-    // Check if the user has an always-permitted role
-    const isAlwaysPermitted = alwaysPermittedRoles.some(
-      (role) =>
-        role.department === userDepartment &&
-        role.designations.includes(userDesignation),
-    );
+    const isAlwaysPermitted = isEB || isGB;
 
     // Check if the user is permitted based on specific props
     const departmentCheck =

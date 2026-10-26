@@ -77,9 +77,14 @@ export default function RegistrationManagementPage() {
   });
  
   const user = session?.user as any;
-  const isGB = user ? checkGB(user) : false;
-  const isDeptHead = user ? ["Director", "Assistant Director"].includes(user.designation) : false;
-  const isPermitted = isGB || isDeptHead || (configData?.allowSERecruitmentAccess && user?.designation === "Senior Executive");
+  const isAlumni = 
+    user?.memberStatus?.toLowerCase() === "alumni" || 
+    user?.designation?.toLowerCase() === "alumni" ||
+    (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
+
+  const isGB = user && !isAlumni ? checkGB(user) : false;
+  const isDeptHead = user && !isAlumni ? ["Director", "Assistant Director"].includes(user.designation) : false;
+  const isPermitted = !isAlumni && (isGB || isDeptHead || (configData?.allowSERecruitmentAccess && user?.designation === "Senior Executive"));
 
   const { data: pendingMembers, isLoading, isError } = useQuery({
     queryKey: ["pending-onboarding"],

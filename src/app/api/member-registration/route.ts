@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import PendingMember from "@/model/PendingMember";
 import User from "@/model/User";
-import RateLimit from "@/model/RateLimit";
 import { isSuperUser } from "@/lib/permissions";
 import { encrypt } from "@/lib/crypto";
 import { NextResponse } from "next/server";
@@ -98,32 +97,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Registration request submitted successfully! Awaiting board approval." });
     }
  
-    // 4. IP-Based Rate Limiting (Using MongoDB with Auto-Expiry TTL indexes)
-    const MAX_REGISTRATIONS = 3;
-    const WINDOW_TIME = 60 * 60 * 1000; // 1 Hour Rate Window
- 
-    const rateEntry = await RateLimit.findOne({ ip, endpoint: "member-registration" });
-    const now = new Date();
- 
-    if (rateEntry) {
-      if (rateEntry.count >= MAX_REGISTRATIONS) {
-        logSpammerInfo(ip, userAgent, "IP Rate Limit Exceeded", `| Current count: ${rateEntry.count}`);
-        return NextResponse.json(
-          { message: "Too many registration attempts from this connection. Please try again in an hour." }, 
-          { status: 429 }
-        );
-      }
-      rateEntry.count += 1;
-      await rateEntry.save();
-    } else {
-      const newRate = new RateLimit({
-        ip,
-        endpoint: "member-registration",
-        count: 1,
-        resetAt: new Date(now.getTime() + WINDOW_TIME),
-      });
-      await newRate.save();
-    }
  
     // Basic validations
     if (!name || !email || !password || !studentId || !phoneNumber || !memberStatus || !buccDepartment || !bracuDepartment || !designation) {

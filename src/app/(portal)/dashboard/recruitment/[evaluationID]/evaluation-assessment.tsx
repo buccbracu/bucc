@@ -87,8 +87,19 @@ export default function EvaluationAssessment({ evaluationData }: any) {
   const userDept = user?.buccDepartment || "";
   const userDesignation = user?.designation || "";
 
-  const isSuper = ["President", "Vice President", "General Secretary", "Treasurer"].includes(userDesignation) ||
-    (userDept === "Research and Development" && ["Director", "Assistant Director"].includes(userDesignation));
+  const isAlumni = 
+    user?.memberStatus?.toLowerCase() === "alumni" || 
+    user?.designation?.toLowerCase() === "alumni" ||
+    (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
+
+  const isSuper = !isAlumni && [
+    "President",
+    "Vice President",
+    "General Secretary",
+    "Treasurer",
+    "Director",
+    "Assistant Director",
+  ].includes(userDesignation);
 
   useEffect(() => {
     const fetchConfigs = async () => {

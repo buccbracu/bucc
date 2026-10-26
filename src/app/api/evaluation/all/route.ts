@@ -3,7 +3,16 @@ import { getConfigValue } from "@/helpers/appConfigStore";
 import EvaluationData from "@/model/EvaluationData";
 import { NextResponse } from "next/server";
 
-const permittedDepartments = ["Human Resources", "Governing Body", "Research and Development"];
+const permittedDepartments = [
+  "Human Resources",
+  "Governing Body",
+  "Research and Development",
+  "Event Management",
+  "Creative",
+  "Communication and Marketing",
+  "Finance",
+  "Press Release and Publications",
+];
 const permittedDesignations = [
   "President",
   "Vice President",
