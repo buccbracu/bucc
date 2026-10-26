@@ -194,3 +194,32 @@ This document outlines all features, security refactoring, database schemas, and
 *   **Mobile Gating for Spline 3D Model Render ([HomePage.tsx](file:///C:/Users/Abir/Desktop/bucc-clean-history/src/components/HomePage.tsx)):**
     *   Disabled loading and mounting of the dynamic `@splinetool/react-spline` component on mobile viewports (screen widths `< 1024px`).
     *   Forced the page layout to automatically use the original 3-column static grid fallback, saving device CPU/GPU resources, reducing network load, and guaranteeing a fast LCP and lag-free 60fps on mobile browsers.
+
+---
+
+## 9. Universal EB Recruitment Access, Hardened Alumni Safeguards & Registration Rate Limit Removal (October 2026)
+*   **Universal Recruitment Access for All Active Department EBs ([Sidebar.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/components/Sidebar.tsx), [withAuthorization.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/util/withAuthorization.tsx), [hasAuth.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/helpers/hasAuth.ts), [api/evaluation/all](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/all/route.ts), [api/preregmembers](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/preregmembers/route.ts)):**
+    *   Resolved an access restriction where only HR, R&D, and Governing Body could view and manage recruitment.
+    *   Updated `canSeeRecruitment` in `Sidebar.tsx` so all active Directors and Assistant Directors (`["director", "assistant director"].includes(userDesignation)`) from all club departments (Event Management, Creative, Communication & Marketing, Finance, Press Release, HR, R&D) dynamically see the Recruitment navigation dropdown.
+    *   Expanded backend permissions in `hasAuth.ts` and route handlers to authorize active EB members across all departments with equal management parity to the R&D EB.
+*   **Cross-Department Task Assessment in Evaluation Workspace ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)):**
+    *   Updated `isSuper` evaluation checks to authorize all active Directors and Assistant Directors to view and assign candidate tasks across departments during evaluation panels.
+*   **Comprehensive Case-Insensitive Alumni Exclusion:**
+    *   Hardened Alumni and Inactive status checks across `Sidebar.tsx`, `withAuthorization.tsx`, `hasAuth.ts`, `permissions.ts`, `registration/page.tsx`, `recruitment/page.tsx`, `evaluation/page.tsx`, and `api/registration/route.ts`.
+    *   Uses composite verification (`user?.memberStatus?.toLowerCase() === "alumni" || user?.designation?.toLowerCase() === "alumni" || user?.memberStatus !== "Active"`).
+    *   Guarantees that former Directors or Assistant Directors who graduated to Alumni status are strictly prohibited from viewing or interacting with recruitment pipelines.
+*   **Member Registration Rate Limit Removal ([route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/member-registration/route.ts)):**
+    *   Removed the IP-based rate limiting window (formerly 1 hour / 3 attempts) and 429 status response from `src/app/api/member-registration/route.ts`, allowing frictionless onboarding submissions without connection lockouts.
+
+---
+
+## 10. Senior Executive Recruitment Parity & Dynamic Interviewers List (October 2026)
+*   **Full Evaluator Parity for Senior Executives ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)):**
+    *   Updated `isSuper` logic in the evaluation workspace to include active Senior Executives when `allowSERecruitmentAccess` is toggled on in `recruitment_config`.
+    *   Eliminated department-bound locks for permitted SEs: SEs can view candidate tasks across all departments and assign tasks to any department using the department selector dropdown, achieving full functional equality with active Directors and Assistant Directors.
+*   **Dynamic Database Interviewers List with Strict Role Gating ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx), [api/members/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/members/route.ts)):**
+    *   The base Interviewers selector continues to use the hardcoded EB and GB names (`ExecutiveBody2026`).
+    *   When `allowSERecruitmentAccess` is active, active Senior Executives are dynamically fetched from MongoDB via `/api/members?minimal=true&designation=Senior%20Executive` and appended with their full names.
+    *   When `allowSERecruitmentAccess` is false, only EB and GB names appear. General Members, regular Executives, and Alumni are strictly excluded from the Interviewers options.
+*   **Evaluation Detail Route Guard ([recruitment/[evaluationID]/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/page.tsx)):**
+    *   Hardened direct URL access to `/dashboard/recruitment/[evaluationID]` with session authentication, live `allowSERecruitmentAccess` config checks, and multi-factor Alumni gating.

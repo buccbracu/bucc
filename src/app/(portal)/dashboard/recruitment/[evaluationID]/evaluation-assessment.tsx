@@ -73,6 +73,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
     })) || []
   );
 
+  const [interviewerOptions, setInterviewerOptions] = useState<Option[]>(EB_OPTIONS);
   const [config, setConfig] = useState<any>(null);
   const [defaultTasks, setDefaultTasks] = useState<any>({});
   const [assignedTasks, setAssignedTasks] = useState<any[]>(evaluationData.assignedTasks || []);
@@ -92,14 +93,21 @@ export default function EvaluationAssessment({ evaluationData }: any) {
     user?.designation?.toLowerCase() === "alumni" ||
     (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
 
-  const isSuper = !isAlumni && [
-    "President",
-    "Vice President",
-    "General Secretary",
-    "Treasurer",
-    "Director",
-    "Assistant Director",
-  ].includes(userDesignation);
+  const isSEAllowed = 
+    !isAlumni && 
+    userDesignation === "Senior Executive" && 
+    Boolean(config?.allowSERecruitmentAccess);
+
+  const isSuper = !isAlumni && (
+    [
+      "President",
+      "Vice President",
+      "General Secretary",
+      "Treasurer",
+      "Director",
+      "Assistant Director",
+    ].includes(userDesignation) || isSEAllowed
+  );
 
   useEffect(() => {
     const fetchConfigs = async () => {
@@ -118,6 +126,37 @@ export default function EvaluationAssessment({ evaluationData }: any) {
     };
     fetchConfigs();
   }, []);
+
+  // Fetch active Senior Executives dynamically when SE recruitment access is enabled
+  useEffect(() => {
+    if (config?.allowSERecruitmentAccess) {
+      fetch("/api/members?minimal=true&designation=Senior%20Executive")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && Array.isArray(data.users)) {
+            const seOptions: Option[] = data.users
+              .filter((u: any) => u.name && u.designation === "Senior Executive")
+              .map((u: any) => ({
+                label: u.name,
+                value: u.name,
+              }));
+
+            const existingValues = new Set(EB_OPTIONS.map((o) => o.value.toLowerCase()));
+            const combined = [...EB_OPTIONS];
+            for (const opt of seOptions) {
+              if (!existingValues.has(opt.value.toLowerCase())) {
+                combined.push(opt);
+                existingValues.add(opt.value.toLowerCase());
+              }
+            }
+            setInterviewerOptions(combined);
+          }
+        })
+        .catch((err) => console.error("Failed to load Senior Executive interviewers:", err));
+    } else {
+      setInterviewerOptions(EB_OPTIONS);
+    }
+  }, [config?.allowSERecruitmentAccess]);
 
   // Set initial task department based on user department if not superadmin
   useEffect(() => {
@@ -248,11 +287,11 @@ export default function EvaluationAssessment({ evaluationData }: any) {
             <MultipleSelector
               value={selectedEBs}
               onChange={setSelectedEBs}
-              defaultOptions={EB_OPTIONS}
-              placeholder="Type to search EBs..."
+              defaultOptions={interviewerOptions}
+              placeholder="Type to search interviewers..."
               emptyIndicator={
                 <p className="text-center text-sm leading-10 text-muted-foreground">
-                  No EB found.
+                  No interviewer found.
                 </p>
               }
               className="bg-transparent border-0 border-b border-border rounded-none px-0 min-h-[40px] focus-within:border-primary transition-colors"

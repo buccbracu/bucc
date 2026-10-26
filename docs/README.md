@@ -10,13 +10,13 @@ Please refer to the following documents for deep dives into specific engineering
    - Core technology stack
    - The Unified `User` Model ("One Source of Truth")
    - Database schemas and relationships
-   - Role-Based Access Control (RBAC) hierarchy
+   - Role-Based Access Control (RBAC) hierarchy and Alumni gating
 
 2. **[API Reference](./API_REFERENCE.md)**
    - RESTful endpoint specifications
    - Authentication & session management via Better Auth
    - Payload schemas and response contracts
-   - Server-side gating implementation
+   - Server-side gating implementation and evaluation APIs
 
 3. **[Design System & UI/UX](./DESIGN_SYSTEM.md)**
    - The "Anthropic Minimalist" aesthetic mandate
@@ -28,6 +28,7 @@ Please refer to the following documents for deep dives into specific engineering
    - The end-to-end applicant onboarding flow
    - The Gatekeeper system (AppConfig master switches)
    - State machine: Pre-Reg -> Evaluation -> Acceptance -> Onboarding
+   - Universal EB permissions and strict Alumni gating policies
 
 5. **[Public Member Profiles](./PUBLIC_PROFILE_PLAN.md)**
    - The member directory (`/people`) and customized dynamic slug routes (`/m/[slug]`)

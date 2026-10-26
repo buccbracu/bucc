@@ -268,3 +268,35 @@ Performs a destructive wipe of recruitment registration and evaluation collectio
 - **Payload:** `{ collectionName: string }` (Must match `"recruitment_all"`)
 - **Security:** Restricted to Governing Body (GB) and R&D Leadership. Enforces a case-insensitive, whitespace-trimmed verification check to prevent accidental flushes while remaining user-friendly.
 
+
+---
+
+## Recruitment Operations & Pre-Reg APIs
+
+### `GET /api/evaluation/all`
+Fetches all candidate evaluation records.
+- **Auth:** Active Governing Body (GB) and Executive Body (EB - Directors & Assistant Directors) from **all departments**, or Senior Executives if `allowSERecruitmentAccess` is active.
+- **Restrictions:** Alumni and Inactive members are strictly barred (`401 Unauthorized`).
+
+### `GET /api/preregmembers`
+Fetches all pre-registered applicant profiles.
+- **Auth:** Active Governing Body (GB) and Executive Body (EB - Directors & Assistant Directors) across all departments.
+- **Restrictions:** Alumni and Inactive members are strictly barred (`401 Unauthorized`).
+
+### `PATCH /api/preregmembers/[id]`
+Updates an applicant's pre-registration data.
+- **Auth:** Active Governing Body (GB) and Executive Body (EB - Directors & Assistant Directors).
+
+---
+
+## Member Portal Registration (`/api/member-registration`)
+
+### `POST /api/member-registration`
+Submits a self-registration application for existing BUCC members and alumni.
+- **Validation:**
+  - Mandatory fields check (name, email, password, studentId, phoneNumber, buccDepartment, bracuDepartment, designation, memberStatus).
+  - Student ID format: 8 or 10 numeric digits.
+  - Email: Active members require `@g.bracu.ac.bd`; Alumni can use personal email.
+  - Honeypot protection: Silently discards bot submissions filling `academicWebsite`.
+  - Rate limiting: Removed to permit frictionless bulk registrations.
+- **Output:** Staged in `PendingMember` with symmetrically encrypted password awaiting administrative review.
