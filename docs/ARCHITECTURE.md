@@ -88,14 +88,14 @@ Authorization is resolved via `src/lib/permissions.ts` based on `buccDepartment`
 ### Tiers & Capabilities
 1. **Governing Body (GB):** 
    - *Capabilities:* Global flush rights, site-wide banner management, cross-department visibility, recruitment gating. Can manage Projects and Inquiries (Full CRUD).
-2. **HR & R&D Department Heads (Directors/ADs):**
-   - *Capabilities:* Manage members and onboard applicants within their departments. Share recruitment gating powers with GB. Can approve/edit Projects and view/archive Inquiries.
-3. **Other Department Heads:**
-   - *Capabilities:* Manage members and onboard applicants specifically within their assigned department.
-4. **Executive Body (EB):**
-   - *Capabilities:* Broadcast internal notices. Submit projects. PR members can manage press releases. Write testimonials for other members.
-5. **General Member:**
-   - *Capabilities:* View dashboard, access ID card, edit personal profile, configure public portfolio, submit projects.
+2. **Executive Body (EB - Directors & Assistant Directors across All Departments):**
+   - *Capabilities:* Full access to the Recruitment Portal (Pre-Reg Members, Evaluations, and candidate task assessment workspace across all departments). Manage members and onboard accepted applicants within their assigned departments. Broadcast internal notices. PR heads can manage press releases; Event Management heads can manage events.
+3. **Senior Executives (SE):**
+   - *Capabilities:* Author blogs and PRs. Dynamic recruitment moderation when `allowSERecruitmentAccess` is enabled by GB.
+4. **General Member:**
+   - *Capabilities:* View personal dashboard, access ID card, edit personal profile, configure public portfolio, submit projects.
+5. **Alumni & Inactive Members:**
+   - *Restrictions:* Strictly prohibited from accessing operational modules (Recruitment, Pre-Reg, Evaluations, Onboarding, Announcements posting). Access limited to personal public portfolio, submitting personal projects, and writing blogs.
 
 ---
 

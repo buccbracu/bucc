@@ -55,28 +55,28 @@ The BUCC Web Portal is a comprehensive platform designed to manage club operatio
 
 ```text
 C:\Users\Abir\Desktop\bucc\
-├── public/                # Static assets
-│   ├── assets/            # Official SVGs (bucc-logo.svg, bucc-icon.svg)
-│   └── images/            # Department, events, and people photos
-├── src/
-│   ├── app/               # Next.js App Router (Routing & Pages)
-│   │   ├── (main)/        # Public routes (Homepage, Blogs, Events, Publications)
-│   │   ├── (portal)/      # Internal dashboard (Members, Broadcast, Manage Data)
-│   │   └── api/           # Backend API handlers (Config, Auth, Member)
-│   ├── components/        # Reusable UI components
-│   │   ├── ui/            # Basic primitives & Announcement Bar
-│   │   ├── portal/        # Dashboard specific modules (Profile, Broadcast)
-│   │   └── home/          # Public landing page sections
-│   ├── constants/         # Static data (Executive Body, Skills, Departments)
-│   ├── helpers/           # Utility functions (Mailer, Config Store)
-│   ├── lib/               # Core configurations (Auth, DB, Permissions)
-│   ├── model/             # Mongoose schemas (User, GlobalBanner, Event, etc.)
-│   ├── schemas/           # Zod validation schemas
-│   ├── types/             # Global TypeScript definitions
-│   └── util/              # Shared providers and context wrappers
-├── next.config.mjs        # Next.js configuration
-├── tailwind.config.ts     # Tailwind theme and plugin setup
-└── package.json           # Dependencies and scripts
+â”œâ”€â”€ public/                # Static assets
+â”‚   â”œâ”€â”€ assets/            # Official SVGs (bucc-logo.svg, bucc-icon.svg)
+â”‚   â””â”€â”€ images/            # Department, events, and people photos
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ app/               # Next.js App Router (Routing & Pages)
+â”‚   â”‚   â”œâ”€â”€ (main)/        # Public routes (Homepage, Blogs, Events, Publications)
+â”‚   â”‚   â”œâ”€â”€ (portal)/      # Internal dashboard (Members, Broadcast, Manage Data)
+â”‚   â”‚   â””â”€â”€ api/           # Backend API handlers (Config, Auth, Member)
+â”‚   â”œâ”€â”€ components/        # Reusable UI components
+â”‚   â”‚   â”œâ”€â”€ ui/            # Basic primitives & Announcement Bar
+â”‚   â”‚   â”œâ”€â”€ portal/        # Dashboard specific modules (Profile, Broadcast)
+â”‚   â”‚   â””â”€â”€ home/          # Public landing page sections
+â”‚   â”œâ”€â”€ constants/         # Static data (Executive Body, Skills, Departments)
+â”‚   â”œâ”€â”€ helpers/           # Utility functions (Mailer, Config Store)
+â”‚   â”œâ”€â”€ lib/               # Core configurations (Auth, DB, Permissions)
+â”‚   â”œâ”€â”€ model/             # Mongoose schemas (User, GlobalBanner, Event, etc.)
+â”‚   â”œâ”€â”€ schemas/           # Zod validation schemas
+â”‚   â”œâ”€â”€ types/             # Global TypeScript definitions
+â”‚   â””â”€â”€ util/              # Shared providers and context wrappers
+â”œâ”€â”€ next.config.mjs        # Next.js configuration
+â”œâ”€â”€ tailwind.config.ts     # Tailwind theme and plugin setup
+â””â”€â”€ package.json           # Dependencies and scripts
 ```
 
 ---
@@ -162,6 +162,9 @@ C:\Users\Abir\Desktop\bucc\
 - **Above-The-Fold Image Loading Priority:** Marked the persistent navigation header logo `Image` component (`Navbar.tsx`) with the `priority` attribute. This forces eager loading and high fetch priority, resolving the Chromium console intervention warning regarding lazy-loaded images in the initial viewport.
 - **Static Caching of Default Hero Slides:** Saved the 3 default Unsplash banner images locally inside the `/public/images/` assets directory and updated the `HeroCarousel.tsx` default state properties to use static `/images/hero-slide-*.jpg` paths. This eliminates dependency on remote Unsplash domains during public layout paint passes.
 - **Mobile Gating for Spline 3D Scene Loads:** Disabled the dynamic `@splinetool/react-spline` 3D canvas loader on screen widths `< 1024px` (`isMobile`). Bypasses network downloads of large `.splinecode` scenes and WebGL allocation to ensure a lightweight 60fps experience on mobile devices.
+- **Universal Executive Body (EB) Recruitment Access:** Expanded recruitment access from previously hardcoded departments (HR, R&D, GB) to active Directors and Assistant Directors of ALL club departments (Event Management, Creative, Finance, Communication & Marketing, Press Release & Publications, Human Resources, Research & Development). Updated `Sidebar.tsx`, `withAuthorization.tsx`, `hasAuth.ts`, `api/evaluation/all`, `api/preregmembers`, `api/registration`, and `evaluation-assessment.tsx` so all active EBs possess equal viewing, moderation, and task assignment capabilities matching R&D EB.
+- **Strict Multi-Factor Alumni Gating:** Hardened Alumni exclusion across all portal management interfaces and APIs. Built a case-insensitive validator (`user.memberStatus?.toLowerCase() === "alumni" || user.designation?.toLowerCase() === "alumni" || (user.memberStatus && user.memberStatus?.toLowerCase() !== "active")`) ensuring former Directors and Assistant Directors who have transitioned to Alumni or Inactive status cannot view or interact with the Recruitment menu, candidate evaluations, pre-registrations, or onboarding workflows.
+- **Member Registration Rate Limiting Removal:** Removed the IP-based 429 rate limiter from `src/app/api/member-registration/route.ts` to support seamless onboarding and batch enrollment without connection lockouts.
 
 ---
 

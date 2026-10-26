@@ -54,6 +54,9 @@ Portal permissions are structured to preserve member privacy while granting mode
 | **General Members** | **Access Denied** | **Access Denied** | Author-Only / Submit | **Access Denied** |
 | **Alumni** | **Access Denied** | Author-Only | Author-Only / Submit | **Access Denied** |
 
+### Alumni & Inactive Gating Policy
+Alumni (regardless of past designations such as former Directors, Assistant Directors, or Governing Body members) and Inactive members are strictly barred from operational workflows, including viewing or accessing the Recruitment menu, candidate evaluations, pre-registrations, and onboarding management.
+
 ### Dynamic Recruitment Gating
 The Governing Body can dynamically toggle Senior Executive recruitment evaluation access via the dashboard configurations.
 - **Config Key:** `recruitment_config`
@@ -69,7 +72,7 @@ The Governing Body can dynamically toggle Senior Executive recruitment evaluatio
 
 ### A. Recruitment, Evaluation & Onboarding
 1. **Applicant Submission:** Public registration entries are saved as `PreRegMember` records.
-2. **Reviewing Evaluations:** HR, R&D, GB, and permitted Senior Executives score and grade candidate profiles, saving assessment details in `EvaluationData`.
+2. **Reviewing Evaluations:** Active Directors and Assistant Directors across all departments, Governing Body, and permitted Senior Executives score and grade candidate profiles, saving assessment details in `EvaluationData`.
 3. **Onboarding & Credential Dispatch (`/dashboard/registration`):**
    - Displays accepted candidates who do not yet have user accounts.
    - Eligible moderators input onboarding parameters (generating automatic secure passwords).
@@ -100,6 +103,7 @@ The Governing Body can dynamically toggle Senior Executive recruitment evaluatio
   - **Aligned Form Fields:** Implements a unified icon-in-input alignment (`pl-10`) where all Lucide support icons sit inside input and select elements.
   - **Vector Gradient Ambient Glows:** Replaces resource-heavy Gaussian CSS blur boxes (`blur-[120px]`) with smooth, browser-native `radial-gradient` glow overlays to eliminate pixelation artifacts on high-DPI mobile devices (e.g., iOS Safari/Chrome).
   - **Responsive Layout:** Uses responsive padding structures (`p-5 sm:p-8 md:p-10`) and stacking flex containers to scale layouts cleanly across small phone screens.
+- **Rate Limiting Check Removed:** IP-based rate limiting was removed from `/api/member-registration` to prevent test and onboarding lockouts.
 
 ---
 
