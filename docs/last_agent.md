@@ -210,3 +210,16 @@ This document outlines all features, security refactoring, database schemas, and
     *   Guarantees that former Directors or Assistant Directors who graduated to Alumni status are strictly prohibited from viewing or interacting with recruitment pipelines.
 *   **Member Registration Rate Limit Removal ([route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/member-registration/route.ts)):**
     *   Removed the IP-based rate limiting window (formerly 1 hour / 3 attempts) and 429 status response from `src/app/api/member-registration/route.ts`, allowing frictionless onboarding submissions without connection lockouts.
+
+---
+
+## 10. Senior Executive Recruitment Parity & Dynamic Interviewers List (October 2026)
+*   **Full Evaluator Parity for Senior Executives ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)):**
+    *   Updated `isSuper` logic in the evaluation workspace to include active Senior Executives when `allowSERecruitmentAccess` is toggled on in `recruitment_config`.
+    *   Eliminated department-bound locks for permitted SEs: SEs can view candidate tasks across all departments and assign tasks to any department using the department selector dropdown, achieving full functional equality with active Directors and Assistant Directors.
+*   **Dynamic Database Interviewers List with Strict Role Gating ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx), [api/members/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/members/route.ts)):**
+    *   The base Interviewers selector continues to use the hardcoded EB and GB names (`ExecutiveBody2026`).
+    *   When `allowSERecruitmentAccess` is active, active Senior Executives are dynamically fetched from MongoDB via `/api/members?minimal=true&designation=Senior%20Executive` and appended with their full names.
+    *   When `allowSERecruitmentAccess` is false, only EB and GB names appear. General Members, regular Executives, and Alumni are strictly excluded from the Interviewers options.
+*   **Evaluation Detail Route Guard ([recruitment/[evaluationID]/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/page.tsx)):**
+    *   Hardened direct URL access to `/dashboard/recruitment/[evaluationID]` with session authentication, live `allowSERecruitmentAccess` config checks, and multi-factor Alumni gating.

@@ -39,6 +39,11 @@ All active Executive Body (EB) members—specifically users with designation **"
 
 ### Dynamic Senior Executive Access
 - Senior Executives can access the recruitment evaluation portal only when the system flag `allowSERecruitmentAccess` in `AppConfig` is enabled by Governing Body (GB) leadership.
+- When enabled, Senior Executives receive full evaluator parity with Directors and Assistant Directors:
+  - Unlocked cross-department task assignment via the department selector dropdown.
+  - Complete visibility of tasks and comments across all departments.
+  - Full scoring, evaluation submission, and department-level onboarding rights.
+- **Dynamic Interviewers List:** The Interviewers list defaults strictly to the baseline hardcoded EB & GB roster. When SE recruitment access is toggled on, active Senior Executives from MongoDB are dynamically fetched and added by their full names so they can be selected as interviewers. General Members, Executives, and Alumni are never included.
 
 ### Strict Alumni Exclusion
 - Inactive members and Alumni are strictly barred from all recruitment interfaces and APIs.

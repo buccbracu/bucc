@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import EvaluationAssessment from "./evaluation-assessment";
 import Link from "next/link";
 import { 
@@ -44,8 +45,17 @@ type EvaluationData = {
 export default function EvaluationDetailPage() {
   const params = useParams();
   const evaluationID = params.evaluationID as string;
+  const { data: session, status: sessionStatus } = useSession();
   const [evaluation, setEvaluation] = useState<EvaluationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [config, setConfig] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/config?key=recruitment_config")
+      .then(res => res.json())
+      .then(data => setConfig(data.value || { allowSERecruitmentAccess: false }))
+      .catch(() => setConfig({ allowSERecruitmentAccess: false }));
+  }, []);
 
   useEffect(() => {
     const fetchEvaluation = async () => {
@@ -63,7 +73,37 @@ export default function EvaluationDetailPage() {
     fetchEvaluation();
   }, [evaluationID]);
 
-  if (isLoading) return <SpinnerComponent />;
+  const user = session?.user as any;
+  const isAlumni = 
+    user?.memberStatus?.toLowerCase() === "alumni" || 
+    user?.designation?.toLowerCase() === "alumni" ||
+    (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
+
+  const permittedDesignations = [
+    "President",
+    "Vice President",
+    "General Secretary",
+    "Treasurer",
+    "Director",
+    "Assistant Director",
+  ];
+
+  const isPermitted = !isAlumni && (
+    permittedDesignations.includes(user?.designation) || 
+    (config?.allowSERecruitmentAccess && user?.designation === "Senior Executive")
+  );
+
+  if (sessionStatus === "loading" || isLoading || config === null) return <SpinnerComponent />;
+
+  if (!isPermitted) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[50vh] text-center space-y-2">
+        <h2 className="text-2xl font-serif font-medium">Access Denied</h2>
+        <p className="text-muted-foreground">You do not have permission to view recruitment data.</p>
+      </div>
+    );
+  }
+
   if (!evaluation) return <div className="p-8 text-center">Evaluation not found.</div>;
 
   const responses = typeof evaluation.responseObject === "string" 

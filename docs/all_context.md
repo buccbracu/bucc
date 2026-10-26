@@ -65,6 +65,8 @@ The Governing Body can dynamically toggle Senior Executive recruitment evaluatio
   - Senior Executives from **any department** (e.g. Communication and Marketing) dynamically view the "Recruitment" menu options in their sidebars.
   - Page-level guards (the `withAuthorization` HOC protecting `/dashboard/recruitment/prereg` and validation inside `/dashboard/registration`) permit their access.
   - Backend API endpoints (`/api/evaluation/all`, `/api/preregmembers`, `/api/preregmembers/[id]`, and `/api/registration`) bypass department gates for Senior Executives. In onboarding tasks, they are restricted to managing candidates matching their own department.
+  - Evaluator Parity: In `/dashboard/recruitment/[evaluationID]`, permitted Senior Executives possess full equality with Directors and Assistant Directors (cross-department task assignment via dropdown, full task review across all departments).
+  - Dynamic Interviewers List: Active Senior Executives from MongoDB are dynamically fetched and appended to the Interviewers selection list with their full names. When disabled, only the hardcoded EB & GB names appear. General members, executives, and alumni are never included.
 
 ---
 

@@ -19,6 +19,16 @@ export async function GET(request: Request) {
   }
 
   const user = session.user as any;
+  const isAlumni = 
+    user?.memberStatus?.toLowerCase() === "alumni" || 
+    user?.designation?.toLowerCase() === "alumni" ||
+    (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
+
+  if (isAlumni) {
+    return NextResponse.json({
+      message: "Alumni do not have permission to view members data.",
+    }, { status: 403 });
+  }
 
   const { searchParams } = new URL(request.url);
   const minimal = searchParams.get("minimal");
@@ -26,8 +36,32 @@ export async function GET(request: Request) {
   if (minimal) {
     try {
       const usersCollection = db.collection("user");
+      const query: any = {
+        $and: [
+          {
+            $or: [
+              { memberStatus: { $in: ["Active", "active"] } },
+              { memberStatus: { $exists: false } }
+            ]
+          },
+          {
+            $or: [
+              { designation: { $not: { $regex: /alumni/i } } },
+              { designation: { $exists: false } }
+            ]
+          }
+        ]
+      };
+
+      const designationParam = searchParams.get("designation");
+      if (designationParam) {
+        query.$and.push({
+          designation: { $regex: new RegExp("^" + designationParam.trim() + "$", "i") }
+        });
+      }
+
       const users = await usersCollection.find(
-        { memberStatus: "Active" },
+        query,
         { projection: { name: 1, designation: 1, buccDepartment: 1 } }
       ).toArray();
 
@@ -42,12 +76,6 @@ export async function GET(request: Request) {
     } catch (error) {
       return NextResponse.json({ error: "Failed to search members" }, { status: 500 });
     }
-  }
-
-  if (user.memberStatus === "Alumni") {
-    return NextResponse.json({
-      message: "Alumni do not have permission to view members data.",
-    }, { status: 403 });
   }
 
   if (

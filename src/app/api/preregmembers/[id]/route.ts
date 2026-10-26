@@ -37,7 +37,11 @@ async function checkPermitted() {
   let isPermitted = defaultPermitted;
   if (session && !isPermitted) {
     const user = session.user as any;
-    if (config?.allowSERecruitmentAccess && user.designation === "Senior Executive" && user.memberStatus !== "Alumni") {
+    const isAlumni = 
+      user?.memberStatus?.toLowerCase() === "alumni" || 
+      user?.designation?.toLowerCase() === "alumni" ||
+      (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
+    if (config?.allowSERecruitmentAccess && user.designation === "Senior Executive" && !isAlumni) {
       isPermitted = true;
     }
   }
