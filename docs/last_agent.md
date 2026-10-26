@@ -223,3 +223,20 @@ This document outlines all features, security refactoring, database schemas, and
     *   When `allowSERecruitmentAccess` is false, only EB and GB names appear. General Members, regular Executives, and Alumni are strictly excluded from the Interviewers options.
 *   **Evaluation Detail Route Guard ([recruitment/[evaluationID]/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/page.tsx)):**
     *   Hardened direct URL access to `/dashboard/recruitment/[evaluationID]` with session authentication, live `allowSERecruitmentAccess` config checks, and multi-factor Alumni gating.
+
+---
+
+## 11. Recruitment Waiting Room Management System (October 2026)
+*   **Front-Desk Candidate Check-In & Evaluation Gating ([page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/waiting-room/page.tsx), [route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/recruitment/waiting-room/route.ts)):**
+    *   Coordinators input a candidate's student ID upon physical arrival.
+    *   The system validates whether `EvaluationData` exists. If submitted, the applicant is placed into the live queue with status `Waiting` and a timestamp.
+    *   If not submitted, the system checks `PreRegMember` and flags an instant warning (`EVALUATION_MISSING`), prompting coordinators to guide the candidate to fill out `/evaluation` before joining the interview queue.
+*   **Two-State Queue with Unrestricted FIFO Ordering:**
+    *   Features two live states: `Waiting` and `Sent to Board`, with quick removal/dismissal.
+    *   Displays candidates ordered by check-in time (FIFO), while empowering coordinators to send any candidate to an interview board in any order.
+    *   Includes department filtering, search, live stats counter pills, and direct evaluation workspace links.
+*   **Tiered Access & Delegation Control ([coordinators/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/recruitment/waiting-room/coordinators/route.ts), [Sidebar.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/components/Sidebar.tsx)):**
+    *   **Master Control:** Governing Body (GB), R&D EB (Director & AD), and HR EB (Director & AD) have full management rights and can delegate desk coordinators from an in-app dialog.
+    *   **Assigned Coordinators:** Any active member chosen by leadership is granted check-in and queue status modification powers and automatically sees the Waiting Room item in their sidebar.
+    *   **View-Only Access:** All other active Directors, Assistant Directors, and permitted Senior Executives can view the live queue in read-only mode to observe candidate arrival.
+    *   **Alumni Protection:** Inactive members and Alumni are strictly denied access.

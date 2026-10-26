@@ -15,6 +15,12 @@ The recruitment process is the most critical pipeline in the BUCC portal. It is 
    - **Action:** Verifies identity using ID/Phone, then completes a dynamic JSON-driven questionnaire.
    - **Output:** Document created in the `EvaluationData` collection (Status: `Submitted`).
 
+2.5. **Phase 2.5: Waiting Room Check-In (`/dashboard/recruitment/waiting-room`)**
+   - **Actor:** Assigned Desk Coordinators, HR EB, R&D EB, GB.
+   - **Action:** Front desk enters the student ID of arriving candidates. Verifies online evaluation completion before granting queue entry. Candidates are listed with their preferred department and check-in timestamp.
+   - **Status Transitions:** Candidates can be toggled between `Waiting` and `Sent to Board` in any order.
+   - **Access Model:** GB, R&D EB, and HR EB manage authorized desk coordinators. Other recruitment leadership (EB of all departments, permitted SE) have read-only visibility.
+
 3. **Phase 3: Interview Assessment (`/dashboard/recruitment` & `/dashboard/evaluation`)**
    - **Actor:** Active Department Directors & Assistant Directors (all departments) / HR / GB / authorized Senior Executives.
    - **Action:** Reviews the written submission, conducts an interview, assigns sub-departments/roles, and logs numerical scores + comments via [`evaluation-assessment.tsx`](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx).

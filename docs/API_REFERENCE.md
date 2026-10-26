@@ -300,3 +300,44 @@ Submits a self-registration application for existing BUCC members and alumni.
   - Honeypot protection: Silently discards bot submissions filling `academicWebsite`.
   - Rate limiting: Removed to permit frictionless bulk registrations.
 - **Output:** Staged in `PendingMember` with symmetrically encrypted password awaiting administrative review.
+
+---
+
+### Waiting Room Endpoints
+
+#### `GET /api/recruitment/waiting-room`
+- **Auth:** Active GB, EB of all departments, permitted Senior Executives, or assigned desk coordinators.
+- **Output:**
+  ```json
+  {
+    "candidates": [
+      {
+        "_id": "67... ",
+        "studentId": "22101045",
+        "name": "Jane Doe",
+        "buccDepartment": "Creative",
+        "waitingRoomStatus": "Waiting",
+        "waitingRoomCheckedInAt": "2026-10-27T02:00:00.000Z"
+      }
+    ],
+    "permissions": {
+      "canModify": true,
+      "canManageCoordinators": true
+    }
+  }
+  ```
+
+#### `POST /api/recruitment/waiting-room`
+- **Auth:** Desk coordinators, GB, R&D EB, HR EB (`canModify: true`).
+- **Body:** `{ "studentId": "22101045" }`
+- **Output:** Checked in candidate document, or error `EVALUATION_MISSING` if online evaluation was not submitted.
+
+#### `PATCH /api/recruitment/waiting-room`
+- **Auth:** Desk coordinators, GB, R&D EB, HR EB (`canModify: true`).
+- **Body:** `{ "evaluationId": "...", "status": "Waiting" | "Sent to Board" | "remove" }`
+- **Output:** Success confirmation and updated candidate record.
+
+#### `GET & POST /api/recruitment/waiting-room/coordinators`
+- **Auth:** Strictly Governing Body (GB), R&D EB, and HR EB.
+- **Body (POST):** `{ "assignedCoordinators": ["22101045", "23101011"] }`
+- **Output:** Array of assigned student IDs stored in `AppConfig` (`waiting_room_config`).

@@ -64,6 +64,15 @@ const EvaluationDataSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  waitingRoomStatus: {
+    type: String,
+    enum: ["Waiting", "Sent to Board", null],
+    default: null,
+  },
+  waitingRoomCheckedInAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 const EvaluationData =

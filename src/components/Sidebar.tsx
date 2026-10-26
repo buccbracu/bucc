@@ -25,7 +25,8 @@ import {
   FolderRoot,
   PlusCircle,
   Globe,
-  X
+  X,
+  Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -62,6 +63,18 @@ export function Sidebar({
     },
     staleTime: 60 * 1000,
   });
+
+  // Fetch waiting room configuration dynamically to verify assigned desk coordinators
+  const { data: waitingRoomConfig } = useQuery({
+    queryKey: ["waiting-room-config-sidebar"],
+    queryFn: async () => {
+      const res = await fetch("/api/config?key=waiting_room_config");
+      if (!res.ok) return { assignedCoordinators: [] };
+      const json = await res.json();
+      return json?.value || { assignedCoordinators: [] };
+    },
+    staleTime: 60 * 1000,
+  });
  
   // Auto-expand if on a related path
   useEffect(() => {
@@ -92,11 +105,6 @@ export function Sidebar({
     { href: "/dashboard/blogs", label: "Blogs", icon: FileText },
   ];
  
-  const recruitmentLinks = [
-    { href: "/dashboard/recruitment/prereg", label: "Pre-Reg Members", icon: UserPlus },
-    { href: "/dashboard/evaluation", label: "Evaluation", icon: GraduationCap },
-    { href: "/dashboard/registration", label: "Account Creation", icon: UserPlus },
-  ];
   const userDept = user?.buccDepartment?.toLowerCase() || "";
  
   const isGB = ["president", "vice president", "vice-president", "general secretary", "treasurer"].includes(userDesignation) && !isAlumni;
@@ -113,11 +121,29 @@ export function Sidebar({
  
   const isEB = ["director", "assistant director"].includes(userDesignation) && !isAlumni;
 
-  const canSeeRecruitment = user && !isAlumni && (
+  const isAssignedWaitingRoom = Boolean(
+    waitingRoomConfig?.assignedCoordinators?.some((c: string) => 
+      c?.toLowerCase()?.trim() === user?.studentId?.toLowerCase()?.trim() ||
+      c === user?.id
+    )
+  );
+
+  const hasFullRecruitment = !isAlumni && (
     isGB ||
     isEB ||
     (configData?.allowSERecruitmentAccess && userDesignation === "senior executive")
   );
+
+  const recruitmentLinks = hasFullRecruitment ? [
+    { href: "/dashboard/recruitment/waiting-room", label: "Waiting Room", icon: Clock },
+    { href: "/dashboard/recruitment/prereg", label: "Pre-Reg Members", icon: UserPlus },
+    { href: "/dashboard/evaluation", label: "Evaluation", icon: GraduationCap },
+    { href: "/dashboard/registration", label: "Account Creation", icon: UserPlus },
+  ] : [
+    { href: "/dashboard/recruitment/waiting-room", label: "Waiting Room", icon: Clock },
+  ];
+
+  const canSeeRecruitment = user && !isAlumni && (hasFullRecruitment || isAssignedWaitingRoom);
  
   const canManageData = isGB || isHRHead || isRDAdmin;
   const canManageInquiries = isGB || isHRHead || isRDAdmin;
