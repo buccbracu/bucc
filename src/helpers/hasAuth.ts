@@ -36,12 +36,17 @@ export async function hasAuth(
   const userDepartment = session.user.buccDepartment.toLowerCase();
   const userStudentId = session.user.studentId.toLowerCase();
 
-  // Check if user belongs to the always permitted designations or departments
-  if (
-    alwaysPermittedDesignations.includes(userDesignation) &&
-    (alwaysPermittedDepartments.includes(userDepartment) ||
-      permittedDepartments.length === 0)
-  ) {
+  const isAlumni = 
+    session.user.memberStatus?.toLowerCase() === "alumni" || 
+    session.user.designation?.toLowerCase() === "alumni" ||
+    (session.user.memberStatus && session.user.memberStatus?.toLowerCase() !== "active");
+
+  if (isAlumni) {
+    return { session, isPermitted: false };
+  }
+
+  // All EB (Director, Assistant Director) and GB members have full access across all departments
+  if (alwaysPermittedDesignations.includes(userDesignation)) {
     return { session, isPermitted: true };
   }
 

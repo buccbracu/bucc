@@ -4,14 +4,22 @@ export type UserRole = {
   memberStatus?: string;
 };
 
+export const isAlumniMember = (user: UserRole) => {
+  return (
+    user.memberStatus?.toLowerCase() === "alumni" ||
+    user.designation?.toLowerCase() === "alumni" ||
+    (user.memberStatus !== undefined && user.memberStatus?.toLowerCase() !== "active")
+  );
+};
+
 export const isGoverningBody = (user: UserRole) => {
-  if (user.memberStatus === "Alumni") return false;
+  if (isAlumniMember(user)) return false;
   const gbDesignations = ["President", "Vice President", "General Secretary", "Treasurer"];
   return gbDesignations.includes(user.designation);
 };
 
 export const isRDAdmin = (user: UserRole) => {
-  if (user.memberStatus === "Alumni") return false;
+  if (isAlumniMember(user)) return false;
   return (
     user.buccDepartment === "Research and Development" &&
     ["Director", "Assistant Director"].includes(user.designation)
@@ -19,7 +27,7 @@ export const isRDAdmin = (user: UserRole) => {
 };
 
 export const isHRAdmin = (user: UserRole) => {
-  if (user.memberStatus === "Alumni") return false;
+  if (isAlumniMember(user)) return false;
   return (
     user.buccDepartment === "Human Resources" &&
     ["Director", "Assistant Director"].includes(user.designation)
@@ -39,7 +47,7 @@ export const isSuperUser = (user: UserRole) => {
 };
 
 export const canManageMembers = (user: UserRole) => {
-  if (user.memberStatus === "Alumni") return false;
+  if (isAlumniMember(user)) return false;
   if (isSuperUser(user)) return true;
   
   return (
@@ -48,7 +56,7 @@ export const canManageMembers = (user: UserRole) => {
 };
 
 export const canManageEvents = (user: UserRole) => {
-  if (user.memberStatus === "Alumni") return false;
+  if (isAlumniMember(user)) return false;
   if (isSuperUser(user)) return true;
   
   return (
@@ -58,6 +66,6 @@ export const canManageEvents = (user: UserRole) => {
 };
 
 export const canManageBlogs = (user: UserRole) => {
-  if (user.memberStatus === "Alumni") return false;
+  if (isAlumniMember(user)) return false;
   return isGoverningBody(user) || ["Director", "Assistant Director"].includes(user.designation);
 };

@@ -73,7 +73,10 @@ export function Sidebar({
     }
   }, [pathname, isCollapsed]);
  
-  const isAlumni = user?.memberStatus === "Alumni";
+  const isAlumni = 
+    user?.memberStatus?.toLowerCase() === "alumni" || 
+    user?.designation?.toLowerCase() === "alumni" ||
+    (user?.memberStatus && user?.memberStatus?.toLowerCase() !== "active");
   const userDesignation = user?.designation?.toLowerCase() || "";
   const canViewMembers = user && !isAlumni && [
     "president", "vice president", "vice-president", "general secretary", "treasurer",
@@ -108,13 +111,13 @@ export function Sidebar({
  
   const canBroadcast = (isGB || ["director", "assistant director"].includes(userDesignation)) && !isAlumni;
  
-  const canSeeRecruitment = user && (
-    (
-      ["human resources", "governing body", "research and development"].includes(userDept) &&
-      ["president", "vice president", "vice-president", "general secretary", "treasurer", "director", "assistant director"].includes(userDesignation)
-    ) ||
+  const isEB = ["director", "assistant director"].includes(userDesignation) && !isAlumni;
+
+  const canSeeRecruitment = user && !isAlumni && (
+    isGB ||
+    isEB ||
     (configData?.allowSERecruitmentAccess && userDesignation === "senior executive")
-  ) && !isAlumni;
+  );
  
   const canManageData = isGB || isHRHead || isRDAdmin;
   const canManageInquiries = isGB || isHRHead || isRDAdmin;

@@ -18,6 +18,15 @@ export async function GET(request: NextRequest) {
     }
 
     const user = session.user as any;
+    const isAlumni = 
+      user?.memberStatus?.toLowerCase() === "alumni" || 
+      user?.designation?.toLowerCase() === "alumni" ||
+      user?.memberStatus !== "Active";
+
+    if (isAlumni) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const isGB = checkGB(user);
     const isDeptHead = ["Director", "Assistant Director"].includes(user.designation);
 
@@ -69,6 +78,15 @@ export async function POST(request: NextRequest) {
     }
 
     const currentUser = session.user as any;
+    const isAlumni = 
+      currentUser?.memberStatus?.toLowerCase() === "alumni" || 
+      currentUser?.designation?.toLowerCase() === "alumni" ||
+      currentUser?.memberStatus !== "Active";
+
+    if (isAlumni) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { 
       evaluationId, 
