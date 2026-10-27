@@ -17,8 +17,9 @@ export default function ForgotPassword() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
       const { error } = await authClient.requestPasswordReset({
-        email,
+        email: cleanEmail,
         redirectTo: "/reset-password/confirm",
       });
       if (error) {

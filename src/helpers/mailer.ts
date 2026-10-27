@@ -1,5 +1,6 @@
 import {
   resetMail,
+  resetMailHtml,
   sendVerifyToken,
   welcomeMail,
 } from "@/helpers/mailTemplates";
@@ -8,9 +9,11 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  pool: true,
+  maxConnections: 3,
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
   auth: {
     user: process.env.GMAIL_USERNAME,
     pass: process.env.GMAIL_APP_SECRET,
@@ -24,11 +27,10 @@ const singleWelcomeMail = async (
   password: String,
 ) => {
   try {
-    // We don't need to fetch the user from DB since we already have the required data
-    // passed as arguments. This also avoids issues with different user models.
+    const sender = process.env.GMAIL_USERNAME;
     const mailOptions = {
-      from: process.env.GMAIL_USERNAME,
-      to: email.toString(),
+      from: `"BRAC University Computer Club" <${sender}>`,
+      to: email.toString().trim(),
       subject: "Welcome to BUCC Portal",
       text: welcomeMail(name, email, password),
     };
@@ -36,6 +38,7 @@ const singleWelcomeMail = async (
 
     return "Mail sent successfully";
   } catch (error: any) {
+    console.error(`Failed to send welcome email to ${email}:`, error);
     throw new Error(error.message);
   }
 };
@@ -46,9 +49,10 @@ const singleVerifyMail = async (
   verifyToken: string,
 ) => {
   try {
+    const sender = process.env.GMAIL_USERNAME;
     const mailOptions = {
-      from: process.env.GMAIL_USERNAME,
-      to: email,
+      from: `"BRAC University Computer Club" <${sender}>`,
+      to: email.trim(),
       subject: "Verification Token",
       text: sendVerifyToken(name, verifyToken),
     };
@@ -57,6 +61,7 @@ const singleVerifyMail = async (
 
     return "Mail sent successfully";
   } catch (error: any) {
+    console.error(`Failed to send verify token to ${email}:`, error);
     return error.message;
   }
 };
@@ -66,18 +71,22 @@ const singleResetMail = async (
   resetToken: string,
 ) => {
   try {
+    const sender = process.env.GMAIL_USERNAME;
+    const cleanEmail = email.trim().toLowerCase();
     const mailOptions = {
-      from: process.env.GMAIL_USERNAME,
-      to: email,
+      from: `"BRAC University Computer Club" <${sender}>`,
+      to: cleanEmail,
       subject: "Reset your BUCC Portal Password",
       text: resetMail(resetToken),
+      html: resetMailHtml(resetToken),
     };
 
-    await transporter.sendMail(mailOptions);
-
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Password reset email sent to ${cleanEmail}: ${info.messageId}`);
     return "Mail sent successfully";
   } catch (error: any) {
-    return error.message;
+    console.error(`Error sending password reset email to ${email}:`, error);
+    throw new Error(`Failed to send password reset email: ${error.message}`);
   }
 };
 

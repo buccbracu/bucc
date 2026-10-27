@@ -259,11 +259,14 @@ export default function WaitingRoomPage() {
   const memberOptions: Option[] = useMemo(() => {
     if (!Array.isArray(allActiveMembers)) return [];
     return allActiveMembers
-      .filter((m: any) => m.studentId)
-      .map((m: any) => ({
-        label: `${m.name} (${m.studentId}) - ${m.designation}`,
-        value: m.studentId,
-      }));
+      .filter((m: any) => m.studentId && m.studentId.toString().trim())
+      .map((m: any) => {
+        const sId = m.studentId.toString().trim();
+        return {
+          label: `${m.name} (${sId}) - ${m.designation}${m.buccDepartment ? ` • ${m.buccDepartment}` : ""}`,
+          value: sId,
+        };
+      });
   }, [allActiveMembers]);
 
   if (sessionStatus === "loading" || (isLoading && !waitingRoomData)) {

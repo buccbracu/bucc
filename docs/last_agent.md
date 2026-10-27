@@ -270,3 +270,16 @@ This document outlines all features, security refactoring, database schemas, and
 *   **Autofill & Verification Resilience ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/evaluation/page.tsx), [api/evaluation/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/route.ts)):**
     *   Sanitized and trimmed `studentId` and `email` on verification submission.
     *   Updated server-side lookup with case-insensitive regex matching for `PreRegMember` emails to prevent spurious "Student record not found" errors caused by mobile keyboard trailing spaces or casing differences.
+
+---
+
+## 14. Password Reset Dispatch Reliability & Waiting Room Coordinator Assignment (October 2026)
+*   **Password Reset Email Delivery Hardening ([auth.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/lib/auth.ts), [mailer.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/helpers/mailer.ts), [mailTemplates.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/helpers/mailTemplates.ts), [reset-password/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/reset-password/page.tsx)):**
+    *   **Awaited Dispatch:** Changed `void singleResetMail(user.email, url)` in `src/lib/auth.ts` to `await singleResetMail(...)`. This prevents serverless runtimes from closing the HTTP response and prematurely dropping the SMTP socket connection before Nodemailer finishes transmitting to Gmail.
+    *   **Nodemailer Pooling & Timeouts:** Enabled connection pooling (`pool: true`, `maxConnections: 3`) and explicit connection/greeting/socket timeouts (10s/15s) in `src/helpers/mailer.ts` to prevent silent socket hanging on Google SMTP.
+    *   **HTML Email Template:** Introduced `resetMailHtml` in `src/helpers/mailTemplates.ts` with responsive styling and a prominent call-to-action button, preventing spam/junk classification by university filters triggered by raw plain-text token URLs.
+    *   **Email Sanitization & Error Handling:** Added `.trim().toLowerCase()` to the forgot-password email input to prevent silent user lookup misses caused by mobile keyboard capitalization or trailing spaces. Fixed error swallowing in `singleResetMail` to log and rethrow errors cleanly.
+*   **Waiting Room Coordinator Selection Fix ([api/members/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/members/route.ts), [waiting-room/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/waiting-room/page.tsx)):**
+    *   Previously, the search input in the "Assign Desk Coordinators" modal yielded "No matching active members found" because `/api/members?minimal=true` did not project `studentId`. As a result, `.filter((m: any) => m.studentId)` in `waiting-room/page.tsx` filtered out 100% of club members (including Senior Executives).
+    *   Added `studentId: 1` to the MongoDB query projection in `/api/members?minimal=true`.
+    *   Updated selector mapping in `waiting-room/page.tsx` to include department labels and trimmed student IDs (`Name (Student ID) - Designation • Department`), enabling instant search and assignment of Senior Executives and other active members.
