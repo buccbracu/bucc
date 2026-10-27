@@ -19,9 +19,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { studentId, name, gSuiteEmail, phoneNumber, bracuDepartment, buccDepartment, responseObject } = body;
+    const cleanStudentId = studentId?.trim();
+    const cleanEmail = gSuiteEmail?.trim();
 
     // Check if evaluation already submitted
-    const existingEvaluation = await EvaluationData.findOne({ studentId });
+    const existingEvaluation = await EvaluationData.findOne({ studentId: cleanStudentId });
     if (existingEvaluation) {
       return NextResponse.json(
         { message: "Evaluation already submitted for this Student ID." },
@@ -30,9 +32,9 @@ export async function POST(request: NextRequest) {
     }
 
     const newEvaluation = new EvaluationData({
-      studentId,
+      studentId: cleanStudentId,
       name,
-      email: gSuiteEmail,
+      email: cleanEmail,
       phoneNumber,
       bracuDepartment,
       buccDepartment,
@@ -100,8 +102,11 @@ export async function GET(request: NextRequest) {
     if (studentID && gSuiteEmail) {
       await dbConnect();
       
+      const cleanId = studentID.trim();
+      const cleanEmail = gSuiteEmail.trim();
+
       // First check if they already submitted
-      const existingEvaluation = await EvaluationData.findOne({ studentId: studentID });
+      const existingEvaluation = await EvaluationData.findOne({ studentId: cleanId });
       if (existingEvaluation) {
         return NextResponse.json(
           { message: "Evaluation already submitted" },
@@ -109,10 +114,10 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // If not, find their registration data matching both ID and Email
+      // If not, find their registration data matching both ID and Email (case-insensitive)
       const preRegMember = await PreRegMember.findOne({ 
-        studentId: studentID,
-        email: gSuiteEmail
+        studentId: cleanId,
+        email: { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") }
       });
 
       if (preRegMember) {

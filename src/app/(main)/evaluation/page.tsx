@@ -36,19 +36,22 @@ export default function EvaluationPage() {
   }, []);
 
   const handleVerify = async (studentId: string, email: string) => {
-    if (!studentId?.match(/^(?:[0-9]{8}|[0-9]{10})$/)) {
+    const cleanId = (studentId || "").trim();
+    const cleanEmail = (email || "").trim().toLowerCase();
+
+    if (!cleanId.match(/^(?:[0-9]{8}|[0-9]{10})$/)) {
       toast.error("Please enter a valid 8 or 10 digit Student ID.");
       return;
     }
 
-    if (!email || !email.match(/^[a-zA-Z0-9._%+-]+@(g\.)?bracu\.ac\.bd$/)) {
+    if (!cleanEmail || !cleanEmail.match(/^[a-zA-Z0-9._%+-]+@(g\.)?bracu\.ac\.bd$/)) {
       toast.error("Please enter a valid BRACU G-Suite email address.");
       return;
     }
 
     setIsVerifying(true);
     try {
-      const res = await fetch(`/api/evaluation?studentID=${studentId}&gSuiteEmail=${email}`);
+      const res = await fetch(`/api/evaluation?studentID=${encodeURIComponent(cleanId)}&gSuiteEmail=${encodeURIComponent(cleanEmail)}`);
       const data = await res.json();
 
       if (res.ok) {
@@ -56,8 +59,10 @@ export default function EvaluationPage() {
         // Auto-fill questions from member data based on JSON keys
         setFormData((prev: any) => ({
           ...prev,
+          tempId: cleanId,
+          tempEmail: cleanEmail,
           question1: member.name,
-          question2: studentId,
+          question2: cleanId,
           question3: member.email,
           phoneNumber: member.phoneNumber, 
           bracuDepartment: member.bracuDepartment,
@@ -154,6 +159,32 @@ export default function EvaluationPage() {
 
     // If no more visible pages, submit
     handleSubmit();
+  };
+
+  const handlePrev = () => {
+    let prevIndex = currentPageIndex - 1;
+    while (prevIndex >= 0) {
+      if (isPageVisible(evaluationData.pages[prevIndex])) {
+        setCurrentPageIndex(prevIndex);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      prevIndex--;
+    }
+  };
+
+  const hasPrevPage = () => {
+    for (let i = currentPageIndex - 1; i >= 0; i--) {
+      if (isPageVisible(evaluationData.pages[i])) return true;
+    }
+    return false;
+  };
+
+  const hasNextPage = () => {
+    for (let i = currentPageIndex + 1; i < evaluationData.pages.length; i++) {
+      if (isPageVisible(evaluationData.pages[i])) return true;
+    }
+    return false;
   };
 
   const handleSubmit = async () => {
@@ -491,8 +522,8 @@ export default function EvaluationPage() {
         <div className="flex items-center justify-between pt-8 border-t border-border">
           <Button
             variant="ghost"
-            onClick={() => setCurrentPageIndex(prev => prev - 1)}
-            disabled={currentPageIndex <= 0}
+            onClick={handlePrev}
+            disabled={!hasPrevPage()}
             className="text-[10px] font-bold uppercase tracking-widest gap-2"
           >
             Previous
@@ -504,7 +535,7 @@ export default function EvaluationPage() {
           >
             {isSubmitting 
               ? "Processing..." 
-              : (currentPageIndex === evaluationData.pages.length - 1 ? "Finish Evaluation" : "Next Step")}
+              : (!hasNextPage() ? "Finish Evaluation" : "Next Step")}
           </Button>
         </div>
       </div>

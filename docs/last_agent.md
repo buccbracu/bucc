@@ -253,3 +253,20 @@ This document outlines all features, security refactoring, database schemas, and
     *   Fixed check to explicitly test for `value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)`.
 *   **Standardized Boolean Values ([questionJSON.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/components/evaluation/questionJSON.ts)):**
     *   Configured explicit `valueTrue: "Yes"` and `valueFalse: "No"` on `question22` in `questionJSON.ts` to align with `question18`.
+
+---
+
+## 13. Evaluation Questionnaire Audit, Navigation & Validation Hardening (October 2026)
+*   **Dynamic Previous Button Navigation ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/evaluation/page.tsx)):**
+    *   Previously, the "Previous" button used `setCurrentPageIndex(prev => prev - 1)`, mechanically decrementing by 1 index without evaluating `isPageVisible`.
+    *   When candidates reached later pages (e.g., Brain Teaser) and clicked "Previous", they were dropped into unselected department pages (e.g., Research & Development, Press Release) rather than their chosen department.
+    *   Implemented `handlePrev`, looping backwards through pages to find the nearest preceding visible page matching the candidate's chosen departments.
+    *   Added helper functions `hasPrevPage()` and `hasNextPage()` for clean button disabled states and dynamic label switching (`Finish Evaluation` vs `Next Step`).
+*   **Survey Questionnaire Hardening ([questionJSON.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/components/evaluation/questionJSON.ts)):**
+    *   **`question17` (Event Management):** Added `visibleIf: "{question16} != 'No'"` and made `isRequired: false` so candidates answering "No" to photography interest are not blocked from advancing.
+    *   **Portfolio URL Traps (`question13`, `question26`, `question31`):** Converted from `isRequired: true` to `isRequired: false` across Creative, Press Release, and R&D so beginners/freshers without existing online portfolios are not forced to enter dummy URLs to proceed.
+    *   **`question14` (Creative):** Replaced placeholder values (`Item 1`, `Item 2`, `Item 3`, `Item 4`) with the actual readable text choices so interviewers see the candidate's genuine response rather than raw IDs.
+    *   **`question3` Email Regex:** Updated G-Suite regex to `^[a-zA-Z0-9._%+-]+@(g\.)?bracu\.ac\.bd\s*$` to support hyphens, underscores, and BRACU email formats.
+*   **Autofill & Verification Resilience ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/evaluation/page.tsx), [api/evaluation/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/route.ts)):**
+    *   Sanitized and trimmed `studentId` and `email` on verification submission.
+    *   Updated server-side lookup with case-insensitive regex matching for `PreRegMember` emails to prevent spurious "Student record not found" errors caused by mobile keyboard trailing spaces or casing differences.
