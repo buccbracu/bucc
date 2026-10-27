@@ -47,7 +47,7 @@ export const json = {
             {
               type: "regex",
               text: "Enter a valid G-Suite Email",
-              regex: "^[a-zA-Z0-9\\d\\.]+@g.bracu.ac.bd\\s*$",
+              regex: "^[a-zA-Z0-9._%+-]+@(g\\.)?bracu\\.ac\\.bd\\s*$",
             },
           ],
           placeholder: "nafis.sadique.niloy@g.bracu.ac.bd",
@@ -304,8 +304,7 @@ export const json = {
           name: "question13",
           title: "Have you done any artwork, design, or edited videos before? If yes, can you show us some of your work?",
           description: "Provide a drive link of your content, and don't forget to turn the share option on.",
-          isRequired: true,
-          requiredErrorText: "This field is required",
+          isRequired: false,
           inputType: "url",
         },
         {
@@ -315,22 +314,10 @@ export const json = {
           isRequired: true,
           requiredErrorText: "This field is required",
           choices: [
-            {
-              value: "Item 1",
-              text: "Take help from your graphics designer friend and do your design beautifully",
-            },
-            {
-              value: "Item 2",
-              text: "Try to find a software in the internet that can make your work easier but doesn't have as many features",
-            },
-            {
-              value: "Item 3",
-              text: "Try to learn more of graphics design and create a cover as sophisticated as possible",
-            },
-            {
-              value: "Item 4",
-              text: "Find already done beautiful covers on the internet and just change some tweaks",
-            },
+            "Take help from your graphics designer friend and do your design beautifully",
+            "Try to find a software in the internet that can make your work easier but doesn't have as many features",
+            "Try to learn more of graphics design and create a cover as sophisticated as possible",
+            "Find already done beautiful covers on the internet and just change some tweaks",
           ],
         },
         {
@@ -366,8 +353,8 @@ export const json = {
           name: "question17",
           title: "If you have an interest in photography, can you show us some of your works?",
           description: "Provide a drive link of your photos, and don't forget to turn the share option on.",
-          isRequired: true,
-          requiredErrorText: "This field is required",
+          visibleIf: "{question16} != 'No'",
+          isRequired: false,
           inputType: "url",
         },
         {
@@ -466,8 +453,7 @@ export const json = {
           name: "question26",
           title: "If you have written any articles, short stories, or novels before, can you show us some of your works?",
           description: "Provide a drive link, or website links (if published) of your writings, and don't forget to turn the share option on.",
-          isRequired: true,
-          requiredErrorText: "This field is required",
+          isRequired: false,
           inputType: "url",
         },
         {
@@ -528,8 +514,7 @@ export const json = {
           name: "question31",
           title: "Give us the GitHub, Google, or Live Link of your project.",
           description: "Provide a github, drive link, or live link (if deployed) of your project, and don't forget to turn the share option on if providing a drive link. If it's any online portfolio (Leetcode, Codeforces, Portfolio Website, etc) you can attach that as well.",
-          isRequired: true,
-          requiredErrorText: "This field is required",
+          isRequired: false,
           inputType: "url",
         },
       ],
