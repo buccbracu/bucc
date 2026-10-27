@@ -283,3 +283,15 @@ This document outlines all features, security refactoring, database schemas, and
     *   Previously, the search input in the "Assign Desk Coordinators" modal yielded "No matching active members found" because `/api/members?minimal=true` did not project `studentId`. As a result, `.filter((m: any) => m.studentId)` in `waiting-room/page.tsx` filtered out 100% of club members (including Senior Executives).
     *   Added `studentId: 1` to the MongoDB query projection in `/api/members?minimal=true`.
     *   Updated selector mapping in `waiting-room/page.tsx` to include department labels and trimmed student IDs (`Name (Student ID) - Designation • Department`), enabling instant search and assignment of Senior Executives and other active members.
+
+---
+
+## 15. Evaluation Admin Comments & Task Modals Multi-Screen Responsiveness (October 2026)
+*   **Viewport Locking & Internal Scrolling ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)):**
+    *   Configured `DialogContent` with `w-[95vw] sm:w-full max-h-[90vh] flex flex-col p-4 sm:p-6 overflow-hidden` for both the Admin Comments modal and the Assign Task modal.
+    *   Wrapped the `BlockNoteEditor` in a `flex-1 min-h-0 overflow-y-auto py-2 pr-1` flex container.
+    *   Anchored `DialogFooter` (`mt-auto shrink-0`) with responsive full-width mobile buttons and pinned placement so actions ("Close & Save", "Add Assignment") are never pushed off-screen.
+*   **BlockNote Mobile Padding & Height Containment ([BlockNoteEditor.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/components/BlockNoteEditor.tsx)):**
+    *   Added optional `maxHeight` and `className` prop support to `BlockNoteEditorProps` with internal `overflow-y-auto`.
+    *   Added mobile responsive CSS overrides reducing `.bn-container .bn-editor` side padding from large default gutter margins down to `10px` on screens `< 640px`, maximizing horizontal typing area on phones and small tablets.
+    *   Reduced initial `minHeight` on comments dialog to `260px` to fit comfortably on 13-inch laptop viewports (768px height) and mobile viewports with on-screen keyboards.
