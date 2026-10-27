@@ -117,7 +117,11 @@ export default function EvaluationPage() {
       const value = formData[el.name];
       
       // Required check
-      const isEmpty = !value || (Array.isArray(value) && value.length === 0);
+      const isEmpty = 
+        value === undefined || 
+        value === null || 
+        value === "" || 
+        (Array.isArray(value) && value.length === 0);
       if (el.isRequired && isEmpty) {
         toast.error(`"${el.title || el.name}" is required.`);
         return;
@@ -402,6 +406,71 @@ export default function EvaluationPage() {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+
+                {el.type === "boolean" && (
+                  <div className="flex flex-wrap items-center gap-4 pt-2">
+                    {[
+                      { label: el.labelTrue || el.valueTrue || "Yes", value: el.valueTrue !== undefined ? el.valueTrue : "Yes" },
+                      { label: el.labelFalse || el.valueFalse || "No", value: el.valueFalse !== undefined ? el.valueFalse : "No" },
+                    ].map((option) => {
+                      const isSelected = 
+                        formData[el.name] === option.value || 
+                        (formData[el.name] === true && (option.value === "Yes" || option.value === true)) ||
+                        (formData[el.name] === false && (option.value === "No" || option.value === false)) ||
+                        (typeof formData[el.name] === "string" && formData[el.name].toLowerCase() === option.label.toLowerCase());
+
+                      return (
+                        <button
+                          key={option.label}
+                          type="button"
+                          onClick={() => handleValueChange(el.name, option.value)}
+                          className={`px-8 py-3.5 border text-sm font-medium transition-all rounded-sm flex items-center gap-3 ${
+                            isSelected
+                              ? "bg-foreground text-background border-foreground shadow-md"
+                              : "bg-transparent text-foreground border-border hover:border-foreground hover:bg-muted/30"
+                          }`}
+                        >
+                          <div
+                            className={`h-4 w-4 border rounded-full flex items-center justify-center ${
+                              isSelected ? "border-background" : "border-muted-foreground"
+                            }`}
+                          >
+                            {isSelected && <div className="h-2 w-2 bg-background rounded-full" />}
+                          </div>
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {el.type === "rating" && (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      {[1, 2, 3, 4, 5].map((score) => {
+                        const isSelected = formData[el.name] === score || formData[el.name] === String(score);
+                        return (
+                          <button
+                            key={score}
+                            type="button"
+                            onClick={() => handleValueChange(el.name, score)}
+                            className={`w-12 h-12 rounded-sm border text-sm font-bold transition-all flex items-center justify-center ${
+                              isSelected
+                                ? "bg-foreground text-background border-foreground shadow-md scale-105"
+                                : "bg-transparent text-foreground border-border hover:border-foreground hover:bg-muted/30"
+                            }`}
+                          >
+                            {score}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="flex justify-between text-[11px] text-muted-foreground uppercase tracking-wider max-w-[280px] px-1">
+                      <span>1 - Poor</span>
+                      <span>5 - Excellent</span>
+                    </div>
                   </div>
                 )}
 
