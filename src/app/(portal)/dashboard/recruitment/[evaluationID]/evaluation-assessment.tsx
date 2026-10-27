@@ -344,14 +344,14 @@ export default function EvaluationAssessment({ evaluationData }: any) {
                       <PlusCircle className="w-3.5 h-3.5" /> Assign Task
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-3xl border-border bg-card">
-                    <DialogHeader>
+                  <DialogContent className="max-w-3xl w-[95vw] sm:w-full border-border bg-card max-h-[90vh] flex flex-col p-4 sm:p-6 overflow-hidden">
+                    <DialogHeader className="shrink-0 space-y-1 pb-2">
                       <DialogTitle className="text-xl font-serif">Assign Recruitment Task</DialogTitle>
                       <DialogDescription className="text-xs">
                         Configure a custom task or select from configured default presets for this candidate.
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-1">
+                    <div className="space-y-4 py-3 flex-1 min-h-0 overflow-y-auto pr-1">
                       {/* Form inputs */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
@@ -432,12 +432,13 @@ export default function EvaluationAssessment({ evaluationData }: any) {
                         </div>
                       </div>
                     </div>
-                    <DialogFooter className="border-t border-border/30 pt-4 flex gap-2">
+                    <DialogFooter className="border-t border-border/30 pt-3 sm:pt-4 mt-auto shrink-0 flex gap-2 justify-end">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setIsDialogOpen(false)}
+                        className="flex-1 sm:flex-initial"
                       >
                         Cancel
                       </Button>
@@ -445,6 +446,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
                         type="button"
                         size="sm"
                         onClick={handleAssignTask}
+                        className="flex-1 sm:flex-initial"
                       >
                         Add Assignment
                       </Button>
@@ -550,25 +552,26 @@ export default function EvaluationAssessment({ evaluationData }: any) {
 
         {/* Fullscreen Comments Dialog */}
         <Dialog open={isCommentsDialogOpen} onOpenChange={setIsCommentsDialogOpen}>
-          <DialogContent className="max-w-4xl border-border bg-card">
-            <DialogHeader>
+          <DialogContent className="max-w-4xl w-[95vw] sm:w-full border-border bg-card max-h-[90vh] flex flex-col p-4 sm:p-6 overflow-hidden">
+            <DialogHeader className="shrink-0 space-y-1 pb-2">
               <DialogTitle className="text-xl font-serif">Admin Comments</DialogTitle>
               <DialogDescription className="text-xs">
                 Write and format detailed recruitment interview notes.
               </DialogDescription>
             </DialogHeader>
-            <div className="py-2">
+            <div className="flex-1 min-h-0 overflow-y-auto py-2 pr-1">
               <BlockNoteEditor
                 key={`comments-dialog-${isCommentsDialogOpen}`}
                 initialValue={comment}
                 onChange={(json) => setComment(json)}
-                minHeight="400px"
+                minHeight="260px"
               />
             </div>
-            <DialogFooter className="border-t border-border/30 pt-4">
+            <DialogFooter className="border-t border-border/30 pt-3 sm:pt-4 mt-auto shrink-0 flex items-center justify-end">
               <Button
                 type="button"
                 onClick={() => setIsCommentsDialogOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Close & Save
               </Button>

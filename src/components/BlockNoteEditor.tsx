@@ -12,9 +12,18 @@ interface BlockNoteEditorProps {
   onChange?: (content: any) => void;
   editable?: boolean;
   minHeight?: string;
+  maxHeight?: string;
+  className?: string;
 }
 
-export default function BlockNoteEditor({ initialValue, onChange, editable = true, minHeight = "200px" }: BlockNoteEditorProps) {
+export default function BlockNoteEditor({ 
+  initialValue, 
+  onChange, 
+  editable = true, 
+  minHeight = "200px",
+  maxHeight,
+  className = ""
+}: BlockNoteEditorProps) {
   const { resolvedTheme } = useTheme();
 
   // Initialize the editor
@@ -27,8 +36,22 @@ export default function BlockNoteEditor({ initialValue, onChange, editable = tru
   });
 
   return (
-    <div className={editable ? "border border-border rounded-md bg-background overflow-hidden py-4" : "py-2 bg-transparent"} style={{ minHeight: editable ? minHeight : "auto" }}>
+    <div 
+      className={`${editable ? "border border-border rounded-md bg-background py-3 sm:py-4 transition-all" : "py-2 bg-transparent"} ${maxHeight ? "overflow-y-auto" : "overflow-hidden"} ${className}`} 
+      style={{ 
+        minHeight: editable ? minHeight : "auto",
+        maxHeight: maxHeight || undefined
+      }}
+    >
       <style dangerouslySetInnerHTML={{ __html: `
+        /* Mobile responsive editor padding */
+        @media (max-width: 640px) {
+          .bn-container .bn-editor {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+          }
+        }
+
         /* Hide upload tab button in BlockNote panels */
         .mantine-Tabs-tab[value="upload"],
         [role="tab"][value="upload"],
