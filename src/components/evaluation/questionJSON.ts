@@ -414,6 +414,8 @@ export const json = {
           title: "Have you ever worked related to finance or made a budget before?",
           isRequired: true,
           requiredErrorText: "This field is required",
+          valueTrue: "Yes",
+          valueFalse: "No",
         },
         {
           type: "comment",

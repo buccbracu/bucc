@@ -240,3 +240,16 @@ This document outlines all features, security refactoring, database schemas, and
     *   **Assigned Coordinators:** Any active member chosen by leadership is granted check-in and queue status modification powers and automatically sees the Waiting Room item in their sidebar.
     *   **View-Only Access:** All other active Directors, Assistant Directors, and permitted Senior Executives can view the live queue in read-only mode to observe candidate arrival.
     *   **Alumni Protection:** Inactive members and Alumni are strictly denied access.
+
+---
+
+## 12. Evaluation Form Boolean & Rating Component Fix (October 2026)
+*   **Missing Component Rendering ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/evaluation/page.tsx)):**
+    *   Previously, SurveyJS question types `boolean` (e.g. `question18` in Event Management and `question22` in Finance) and `rating` (`question21`) lacked UI component branches in the evaluation page renderer.
+    *   This caused only the question title to display with no buttons or input elements, leaving applicants unable to supply an answer.
+    *   Added interactive, styled Yes/No buttons for `boolean` elements and 1-5 segmented rating score controls for `rating` elements.
+*   **False-Positive Required Field Validation Fix:**
+    *   In `handleNext`, the emptiness test was `!value || (Array.isArray(value) && value.length === 0)`. If an applicant chose "No" (`false`), `!false` evaluated to `true`, erroneously triggering the required field error toast and preventing page navigation.
+    *   Fixed check to explicitly test for `value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)`.
+*   **Standardized Boolean Values ([questionJSON.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/components/evaluation/questionJSON.ts)):**
+    *   Configured explicit `valueTrue: "Yes"` and `valueFalse: "No"` on `question22` in `questionJSON.ts` to align with `question18`.
