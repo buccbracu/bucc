@@ -62,13 +62,14 @@ export async function GET(request: Request) {
 
       const users = await usersCollection.find(
         query,
-        { projection: { name: 1, designation: 1, buccDepartment: 1 } }
+        { projection: { name: 1, designation: 1, buccDepartment: 1, studentId: 1 } }
       ).toArray();
 
       return NextResponse.json({
         users: users.map((u: any) => ({
           id: u._id.toString(),
           name: u.name,
+          studentId: u.studentId,
           designation: u.designation,
           buccDepartment: u.buccDepartment
         }))
