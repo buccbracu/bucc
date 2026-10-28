@@ -490,6 +490,7 @@ export default function EvaluationAssessment({ evaluationData }: any) {
                               <p className="whitespace-pre-wrap">{task.description}</p>
                             ) : (
                               <BlockNoteEditor
+                                key={`eval-task-${task.department}-${task.title}`}
                                 initialValue={task.description}
                                 editable={false}
                               />

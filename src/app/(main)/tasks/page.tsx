@@ -179,6 +179,21 @@ export default function TasksPortalPage() {
     }
   };
 
+  // Helper to parse description whether string, JSON string, or block array
+  const parseTaskDescription = (desc: any) => {
+    if (!desc) return [];
+    if (Array.isArray(desc)) return desc;
+    if (typeof desc === "string") {
+      try {
+        const parsed = JSON.parse(desc);
+        if (Array.isArray(parsed) || typeof parsed === "object") return parsed;
+      } catch {
+        return desc;
+      }
+    }
+    return desc;
+  };
+
   // Check if deadline is passed
   const isDeadlinePassed = () => {
     if (!verifiedData?.config?.tasksDeadline) return false;
@@ -346,7 +361,7 @@ export default function TasksPortalPage() {
           {/* Task Details & Submission Panel */}
           <main className="lg:col-span-3 space-y-6">
             {currentTask && (
-              <Card className="border-border bg-card shadow-sm overflow-hidden">
+              <Card key={currentTask.department} className="border-border bg-card shadow-sm overflow-hidden animate-in fade-in duration-200">
                 <CardHeader className="border-b border-border/40 pb-6 bg-muted/5">
                   <div className="flex items-center gap-2 mb-2">
                     <Badge variant={currentTask.status === "submitted" ? "Accepted" : "Pending"} className="uppercase text-[9px] tracking-widest font-semibold px-2 py-0.5">
@@ -363,14 +378,19 @@ export default function TasksPortalPage() {
                   <div className="space-y-3">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Instructions & Description</h3>
                     <div className="text-sm font-light text-muted-foreground leading-relaxed bg-muted/10 p-4 rounded-xl border border-border/30 overflow-hidden">
-                      {typeof currentTask.description === "string" ? (
-                        <p className="whitespace-pre-wrap">{currentTask.description}</p>
-                      ) : (
-                        <BlockNoteEditor
-                          initialValue={currentTask.description}
-                          editable={false}
-                        />
-                      )}
+                      {(() => {
+                        const taskDesc = parseTaskDescription(currentTask.description);
+                        if (typeof taskDesc === "string") {
+                          return <p className="whitespace-pre-wrap">{taskDesc}</p>;
+                        }
+                        return (
+                          <BlockNoteEditor
+                            key={`task-body-${currentTask.department}-${currentTask.title}`}
+                            initialValue={taskDesc}
+                            editable={false}
+                          />
+                        );
+                      })()}
                     </div>
                   </div>
 
