@@ -54,9 +54,34 @@ export default function TasksPortalPage() {
   const [activeTab, setActiveTab] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
   
-  // Form Submission States
-  const [driveLink, setDriveLink] = useState("");
-  const [githubLink, setGithubLink] = useState("");
+  // Form Submission States (keyed per department so draft input is preserved across tab switching)
+  const [submissionInputs, setSubmissionInputs] = useState<Record<string, { driveLink: string; githubLink: string }>>({});
+
+  const getDriveLink = (dept: string) => {
+    if (submissionInputs[dept]?.driveLink !== undefined) {
+      return submissionInputs[dept].driveLink;
+    }
+    const task = verifiedData?.assignedTasks.find(t => t.department === dept);
+    return task?.driveLink || "";
+  };
+
+  const getGithubLink = (dept: string) => {
+    if (submissionInputs[dept]?.githubLink !== undefined) {
+      return submissionInputs[dept].githubLink;
+    }
+    const task = verifiedData?.assignedTasks.find(t => t.department === dept);
+    return task?.githubLink || "";
+  };
+
+  const handleLinkChange = (dept: string, field: "driveLink" | "githubLink", value: string) => {
+    setSubmissionInputs(prev => ({
+      ...prev,
+      [dept]: {
+        driveLink: field === "driveLink" ? value : (prev[dept]?.driveLink ?? verifiedData?.assignedTasks.find(t => t.department === dept)?.driveLink ?? ""),
+        githubLink: field === "githubLink" ? value : (prev[dept]?.githubLink ?? verifiedData?.assignedTasks.find(t => t.department === dept)?.githubLink ?? "")
+      }
+    }));
+  };
 
   // Portal closure message
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -81,17 +106,6 @@ export default function TasksPortalPage() {
     };
     checkPortalStatus();
   }, []);
-
-  // Sync links when tab changes
-  useEffect(() => {
-    if (verifiedData?.assignedTasks) {
-      const currentTask = verifiedData.assignedTasks.find(t => t.department === activeTab);
-      if (currentTask) {
-        setDriveLink(currentTask.driveLink || "");
-        setGithubLink(currentTask.githubLink || "");
-      }
-    }
-  }, [activeTab, verifiedData]);
 
   if (isLoadingStatus) {
     return <SpinnerComponent />;
@@ -127,9 +141,6 @@ export default function TasksPortalPage() {
       setVerifiedData(data);
       if (data.assignedTasks && data.assignedTasks.length > 0) {
         setActiveTab(data.assignedTasks[0].department);
-        // Pre-fill links if first task is already submitted
-        setDriveLink(data.assignedTasks[0].driveLink || "");
-        setGithubLink(data.assignedTasks[0].githubLink || "");
       }
       toast.success("Verification successful! Welcome to your Task Portal.");
     } catch (err: any) {
@@ -141,15 +152,30 @@ export default function TasksPortalPage() {
 
   const handleSubmitTask = async (e: React.FormEvent, deptName: string) => {
     e.preventDefault();
-    if (!driveLink) {
-      toast.error("Google Drive Link is mandatory.");
+    const rawDrive = getDriveLink(deptName);
+    const rawGithub = getGithubLink(deptName);
+
+    if (!rawDrive || !rawDrive.trim()) {
+      toast.error("Google Drive or Google Docs link is mandatory.");
       return;
     }
 
-    if (!driveLink.toLowerCase().includes("drive.google.com") && !driveLink.toLowerCase().includes("docs.google.com")) {
+    const normalizedDrive = ensureHttps(rawDrive);
+    const lowerDrive = normalizedDrive.toLowerCase();
+    const isDriveOrDocs = lowerDrive.includes("drive.google.com") || lowerDrive.includes("docs.google.com") || lowerDrive.includes("forms.gle");
+
+    if (!isDriveOrDocs) {
       toast.error("Please submit a valid Google Drive or Google Docs link.");
       return;
     }
+
+    const bareCheck = lowerDrive.replace(/^https?:\/\/(www\.)?/, "").replace(/\/+$/, "");
+    if (bareCheck === "drive.google.com" || bareCheck === "docs.google.com") {
+      toast.error("Please provide a link to your specific folder, document, or file, not just the Google Drive homepage.");
+      return;
+    }
+
+    const normalizedGithub = rawGithub ? ensureHttps(rawGithub) : "";
 
     setIsSubmitting(deptName);
     try {
@@ -161,8 +187,8 @@ export default function TasksPortalPage() {
           studentId: studentId.trim(),
           phoneNumber: phoneNumber.trim(),
           department: deptName,
-          driveLink: driveLink.trim(),
-          githubLink: githubLink.trim()
+          driveLink: normalizedDrive,
+          githubLink: normalizedGithub
         })
       });
 
@@ -171,12 +197,29 @@ export default function TasksPortalPage() {
 
       // Update local state with new tasks list
       setVerifiedData(prev => prev ? { ...prev, assignedTasks: data.assignedTasks } : null);
+      // Clean draft for this department so it falls back to saved data
+      setSubmissionInputs(prev => {
+        const next = { ...prev };
+        delete next[deptName];
+        return next;
+      });
       toast.success(`Task for ${deptName} submitted successfully!`);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit task.");
     } finally {
       setIsSubmitting(null);
     }
+  };
+
+  // Helper to ensure https protocol and sanitize URLs
+  const ensureHttps = (url?: string) => {
+    if (!url) return "";
+    let cleaned = url.trim().replace(/^[<"']+|[>"']+$/g, "").trim();
+    if (!cleaned) return "";
+    if (!/^https?:\/\//i.test(cleaned)) {
+      cleaned = `https://${cleaned}`;
+    }
+    return cleaned;
   };
 
   // Helper to parse description whether string, JSON string, or block array
@@ -407,16 +450,18 @@ export default function TasksPortalPage() {
                           <p className="text-muted-foreground font-light mb-2">Submitted on {new Date(currentTask.submittedAt || "").toLocaleString()}</p>
                           <div className="flex items-center gap-3 mt-3">
                             <a 
-                              href={currentTask.driveLink} 
+                              href={ensureHttps(currentTask.driveLink)} 
                               target="_blank" 
+                              rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 bg-emerald-500/10 hover:bg-emerald-500/20 px-2.5 py-1 rounded text-[10px] font-semibold transition-colors"
                             >
-                              Google Drive Folder <ExternalLink className="w-2.5 h-2.5" />
+                              Google Drive / Docs <ExternalLink className="w-2.5 h-2.5" />
                             </a>
                             {currentTask.githubLink && (
                               <a 
-                                href={currentTask.githubLink} 
+                                href={ensureHttps(currentTask.githubLink)} 
                                 target="_blank" 
+                                rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 bg-emerald-500/10 hover:bg-emerald-500/20 px-2.5 py-1 rounded text-[10px] font-semibold transition-colors"
                               >
                                 GitHub Repository <ExternalLink className="w-2.5 h-2.5" />
@@ -431,18 +476,18 @@ export default function TasksPortalPage() {
                     <form onSubmit={(e) => handleSubmitTask(e, currentTask.department)} className="space-y-4">
                       <div className="space-y-1.5">
                         <Label htmlFor="driveLink" className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider flex items-center gap-1">
-                          Google Drive Link <span className="text-destructive font-sans">*</span>
+                          Google Drive / Docs Link <span className="text-destructive font-sans">*</span>
                         </Label>
                         <Input
                           id="driveLink"
-                          placeholder="e.g. https://drive.google.com/drive/folders/your-submission-folder"
-                          value={driveLink}
+                          placeholder="e.g. drive.google.com/drive/folders/... or docs.google.com/..."
+                          value={getDriveLink(currentTask.department)}
                           disabled={submissionsLocked}
-                          onChange={(e) => setDriveLink(e.target.value)}
+                          onChange={(e) => handleLinkChange(currentTask.department, "driveLink", e.target.value)}
                           className="bg-muted/10 border-border h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary font-sans"
                         />
                         <p className="text-[10px] text-muted-foreground font-light leading-normal">
-                          Create a Google Drive folder, upload your files, set the folder access permission to <span className="font-bold text-foreground">"Anyone with the link can view"</span>, then copy and paste the folder link here.
+                          Upload your solution to Google Drive or Google Docs (folder, document, spreadsheet, or presentation), ensure the sharing permission is set to <span className="font-bold text-foreground">"Anyone with the link can view"</span>, and paste the link here.
                         </p>
                       </div>
 
@@ -453,9 +498,9 @@ export default function TasksPortalPage() {
                         <Input
                           id="githubLink"
                           placeholder="e.g. https://github.com/username/repository"
-                          value={githubLink}
+                          value={getGithubLink(currentTask.department)}
                           disabled={submissionsLocked}
-                          onChange={(e) => setGithubLink(e.target.value)}
+                          onChange={(e) => handleLinkChange(currentTask.department, "githubLink", e.target.value)}
                           className="bg-muted/10 border-border h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary font-sans"
                         />
                         <p className="text-[10px] text-muted-foreground font-light leading-normal">
