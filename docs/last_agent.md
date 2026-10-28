@@ -306,3 +306,20 @@ This document outlines all features, security refactoring, database schemas, and
 *   **Task Description Parser:**
     *   Added `parseTaskDescription` helper to robustly parse descriptions whether stored as an array of BlockNote blocks, a stringified JSON array, or plain text strings.
     *   Also keyed task items in [`evaluation-assessment.tsx`](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx) (`key={\`eval-task-${task.department}-${task.title}\`}`) for parity.
+
+---
+
+## 17. Recruitment Tasks Submission Hardening, Protocol Normalization & Data Protection (October 2026)
+*   **Protocol Normalization & Relative Link 404 Prevention ([tasks/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/tasks/page.tsx), [recruitment-tasks/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/recruitment-tasks/route.ts), [evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)):**
+    *   When candidates copy links without `https://` (e.g. `drive.google.com/drive/folders/...` or `docs.google.com/...` or `github.com/...`), browsers treat `<a href="...">` as relative URLs, triggering a 404 error.
+    *   Implemented `normalizeSubmissionUrl` and `ensureHttps` across the pipeline to auto-prepend `https://` and strip accidental enclosing quotes or angle brackets.
+    *   Added `rel="noopener noreferrer"` to all submission anchor tags to prevent reverse tabnabbing vulnerabilities.
+*   **Permissive Drive / Docs / Forms Validation:**
+    *   Accommodates Google Drive folders, Google Docs, Sheets, Slides, and Forms (`drive.google.com`, `docs.google.com`, `forms.gle`) while rejecting bare root homepage URLs (e.g., `https://drive.google.com/`).
+*   **Assessment Update Candidate Submission Preservation ([api/evaluation/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/route.ts)):**
+    *   Previously, updating candidate comments, status, or marks via `PATCH /api/evaluation` could overwrite the `assignedTasks` array with stale in-memory state, wiping candidates' submitted links and timestamps.
+    *   Added a safe merge in `api/evaluation/route.ts` that detects and preserves existing `driveLink`, `githubLink`, `status: "submitted"`, and `submittedAt` from the database.
+*   **Independent Multi-Department Draft State ([tasks/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/tasks/page.tsx)):**
+    *   Replaced shared `driveLink` / `githubLink` single-string state with `submissionInputs` dictionary keyed by department. Candidates can switch between department tabs without losing unsaved draft URLs.
+*   **Candidate Phone Verification Suffix Matching ([api/recruitment-tasks/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/recruitment-tasks/route.ts)):**
+    *   Extended digit phone matching to compare the last 10 digits (`cleanPhoneInput.slice(-10) === cleanCandPhone.slice(-10)`), allowing verification regardless of whether the applicant entered `+880`, `880`, or local `01...`.

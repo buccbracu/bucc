@@ -72,7 +72,27 @@ export async function PATCH(request: NextRequest) {
     evaluation.comment = comment;
     evaluation.modifiedBy = modifiedBy;
     if (assignedTasks !== undefined) {
-      evaluation.assignedTasks = assignedTasks;
+      // Merge tasks while safely preserving candidate submission data (driveLink, githubLink, status, submittedAt)
+      if (Array.isArray(assignedTasks) && Array.isArray(evaluation.assignedTasks)) {
+        evaluation.assignedTasks = assignedTasks.map((incomingTask: any) => {
+          const existing = evaluation.assignedTasks.find(
+            (t: any) => t.department?.trim().toLowerCase() === incomingTask.department?.trim().toLowerCase()
+          );
+          if (existing && existing.status === "submitted") {
+            return {
+              ...incomingTask,
+              driveLink: existing.driveLink || incomingTask.driveLink,
+              githubLink: existing.githubLink || incomingTask.githubLink,
+              status: "submitted",
+              submittedAt: existing.submittedAt || incomingTask.submittedAt,
+            };
+          }
+          return incomingTask;
+        });
+      } else {
+        evaluation.assignedTasks = assignedTasks;
+      }
+      evaluation.markModified("assignedTasks");
     }
 
     await evaluation.save();

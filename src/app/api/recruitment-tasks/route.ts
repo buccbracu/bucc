@@ -18,6 +18,17 @@ export async function GET() {
   }
 }
 
+// Helper to sanitize and normalize URLs
+function normalizeSubmissionUrl(url: string | undefined): string {
+  if (!url) return "";
+  let cleaned = url.trim().replace(/^[<"']+|[>"']+$/g, "").trim();
+  if (!cleaned) return "";
+  if (!/^https?:\/\//i.test(cleaned)) {
+    cleaned = `https://${cleaned}`;
+  }
+  return cleaned;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -29,7 +40,7 @@ export async function POST(request: Request) {
 
     await dbConnect();
 
-    // Normalize phone numbers for robust matching (digits only comparison)
+    // Normalize phone numbers for robust matching (digits only comparison + last 10 digits suffix match)
     const cleanPhoneInput = phoneNumber.replace(/\D/g, "");
     const candidate = await EvaluationData.findOne({ 
       studentId: { $regex: new RegExp(`^${studentId.trim()}$`, "i") } 
@@ -39,8 +50,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No application found for this Student ID." }, { status: 404 });
     }
 
-    const cleanCandPhone = candidate.phoneNumber.replace(/\D/g, "");
-    if (cleanPhoneInput !== cleanCandPhone && phoneNumber.trim() !== candidate.phoneNumber.trim()) {
+    const cleanCandPhone = (candidate.phoneNumber || "").replace(/\D/g, "");
+    const isPhoneMatch = 
+      cleanPhoneInput === cleanCandPhone || 
+      phoneNumber.trim() === candidate.phoneNumber?.trim() ||
+      (cleanPhoneInput.length >= 10 && cleanCandPhone.length >= 10 && cleanPhoneInput.slice(-10) === cleanCandPhone.slice(-10));
+
+    if (!isPhoneMatch) {
       return NextResponse.json({ error: "Invalid credentials. Student ID and Phone Number do not match our records." }, { status: 401 });
     }
 
@@ -89,15 +105,27 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Department and Google Drive link are required." }, { status: 400 });
       }
 
-      // Drive link validation
-      const normalizedDrive = driveLink.trim();
-      if (!normalizedDrive.toLowerCase().includes("drive.google.com") && !normalizedDrive.toLowerCase().includes("docs.google.com")) {
+      // Drive link normalization and validation (permissive: drive, docs, sheets, slides, forms, etc.)
+      const normalizedDrive = normalizeSubmissionUrl(driveLink);
+      const lowerDrive = normalizedDrive.toLowerCase();
+      const isDriveOrDocs = lowerDrive.includes("drive.google.com") || lowerDrive.includes("docs.google.com") || lowerDrive.includes("forms.gle");
+
+      if (!isDriveOrDocs) {
         return NextResponse.json({ error: "A valid Google Drive or Google Docs link is mandatory." }, { status: 400 });
       }
 
+      // Guard against bare homepages like https://drive.google.com/ with no file or folder identifier
+      const bareCheck = lowerDrive.replace(/^https?:\/\/(www\.)?/, "").replace(/\/+$/, "");
+      if (bareCheck === "drive.google.com" || bareCheck === "docs.google.com") {
+        return NextResponse.json({ error: "Please provide a link to your specific folder, document, or file, not just the Google Drive homepage." }, { status: 400 });
+      }
+
+      // Normalize optional github link
+      const normalizedGithub = githubLink ? normalizeSubmissionUrl(githubLink) : "";
+
       // Find the specific assigned task
-      const taskIndex = candidate.assignedTasks.findIndex(
-        (t: any) => t.department.toLowerCase() === department.toLowerCase()
+      const taskIndex = (candidate.assignedTasks || []).findIndex(
+        (t: any) => t.department?.trim().toLowerCase() === department.trim().toLowerCase()
       );
 
       if (taskIndex === -1) {
@@ -106,7 +134,7 @@ export async function POST(request: Request) {
 
       // Update task details
       candidate.assignedTasks[taskIndex].driveLink = normalizedDrive;
-      candidate.assignedTasks[taskIndex].githubLink = githubLink ? githubLink.trim() : "";
+      candidate.assignedTasks[taskIndex].githubLink = normalizedGithub;
       candidate.assignedTasks[taskIndex].status = "submitted";
       candidate.assignedTasks[taskIndex].submittedAt = new Date();
 

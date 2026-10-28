@@ -34,6 +34,16 @@ import {
 // Dynamically import BlockNoteEditor to prevent SSR compilation issues
 const BlockNoteEditor = dynamic(() => import("@/components/BlockNoteEditor"), { ssr: false });
 
+const ensureHttps = (url?: string) => {
+  if (!url) return "";
+  let cleaned = url.trim().replace(/^[<"']+|[>"']+$/g, "").trim();
+  if (!cleaned) return "";
+  if (!/^https?:\/\//i.test(cleaned)) {
+    cleaned = `https://${cleaned}`;
+  }
+  return cleaned;
+};
+
 const EB_OPTIONS: Option[] = EBs.map((eb: any) => ({
   label: eb.fullName,
   value: eb.fullName,
@@ -503,16 +513,18 @@ export default function EvaluationAssessment({ evaluationData }: any) {
                             {task.status === "submitted" && (
                               <div className="flex items-center gap-2">
                                 <a 
-                                  href={task.driveLink} 
+                                  href={ensureHttps(task.driveLink)} 
                                   target="_blank" 
+                                  rel="noopener noreferrer"
                                   className="text-primary flex items-center gap-0.5 hover:underline"
                                 >
-                                  Drive <ExternalLink className="w-2.5 h-2.5" />
+                                  Drive / Docs <ExternalLink className="w-2.5 h-2.5" />
                                 </a>
                                 {task.githubLink && (
                                   <a 
-                                    href={task.githubLink} 
+                                    href={ensureHttps(task.githubLink)} 
                                     target="_blank" 
+                                    rel="noopener noreferrer"
                                     className="text-primary flex items-center gap-0.5 hover:underline"
                                   >
                                     GitHub <ExternalLink className="w-2.5 h-2.5" />
