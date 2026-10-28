@@ -295,3 +295,14 @@ This document outlines all features, security refactoring, database schemas, and
     *   Added optional `maxHeight` and `className` prop support to `BlockNoteEditorProps` with internal `overflow-y-auto`.
     *   Added mobile responsive CSS overrides reducing `.bn-container .bn-editor` side padding from large default gutter margins down to `10px` on screens `< 640px`, maximizing horizontal typing area on phones and small tablets.
     *   Reduced initial `minHeight` on comments dialog to `260px` to fit comfortably on 13-inch laptop viewports (768px height) and mobile viewports with on-screen keyboards.
+
+---
+
+## 16. Multi-Department Task Switching & BlockNote Re-Mount Fix ([tasks/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(main)/tasks/page.tsx)) (October 2026)
+*   **Stale Task Description Bug Resolution:**
+    *   When candidates had multiple department tasks assigned (e.g., Creative and R&D), clicking between the department tabs updated the task title in the header, but the instructions/description body remained stuck showing the first department's task content.
+    *   **Root Cause:** In React, `BlockNoteEditor` was mounted without a `key` prop. Because `useCreateBlockNote({ initialContent })` only runs once when the component mounts, React reused the existing component instance upon tab switching without re-initializing the editor document.
+    *   **Fix:** Added dynamic React keys (`key={currentTask.department}` on the task Card and `key={\`task-body-${currentTask.department}-${currentTask.title}\`}` on the `BlockNoteEditor`). This forces React to unmount the old editor instance and mount a fresh instance with the selected department's description content.
+*   **Task Description Parser:**
+    *   Added `parseTaskDescription` helper to robustly parse descriptions whether stored as an array of BlockNote blocks, a stringified JSON array, or plain text strings.
+    *   Also keyed task items in [`evaluation-assessment.tsx`](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx) (`key={\`eval-task-${task.department}-${task.title}\`}`) for parity.
