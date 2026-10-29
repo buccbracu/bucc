@@ -385,3 +385,22 @@ This document outlines all features, security refactoring, database schemas, and
         *   **Expandable Diff Views:** Clear status flip-flop transition visualizer (`[Old Status] ➔ [New Status]`), side-by-side comment revision visualizer (showing previous comment in strike/red and updated comment in green), and JSON diff viewers.
         *   **Direct Export Controls:** One-click CSV and JSON downloads.
         *   **Date Range Purge Dialog:** GB and R&D leadership can launch a modal with quick range presets (Past 7 Days, Past 30 Days, Past 90 Days) and custom start/end date selectors to safely prune historical logs.
+
+---
+
+## 20. API Vulnerability Remediation & Recruitment Privacy Hardening (October 2026)
+*   **Authentication & Access Gating on Evaluation Mutations ([api/evaluation/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/route.ts)):**
+    *   Secured `PATCH /api/evaluation` with mandatory authentication checks (`auth()`).
+    *   Strictly enforced `hasGeneralRecruitmentAccess(user, allowSERecruitmentAccess)` and excluded alumni (`isAlumniMember`), preventing unauthenticated outsiders from altering candidate status, assigning departments, or modifying evaluation comments and tasks.
+*   **Candidate PII & Interview Feedback Leak Prevention ([api/evaluation/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/route.ts)):**
+    *   Enforced session and recruitment role validation on `GET /api/evaluation?evaluationID=...`.
+    *   Prevents outsiders from scraping confidential applicant responses, phone numbers, emails, interviewer names, and private feedback comments.
+    *   Added pre-registration verification to `POST /api/evaluation` ensuring applicants cannot submit evaluations without first completing recruitment pre-registration.
+*   **Intake Management Route Hardening ([api/intake/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/intake/route.ts), [api/intake/[id]/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/intake/[id]/route.ts)):**
+    *   Secured `POST /api/intake` and `PATCH /api/intake/[id]` behind authentication and `isSuperUser(user)` (GB & R&D leadership only).
+    *   Outsiders can no longer forge or alter recruitment intakes.
+*   **System Configuration RBAC Lockdown ([api/config/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/config/route.ts)):**
+    *   Replaced incomplete sensitive key blacklist with comprehensive role-based access control.
+    *   `waiting_room_config` updates require `canManageWaitingRoomCoordinators` (GB, R&D EB, and HR EB).
+    *   All other system configurations (`hero_carousel_config`, `recruitment_config`, `recruitment_default_tasks`, etc.) are strictly locked to `isSuperUser(user)`.
+    *   Prevents unauthorized members from elevating their privileges to desk coordinators or tampering with default task presets.

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getConfigValue } from "@/helpers/appConfigStore";
 import { auth } from "@/auth";
 import { logEvaluationDiff } from "@/helpers/activityLogger";
+import { hasGeneralRecruitmentAccess, isAlumniMember } from "@/lib/permissions";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,6 +34,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verify candidate has actually pre-registered
+    const preReg = await PreRegMember.findOne({
+      studentId: cleanStudentId,
+    });
+    if (!preReg) {
+      return NextResponse.json(
+        { message: "You must complete recruitment pre-registration before submitting the evaluation form." },
+        { status: 403 }
+      );
+    }
+
     const newEvaluation = new EvaluationData({
       studentId: cleanStudentId,
       name,
@@ -58,6 +70,24 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const currentUser = session.user as any;
+    if (isAlumniMember(currentUser)) {
+      return NextResponse.json({ error: "Forbidden: Alumni cannot modify recruitment evaluations" }, { status: 403 });
+    }
+
+    const config = await getConfigValue("recruitment_config", { allowSERecruitmentAccess: false });
+    if (!hasGeneralRecruitmentAccess(currentUser, config?.allowSERecruitmentAccess)) {
+      return NextResponse.json(
+        { error: "Forbidden: You do not have permission to modify recruitment evaluations" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { _id, interviewTakenBy, modifiedBy, assignedDepartment, status, comment, assignedTasks } = body;
 
@@ -68,14 +98,12 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ message: "Evaluation not found" }, { status: 404 });
     }
 
-    // Capture user session and log diff before updating
-    const session = await auth();
     const actor = {
-      id: session?.user?.id,
-      name: session?.user?.name || modifiedBy || "Evaluator",
-      email: session?.user?.email,
-      designation: (session?.user as any)?.designation,
-      department: (session?.user as any)?.buccDepartment,
+      id: currentUser.id || currentUser._id?.toString(),
+      name: currentUser.name || "Evaluator",
+      email: currentUser.email,
+      designation: currentUser.designation,
+      department: currentUser.buccDepartment,
     };
 
     await logEvaluationDiff({
@@ -137,11 +165,30 @@ export async function GET(request: NextRequest) {
     const evaluationID = url.searchParams.get("evaluationID");
 
     if (evaluationID) {
+      const session = await auth();
+      if (!session?.user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const currentUser = session.user as any;
+      if (isAlumniMember(currentUser)) {
+        return NextResponse.json({ error: "Forbidden: Alumni cannot view evaluation records" }, { status: 403 });
+      }
+
+      const config = await getConfigValue("recruitment_config", { allowSERecruitmentAccess: false });
+      if (!hasGeneralRecruitmentAccess(currentUser, config?.allowSERecruitmentAccess)) {
+        return NextResponse.json(
+          { error: "Forbidden: You do not have permission to view candidate evaluations" },
+          { status: 403 }
+        );
+      }
+
       await dbConnect();
       const evaluationData = await EvaluationData.findById(evaluationID);
-      if (evaluationData) {
-        return NextResponse.json(evaluationData, { status: 200 });
+      if (!evaluationData) {
+        return NextResponse.json({ message: "Evaluation not found" }, { status: 404 });
       }
+      return NextResponse.json(evaluationData, { status: 200 });
     }
 
     if (studentID && gSuiteEmail) {
