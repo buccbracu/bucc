@@ -323,3 +323,18 @@ This document outlines all features, security refactoring, database schemas, and
     *   Replaced shared `driveLink` / `githubLink` single-string state with `submissionInputs` dictionary keyed by department. Candidates can switch between department tabs without losing unsaved draft URLs.
 *   **Candidate Phone Verification Suffix Matching ([api/recruitment-tasks/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/recruitment-tasks/route.ts)):**
     *   Extended digit phone matching to compare the last 10 digits (`cleanPhoneInput.slice(-10) === cleanCandPhone.slice(-10)`), allowing verification regardless of whether the applicant entered `+880`, `880`, or local `01...`.
+
+---
+
+## 18. Recruitment Task Data Export & On-Screen Viewer (October 2026)
+*   **Maintenance Tab Integration ([manage-data/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/manage-data/page.tsx)):**
+    *   Added a dedicated, featured **Candidate Recruitment Tasks & Submissions** card to the Maintenance tab in Data Hub (`/dashboard/manage-data`).
+    *   Displays live counts of candidates with assigned tasks and submitted task totals fetched dynamically from MongoDB.
+    *   Features one-click **Download CSV (Excel)** and **Download JSON** export buttons.
+    *   Includes a **View & Inspect Data** dialog modal allowing leadership to search candidates (by ID, Name, Email, Department), toggle status filters (`All`, `Submitted`, `Pending`), and preview clickable Drive / Docs and GitHub solution links.
+*   **CSV & JSON Export API ([manage-data/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/manage-data/route.ts)):**
+    *   Engineered `GET /api/manage-data?model=recruitment_tasks&format=csv|json` generating standardized UTF-8 BOM CSVs with full candidate context (Student ID, Name, Email, Phone, Club Department, Task Title, Task Status, Google Drive/Docs Links, GitHub Links, Submitted Timestamp, Interviewers, and Comments).
+    *   Provides structured hierarchical JSON containing the complete candidate array with nested `assignedTasks`.
+*   **Strict Access Gating ([permissions.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/lib/permissions.ts)):**
+    *   Defined `canAccessTaskSubmissions` strictly granting authorization to Governing Body (GB), Research & Development (R&D) Director & Assistant Director, and Human Resources (HR) Director & Assistant Director (`isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user)`).
+    *   Alumni and unauthorized roles are blocked with 403 Forbidden on both the frontend UI and the backend API.

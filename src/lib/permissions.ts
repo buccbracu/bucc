@@ -74,6 +74,11 @@ export const canManageWaitingRoomCoordinators = (user: UserRole) => {
   return isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user);
 };
 
+export const canAccessTaskSubmissions = (user: UserRole) => {
+  if (isAlumniMember(user)) return false;
+  return isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user);
+};
+
 export const hasGeneralRecruitmentAccess = (user: UserRole, allowSERecruitmentAccess: boolean = false) => {
   if (isAlumniMember(user)) return false;
   const isEB = ["Director", "Assistant Director"].includes(user.designation);

@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
-import { isSuperUser as checkGB } from "@/lib/permissions";
+import { isSuperUser as checkGB, canAccessTaskSubmissions } from "@/lib/permissions";
+import EvaluationData from "@/model/EvaluationData";
 import generatePassword from "@/helpers/generatePassword";
 import { singleWelcomeMail } from "@/helpers/mailer";
 import { auth as authServer, db } from "@/lib/auth";
@@ -42,6 +43,64 @@ function convertToCSV(data: any[]) {
   return [headers, ...rows].join("\n");
 }
 
+function formatTasksCSV(candidates: any[]) {
+  const headers = [
+    "Student ID",
+    "Candidate Name",
+    "Email",
+    "Phone Number",
+    "BRACU Department",
+    "Club Department",
+    "Evaluation Status",
+    "Task Department",
+    "Task Title",
+    "Task Status",
+    "Google Drive / Docs Link",
+    "GitHub Link",
+    "Task Submitted At",
+    "Interviewers",
+    "Evaluation Notes"
+  ];
+
+  const rows: string[] = [];
+
+  for (const c of candidates) {
+    const tasks = c.assignedTasks && c.assignedTasks.length > 0 ? c.assignedTasks : [];
+    for (const t of tasks) {
+      const interviewersStr = Array.isArray(c.interviewTakenBy) ? c.interviewTakenBy.join(", ") : (c.interviewTakenBy || "");
+      let commentStr = "";
+      if (typeof c.comment === "string") {
+        commentStr = c.comment;
+      } else if (c.comment && typeof c.comment === "object") {
+        commentStr = JSON.stringify(c.comment);
+      }
+
+      const row = [
+        c.studentId || "",
+        c.name || "",
+        c.email || "",
+        c.phoneNumber || "",
+        c.bracuDepartment || "",
+        c.buccDepartment || "",
+        c.status || "Pending",
+        t.department || "",
+        t.title || "",
+        t.status || "pending",
+        t.driveLink || "",
+        t.githubLink || "",
+        t.submittedAt ? new Date(t.submittedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : "Not Submitted",
+        interviewersStr,
+        commentStr
+      ];
+
+      const escapedRow = row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",");
+      rows.push(escapedRow);
+    }
+  }
+
+  return "\uFEFF" + [headers.map(h => `"${h}"`).join(","), ...rows].join("\r\n");
+}
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -74,6 +133,12 @@ export async function GET(request: NextRequest) {
       const totalProjects = await db.collection("projects").countDocuments();
       const totalInquiries = await db.collection("inquiries").countDocuments();
       const totalSessions = await db.collection("session").countDocuments();
+      const totalWithTasks = await EvaluationData.countDocuments({
+        "assignedTasks.0": { $exists: true }
+      });
+      const totalTasksSubmitted = await EvaluationData.countDocuments({
+        "assignedTasks.status": "submitted"
+      });
 
       // Aggregate department breakdown (excluding Governing Body, grouping Alumni together)
       const deptData = await db.collection("user").aggregate([
@@ -116,6 +181,8 @@ export async function GET(request: NextRequest) {
           projects: totalProjects,
           inquiries: totalInquiries,
           visitors: visitorEstimate,
+          tasksAssigned: totalWithTasks,
+          tasksSubmitted: totalTasksSubmitted,
         },
         departments: deptData.map((d: any) => ({
           name: d._id || "Unassigned",
@@ -127,6 +194,50 @@ export async function GET(request: NextRequest) {
           visitors: log.visitors || 0
         }))
       });
+    }
+
+    if (model === "recruitment_tasks") {
+      if (!canAccessTaskSubmissions(user)) {
+        return NextResponse.json({ error: "Forbidden: Task submissions export is restricted to GB, R&D, and HR Leadership." }, { status: 403 });
+      }
+
+      await dbConnect();
+      const candidates = await EvaluationData.find({
+        "assignedTasks.0": { $exists: true }
+      }).sort({ submissionDate: -1 }).lean();
+
+      if (format === "csv") {
+        const csv = formatTasksCSV(candidates);
+        return new NextResponse(csv, {
+          headers: {
+            "Content-Type": "text/csv; charset=utf-8",
+            "Content-Disposition": "attachment; filename=recruitment_assigned_tasks.csv",
+          },
+        });
+      }
+
+      const formattedJson = candidates.map((c: any) => ({
+        studentId: c.studentId,
+        name: c.name,
+        email: c.email,
+        phoneNumber: c.phoneNumber,
+        bracuDepartment: c.bracuDepartment,
+        assignedBuccDepartment: c.buccDepartment,
+        evaluationStatus: c.status || "Pending",
+        interviewTakenBy: c.interviewTakenBy || [],
+        comment: c.comment || "",
+        assignedTasksCount: c.assignedTasks?.length || 0,
+        assignedTasks: (c.assignedTasks || []).map((t: any) => ({
+          department: t.department,
+          title: t.title,
+          status: t.status || "pending",
+          driveLink: t.driveLink || "",
+          githubLink: t.githubLink || "",
+          submittedAt: t.submittedAt ? new Date(t.submittedAt).toISOString() : null,
+        })),
+      }));
+
+      return NextResponse.json(formattedJson);
     }
 
     if (!model) return NextResponse.json({ models: MANAGEABLE_MODELS });
