@@ -29,7 +29,33 @@ import {
   CalendarDays,
   LineChart
 } from "lucide-react";
-import { isSuperUser as checkGB } from "@/lib/permissions";
+import { isSuperUser as checkGB, isGoverningBody, isRDAdmin, isHRAdmin, canAccessTaskSubmissions } from "@/lib/permissions";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { 
+  FolderCheck, 
+  Search, 
+  ExternalLink, 
+  ClipboardList, 
+  CheckCircle, 
+  Clock 
+} from "lucide-react";
+
+const ensureHttps = (url?: string) => {
+  if (!url) return "";
+  let cleaned = url.trim().replace(/^[<"']+|[>"']+$/g, "").trim();
+  if (!cleaned) return "";
+  if (!/^https?:\/\//i.test(cleaned)) {
+    cleaned = `https://${cleaned}`;
+  }
+  return cleaned;
+};
 
 const MANAGEABLE_MODELS = [
   { name: "Members (All Data)", collection: "user", protected: true },
@@ -318,14 +344,61 @@ export default function ManageDataPage() {
   if (sessionStatus === "loading") return <SpinnerComponent />;
 
   const user = session?.user as any;
-  const isGB = user ? checkGB(user) : false;
-  const isHRHead = user?.buccDepartment === "Human Resources" && ["Director", "Assistant Director"].includes(user?.designation);
+  const isPermitted = user ? canAccessTaskSubmissions(user) : false;
+  const isGB = user ? isGoverningBody(user) : false;
 
-  if (!isGB && !isHRHead) {
+  // Task Data Preview State
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any[] | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewSearch, setPreviewSearch] = useState("");
+  const [previewFilter, setPreviewFilter] = useState<"all" | "submitted" | "pending">("all");
+
+  const openTasksPreview = async () => {
+    setIsPreviewOpen(true);
+    if (!previewData) {
+      setPreviewLoading(true);
+      try {
+        const res = await fetch("/api/manage-data?model=recruitment_tasks&format=json");
+        if (res.ok) {
+          const json = await res.json();
+          setPreviewData(json);
+        } else {
+          toast.error("Failed to load task candidates.");
+        }
+      } catch (err) {
+        toast.error("Failed to load task candidates.");
+      } finally {
+        setPreviewLoading(false);
+      }
+    }
+  };
+
+  const filteredPreviewCandidates = (previewData || []).filter((cand: any) => {
+    const q = previewSearch.toLowerCase().trim();
+    const matchesSearch = !q || 
+      cand.name?.toLowerCase().includes(q) || 
+      cand.studentId?.toLowerCase().includes(q) || 
+      cand.email?.toLowerCase().includes(q) || 
+      cand.assignedBuccDepartment?.toLowerCase().includes(q) ||
+      cand.assignedTasks?.some((t: any) => t.department?.toLowerCase().includes(q) || t.title?.toLowerCase().includes(q));
+
+    if (!matchesSearch) return false;
+
+    if (previewFilter === "submitted") {
+      return cand.assignedTasks?.some((t: any) => t.status === "submitted");
+    }
+    if (previewFilter === "pending") {
+      return cand.assignedTasks?.some((t: any) => t.status !== "submitted");
+    }
+    return true;
+  });
+
+  if (!isPermitted) {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] text-center space-y-2">
         <h2 className="text-2xl font-serif font-medium">Access Denied</h2>
-        <p className="text-muted-foreground">You do not have permission to access data management tools.</p>
+        <p className="text-muted-foreground">You do not have permission to access data management tools. Restricted to GB, R&D, and HR Leadership.</p>
       </div>
     );
   }
@@ -650,6 +723,65 @@ export default function ManageDataPage() {
 
       {activeTab === "maintenance" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Featured Recruitment Task Submissions Card */}
+          <Card className="border-border shadow-sm bg-card overflow-hidden md:col-span-2 bg-gradient-to-br from-card via-card to-muted/20">
+            <CardHeader className="pb-4 border-b border-border/40">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                      <FolderCheck className="w-5 h-5" />
+                    </span>
+                    <CardTitle className="text-xl font-serif">Candidate Recruitment Tasks & Submissions</CardTitle>
+                  </div>
+                  <CardDescription className="text-xs uppercase tracking-tight font-mono text-muted-foreground/60">
+                    recruitment_task_submissions • Access: GB, R&D, HR Leadership
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+                    {statsData?.counts?.tasksAssigned ?? 0} Candidates with Tasks
+                  </span>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    {statsData?.counts?.tasksSubmitted ?? 0} Submitted
+                  </span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
+                Inspect and download all candidate records who were assigned department tasks during interview sessions. Exports include candidate identification (Name, Student ID, Email, Phone), assigned club department, task titles, status (<span className="text-foreground font-medium">Pending</span> vs. <span className="text-emerald-600 dark:text-emerald-400 font-medium">Submitted</span>), Google Drive / Docs solution links, GitHub links, submission dates, and interviewer evaluation comments.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Button 
+                  variant="outline" 
+                  className="h-10 gap-2 border-border font-semibold text-xs hover:bg-muted"
+                  onClick={() => handleDownload("recruitment_tasks", "csv")}
+                  disabled={loading === "recruitment_tasks-csv"}
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  {loading === "recruitment_tasks-csv" ? "Exporting CSV..." : "Download CSV (Excel)"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-10 gap-2 border-border font-semibold text-xs hover:bg-muted"
+                  onClick={() => handleDownload("recruitment_tasks", "json")}
+                  disabled={loading === "recruitment_tasks-json"}
+                >
+                  <FileJson className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                  {loading === "recruitment_tasks-json" ? "Exporting JSON..." : "Download JSON"}
+                </Button>
+                <Button 
+                  variant="default"
+                  className="h-10 gap-2 bg-foreground text-background font-semibold text-xs hover:bg-foreground/90"
+                  onClick={openTasksPreview}
+                >
+                  <Eye className="w-4 h-4" /> View & Inspect Data
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
           {MANAGEABLE_MODELS.map((model) => (
             <Card key={model.collection} className="border-border shadow-none bg-card overflow-hidden">
               <CardHeader className="pb-4">
@@ -896,6 +1028,215 @@ export default function ManageDataPage() {
           </Card>
         </div>
       )}
+
+      {/* Candidate Tasks Preview Modal */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[90vh] flex flex-col p-4 sm:p-6 overflow-hidden">
+          <DialogHeader className="pb-3 border-b border-border/40 shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <DialogTitle className="text-xl font-serif flex items-center gap-2">
+                  <FolderCheck className="w-5 h-5 text-primary" /> Candidate Recruitment Tasks
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1">
+                  Preview all candidate profiles who were assigned department tasks.
+                </DialogDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 gap-1.5 text-xs border-border"
+                  onClick={() => handleDownload("recruitment_tasks", "csv")}
+                  disabled={loading === "recruitment_tasks-csv"}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> CSV
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 gap-1.5 text-xs border-border"
+                  onClick={() => handleDownload("recruitment_tasks", "json")}
+                  disabled={loading === "recruitment_tasks-json"}
+                >
+                  <FileJson className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" /> JSON
+                </Button>
+              </div>
+            </div>
+
+            {/* Search & Filters */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-3">
+              <div className="relative w-full flex-1">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input 
+                  value={previewSearch}
+                  onChange={(e) => setPreviewSearch(e.target.value)}
+                  placeholder="Search by student ID, name, email, or department..."
+                  className="pl-9 h-9 text-xs bg-muted/20 border-border"
+                />
+              </div>
+              <div className="flex items-center gap-1 border border-border p-0.5 rounded-lg shrink-0">
+                <button
+                  onClick={() => setPreviewFilter("all")}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    previewFilter === "all" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  All ({(previewData || []).length})
+                </button>
+                <button
+                  onClick={() => setPreviewFilter("submitted")}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    previewFilter === "submitted" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Submitted ({
+                    (previewData || []).filter((c: any) => c.assignedTasks?.some((t: any) => t.status === "submitted")).length
+                  })
+                </button>
+                <button
+                  onClick={() => setPreviewFilter("pending")}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    previewFilter === "pending" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Pending ({
+                    (previewData || []).filter((c: any) => c.assignedTasks?.some((t: any) => t.status !== "submitted")).length
+                  })
+                </button>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {/* Modal Scrollable Content */}
+          <div className="flex-1 min-h-0 overflow-y-auto py-4 space-y-4 pr-1">
+            {previewLoading ? (
+              <div className="py-16 text-center space-y-3">
+                <SpinnerComponent />
+                <p className="text-xs text-muted-foreground font-mono">Loading candidate tasks...</p>
+              </div>
+            ) : filteredPreviewCandidates.length === 0 ? (
+              <div className="py-16 text-center space-y-2 border border-dashed border-border rounded-xl">
+                <ClipboardList className="w-8 h-8 text-muted-foreground/40 mx-auto mb-1" />
+                <p className="text-sm font-serif font-medium">No Matching Candidates Found</p>
+                <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                  {previewSearch ? "No candidate matches your search criteria." : "No candidates have been assigned recruitment tasks yet."}
+                </p>
+              </div>
+            ) : (
+              filteredPreviewCandidates.map((cand: any) => (
+                <div key={cand.studentId} className="p-4 rounded-xl border border-border bg-card space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-2.5">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-serif font-semibold text-sm text-foreground">{cand.name}</h4>
+                        <span className="font-mono text-xs text-muted-foreground">({cand.studentId})</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-0.5">
+                        <span>{cand.email}</span>
+                        <span>•</span>
+                        <span>{cand.phoneNumber}</span>
+                        <span>•</span>
+                        <span>{cand.bracuDepartment}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-border bg-muted/30">
+                        {cand.assignedBuccDepartment || "Unassigned"}
+                      </span>
+                      <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                        cand.evaluationStatus === "Accepted"
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                          : cand.evaluationStatus === "Rejected"
+                          ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                          : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                      }`}>
+                        {cand.evaluationStatus}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Tasks list */}
+                  <div className="space-y-2">
+                    <h5 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Assigned Tasks ({cand.assignedTasks?.length || 0})</h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {cand.assignedTasks?.map((task: any, idx: number) => {
+                        const isSubmitted = task.status === "submitted";
+                        return (
+                          <div key={idx} className="p-3 rounded-lg border border-border/60 bg-muted/10 space-y-2 text-xs">
+                            <div className="flex items-start justify-between gap-2">
+                              <span className="font-semibold text-foreground line-clamp-1">{task.title}</span>
+                              <span className={`shrink-0 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                                isSubmitted 
+                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                                  : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                              }`}>
+                                {isSubmitted ? "Submitted" : "Pending"}
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-muted-foreground">
+                              Department: <span className="font-medium text-foreground">{task.department}</span>
+                            </div>
+
+                            {/* Solution Links */}
+                            {isSubmitted && (
+                              <div className="pt-1.5 border-t border-border/40 flex flex-wrap items-center gap-2">
+                                {task.driveLink && (
+                                  <a 
+                                    href={ensureHttps(task.driveLink)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-[10px] font-medium text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 rounded transition-colors"
+                                  >
+                                    Drive / Docs <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                )}
+                                {task.githubLink && (
+                                  <a 
+                                    href={ensureHttps(task.githubLink)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-[10px] font-medium text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 rounded transition-colors"
+                                  >
+                                    GitHub <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                )}
+                              </div>
+                            )}
+
+                            {isSubmitted && task.submittedAt && (
+                              <div className="text-[9px] text-muted-foreground/70 font-mono">
+                                Submitted: {new Date(task.submittedAt).toLocaleString("en-US", { dateStyle: "short", timeStyle: "short" })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Interview comments / notes if any */}
+                  {cand.comment && (
+                    <div className="text-[11px] text-muted-foreground bg-muted/20 p-2 rounded border border-border/30">
+                      <span className="font-semibold text-foreground">Interview Feedback: </span>
+                      {typeof cand.comment === "string" ? cand.comment : JSON.stringify(cand.comment)}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          <DialogFooter className="pt-3 border-t border-border/40 shrink-0 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              Showing {filteredPreviewCandidates.length} of {(previewData || []).length} candidate records
+            </span>
+            <Button variant="outline" size="sm" onClick={() => setIsPreviewOpen(false)} className="text-xs">
+              Close Preview
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
