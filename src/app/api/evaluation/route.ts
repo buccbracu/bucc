@@ -3,6 +3,8 @@ import EvaluationData from "@/model/EvaluationData";
 import PreRegMember from "@/model/PreRegMember";
 import { NextRequest, NextResponse } from "next/server";
 import { getConfigValue } from "@/helpers/appConfigStore";
+import { auth } from "@/auth";
+import { logEvaluationDiff } from "@/helpers/activityLogger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,6 +67,29 @@ export async function PATCH(request: NextRequest) {
     if (!evaluation) {
       return NextResponse.json({ message: "Evaluation not found" }, { status: 404 });
     }
+
+    // Capture user session and log diff before updating
+    const session = await auth();
+    const actor = {
+      id: session?.user?.id,
+      name: session?.user?.name || modifiedBy || "Evaluator",
+      email: session?.user?.email,
+      designation: (session?.user as any)?.designation,
+      department: (session?.user as any)?.buccDepartment,
+    };
+
+    await logEvaluationDiff({
+      existing: evaluation,
+      incoming: {
+        status,
+        assignedDepartment,
+        comment,
+        assignedTasks,
+        interviewTakenBy,
+      },
+      actor,
+      ipAddress: request.headers.get("x-forwarded-for") || undefined,
+    });
 
     evaluation.status = status;
     evaluation.buccDepartment = assignedDepartment;

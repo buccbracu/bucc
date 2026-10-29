@@ -6,6 +6,7 @@ import EvaluationData from "@/model/EvaluationData";
 import generatePassword from "@/helpers/generatePassword";
 import { singleWelcomeMail } from "@/helpers/mailer";
 import { auth as authServer, db } from "@/lib/auth";
+import { logActivity } from "@/helpers/activityLogger";
 
 // Configuration
 const FLUSHABLE_MODELS = [
@@ -43,7 +44,7 @@ function convertToCSV(data: any[]) {
   return [headers, ...rows].join("\n");
 }
 
-function formatTasksCSV(candidates: any[]) {
+function formatTasksCSV(candidates: any[], filterStatus?: "submitted" | "pending") {
   const headers = [
     "Student ID",
     "Candidate Name",
@@ -65,7 +66,13 @@ function formatTasksCSV(candidates: any[]) {
   const rows: string[] = [];
 
   for (const c of candidates) {
-    const tasks = c.assignedTasks && c.assignedTasks.length > 0 ? c.assignedTasks : [];
+    let tasks = c.assignedTasks && c.assignedTasks.length > 0 ? c.assignedTasks : [];
+    if (filterStatus === "submitted") {
+      tasks = tasks.filter((t: any) => t.status === "submitted");
+    } else if (filterStatus === "pending") {
+      tasks = tasks.filter((t: any) => t.status !== "submitted");
+    }
+
     for (const t of tasks) {
       const interviewersStr = Array.isArray(c.interviewTakenBy) ? c.interviewTakenBy.join(", ") : (c.interviewTakenBy || "");
       let commentStr = "";
@@ -139,6 +146,9 @@ export async function GET(request: NextRequest) {
       const totalTasksSubmitted = await EvaluationData.countDocuments({
         "assignedTasks.status": "submitted"
       });
+      const totalTasksPending = await EvaluationData.countDocuments({
+        "assignedTasks": { $elemMatch: { status: { $ne: "submitted" } } }
+      });
 
       // Aggregate department breakdown (excluding Governing Body, grouping Alumni together)
       const deptData = await db.collection("user").aggregate([
@@ -183,6 +193,7 @@ export async function GET(request: NextRequest) {
           visitors: visitorEstimate,
           tasksAssigned: totalWithTasks,
           tasksSubmitted: totalTasksSubmitted,
+          tasksPending: totalTasksPending,
         },
         departments: deptData.map((d: any) => ({
           name: d._id || "Unassigned",
@@ -196,46 +207,64 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    if (model === "recruitment_tasks") {
+    if (model === "recruitment_tasks" || model === "recruitment_tasks_submitted" || model === "recruitment_tasks_pending") {
       if (!canAccessTaskSubmissions(user)) {
         return NextResponse.json({ error: "Forbidden: Task submissions export is restricted to GB, R&D, and HR Leadership." }, { status: 403 });
       }
 
       await dbConnect();
-      const candidates = await EvaluationData.find({
-        "assignedTasks.0": { $exists: true }
-      }).sort({ submissionDate: -1 }).lean();
+
+      let taskFilter: any = { "assignedTasks.0": { $exists: true } };
+      let statusFilter: "submitted" | "pending" | undefined = undefined;
+
+      if (model === "recruitment_tasks_submitted") {
+        taskFilter = { "assignedTasks.status": "submitted" };
+        statusFilter = "submitted";
+      } else if (model === "recruitment_tasks_pending") {
+        taskFilter = { "assignedTasks": { $elemMatch: { status: { $ne: "submitted" } } } };
+        statusFilter = "pending";
+      }
+
+      const candidates = await EvaluationData.find(taskFilter).sort({ submissionDate: -1 }).lean();
 
       if (format === "csv") {
-        const csv = formatTasksCSV(candidates);
+        const csv = formatTasksCSV(candidates, statusFilter);
         return new NextResponse(csv, {
           headers: {
             "Content-Type": "text/csv; charset=utf-8",
-            "Content-Disposition": "attachment; filename=recruitment_assigned_tasks.csv",
+            "Content-Disposition": `attachment; filename=${model}.csv`,
           },
         });
       }
 
-      const formattedJson = candidates.map((c: any) => ({
-        studentId: c.studentId,
-        name: c.name,
-        email: c.email,
-        phoneNumber: c.phoneNumber,
-        bracuDepartment: c.bracuDepartment,
-        assignedBuccDepartment: c.buccDepartment,
-        evaluationStatus: c.status || "Pending",
-        interviewTakenBy: c.interviewTakenBy || [],
-        comment: c.comment || "",
-        assignedTasksCount: c.assignedTasks?.length || 0,
-        assignedTasks: (c.assignedTasks || []).map((t: any) => ({
-          department: t.department,
-          title: t.title,
-          status: t.status || "pending",
-          driveLink: t.driveLink || "",
-          githubLink: t.githubLink || "",
-          submittedAt: t.submittedAt ? new Date(t.submittedAt).toISOString() : null,
-        })),
-      }));
+      const formattedJson = candidates.map((c: any) => {
+        let tasks = c.assignedTasks || [];
+        if (statusFilter === "submitted") {
+          tasks = tasks.filter((t: any) => t.status === "submitted");
+        } else if (statusFilter === "pending") {
+          tasks = tasks.filter((t: any) => t.status !== "submitted");
+        }
+        return {
+          studentId: c.studentId,
+          name: c.name,
+          email: c.email,
+          phoneNumber: c.phoneNumber,
+          bracuDepartment: c.bracuDepartment,
+          assignedBuccDepartment: c.buccDepartment,
+          evaluationStatus: c.status || "Pending",
+          interviewTakenBy: c.interviewTakenBy || [],
+          comment: c.comment || "",
+          assignedTasksCount: tasks.length,
+          assignedTasks: tasks.map((t: any) => ({
+            department: t.department,
+            title: t.title,
+            status: t.status || "pending",
+            driveLink: t.driveLink || "",
+            githubLink: t.githubLink || "",
+            submittedAt: t.submittedAt ? new Date(t.submittedAt).toISOString() : null,
+          })),
+        };
+      });
 
       return NextResponse.json(formattedJson);
     }
@@ -312,6 +341,24 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      logActivity({
+        actor: {
+          id: currentUser.id || currentUser._id?.toString(),
+          name: currentUser.name || "Unknown",
+          email: currentUser.email,
+          designation: currentUser.designation,
+          department: currentUser.buccDepartment,
+        },
+        action: "BULK_USER_ONBOARD",
+        category: "Members",
+        method: "POST",
+        summary: `${currentUser.name || "An admin"} Onboarded ${results.success} Members via Bulk Upload (${results.failed} failed)`,
+        details: {
+          newValue: { success: results.success, failed: results.failed },
+        },
+        ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+      });
+
       return NextResponse.json({ message: "Bulk onboarding complete", results });
     }
 
@@ -340,6 +387,25 @@ export async function DELETE(request: NextRequest) {
       await dbConnect();
       const preregResult = await db.collection("preregmembers").deleteMany({});
       const evalResult = await db.collection("evaluationdatas").deleteMany({});
+
+      logActivity({
+        actor: {
+          id: user.id || user._id?.toString(),
+          name: user.name || "Unknown",
+          email: user.email,
+          designation: user.designation,
+          department: user.buccDepartment,
+        },
+        action: "DATA_FLUSH",
+        category: "System",
+        method: "DELETE",
+        summary: `${user.name || "A GB Member"} Wiped All Recruitment Data (${preregResult.deletedCount} prereg, ${evalResult.deletedCount} evaluations)`,
+        details: {
+          newValue: { model: "recruitment_all", preregDeleted: preregResult.deletedCount, evalDeleted: evalResult.deletedCount },
+        },
+        ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+      });
+
       return NextResponse.json({ 
         message: `Successfully wiped recruitment data. Deleted ${preregResult.deletedCount} prereg records and ${evalResult.deletedCount} evaluation records.` 
       });
@@ -351,6 +417,24 @@ export async function DELETE(request: NextRequest) {
 
     await dbConnect();
     const result = await db.collection(model).deleteMany({});
+
+    logActivity({
+      actor: {
+        id: user.id || user._id?.toString(),
+        name: user.name || "Unknown",
+        email: user.email,
+        designation: user.designation,
+        department: user.buccDepartment,
+      },
+      action: "DATA_FLUSH",
+      category: "System",
+      method: "DELETE",
+      summary: `${user.name || "A GB Member"} Flushed Collection "${model}" (${result.deletedCount} records deleted)`,
+      details: {
+        newValue: { model, deletedCount: result.deletedCount },
+      },
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+    });
 
     return NextResponse.json({ message: `Successfully flushed ${result.deletedCount} records from ${model}` });
   } catch (error: any) {

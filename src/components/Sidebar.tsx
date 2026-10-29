@@ -26,7 +26,8 @@ import {
   PlusCircle,
   Globe,
   X,
-  Clock
+  Clock,
+  History
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -300,6 +301,24 @@ export function Sidebar({
             >
               <Database className="w-4 h-4 shrink-0" />
               {!isCollapsed && <span className="animate-in fade-in duration-300">Manage Data</span>}
+            </Link>
+          )}
+
+          {canManageData && (
+            <Link
+              href="/dashboard/logs"
+              onClick={onClose}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                isCollapsed && "justify-center px-2",
+                pathname === "/dashboard/logs" 
+                  ? "bg-primary text-primary-foreground" 
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+              title={isCollapsed ? "Activity Logs" : undefined}
+            >
+              <History className="w-4 h-4 shrink-0" />
+              {!isCollapsed && <span className="animate-in fade-in duration-300">Activity Logs</span>}
             </Link>
           )}
  

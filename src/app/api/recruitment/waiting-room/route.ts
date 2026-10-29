@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import EvaluationData from "@/model/EvaluationData";
 import PreRegMember from "@/model/PreRegMember";
 import { getConfigValue } from "@/helpers/appConfigStore";
+import { logActivity } from "@/helpers/activityLogger";
 import {
   isAlumniMember,
   canManageWaitingRoomCoordinators,
@@ -138,6 +139,26 @@ export async function POST(request: NextRequest) {
       evaluation.waitingRoomCheckedInAt = new Date();
       await evaluation.save();
 
+      logActivity({
+        actor: {
+          id: user.id || user._id?.toString(),
+          name: user.name || "Unknown",
+          email: user.email,
+          designation: user.designation,
+          department: user.buccDepartment || user.department,
+        },
+        action: "RECRUITMENT_WAITING_CHECKIN",
+        category: "Recruitment",
+        method: "POST",
+        targetId: evaluation.studentId,
+        targetName: evaluation.name,
+        summary: `${user.name || "A coordinator"} Checked In ${evaluation.name} (${evaluation.studentId}) into the Waiting Room`,
+        details: {
+          newValue: "Waiting",
+        },
+        ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+      });
+
       return NextResponse.json({
         success: true,
         message: `Checked in ${evaluation.name} (${evaluation.studentId}) to Waiting Room.`,
@@ -227,9 +248,32 @@ export async function PATCH(request: NextRequest) {
     await dbConnect();
 
     if (status === null || status === "remove") {
+      const existing = await EvaluationData.findById(evaluationId).select("name studentId waitingRoomStatus").lean();
       await EvaluationData.findByIdAndUpdate(evaluationId, {
         $set: { waitingRoomStatus: null, waitingRoomCheckedInAt: null },
       });
+
+      logActivity({
+        actor: {
+          id: user.id || user._id?.toString(),
+          name: user.name || "Unknown",
+          email: user.email,
+          designation: user.designation,
+          department: user.buccDepartment || user.department,
+        },
+        action: "RECRUITMENT_WAITING_REMOVE",
+        category: "Recruitment",
+        method: "PATCH",
+        targetId: (existing as any)?.studentId,
+        targetName: (existing as any)?.name,
+        summary: `${user.name || "A coordinator"} Removed ${(existing as any)?.name || "Candidate"} (${(existing as any)?.studentId || evaluationId}) from Waiting Room`,
+        details: {
+          oldValue: (existing as any)?.waitingRoomStatus,
+          newValue: null,
+        },
+        ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+      });
+
       return NextResponse.json({
         success: true,
         message: "Candidate removed from waiting room queue.",
@@ -240,6 +284,8 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
     }
 
+    const previous = await EvaluationData.findById(evaluationId).select("name studentId waitingRoomStatus").lean();
+
     const updated = await EvaluationData.findByIdAndUpdate(
       evaluationId,
       { $set: { waitingRoomStatus: status } },
@@ -249,6 +295,27 @@ export async function PATCH(request: NextRequest) {
     if (!updated) {
       return NextResponse.json({ error: "Candidate evaluation not found" }, { status: 404 });
     }
+
+    logActivity({
+      actor: {
+        id: user.id || user._id?.toString(),
+        name: user.name || "Unknown",
+        email: user.email,
+        designation: user.designation,
+        department: user.buccDepartment || user.department,
+      },
+      action: "RECRUITMENT_WAITING_STATUS_CHANGE",
+      category: "Recruitment",
+      method: "PATCH",
+      targetId: updated.studentId,
+      targetName: updated.name,
+      summary: `${user.name || "A coordinator"} Changed Waiting Room Status to "${status}" for ${updated.name} (${updated.studentId})`,
+      details: {
+        oldValue: (previous as any)?.waitingRoomStatus,
+        newValue: status,
+      },
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+    });
 
     return NextResponse.json({
       success: true,
