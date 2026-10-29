@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import Intake from "@/model/Intake"; 
+import Intake from "@/model/Intake";
+import { auth } from "@/auth";
+import { isSuperUser, isAlumniMember } from "@/lib/permissions";
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  await dbConnect();
-
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = session.user as any;
+    if (isAlumniMember(user) || !isSuperUser(user)) {
+      return NextResponse.json(
+        { error: "Forbidden: Only Governing Body and R&D leadership can update recruitment intakes." },
+        { status: 403 }
+      );
+    }
+
+    await dbConnect();
+
     const { id } = await params;
-    console.log(id)
     if (!id) {
       return NextResponse.json(
         { message: "Intake ID is required" },
@@ -21,7 +35,7 @@ export async function PATCH(
     // Parse the request body
     const updateData = await request.json();
 
-    const updatedIntake = await Intake.findByIdAndUpdate(id, updateData);
+    const updatedIntake = await Intake.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedIntake) {
       return NextResponse.json(
@@ -30,7 +44,6 @@ export async function PATCH(
       );
     }
 
-    // Return the updated intake
     return NextResponse.json(
       { message: "Intake updated successfully", intake: updatedIntake },
       { status: 200 },

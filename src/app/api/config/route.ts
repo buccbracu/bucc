@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { getConfigValue } from "@/helpers/appConfigStore"; 
-import { setConfigValue } from "@/helpers/appConfigStore";
+import { getConfigValue, setConfigValue } from "@/helpers/appConfigStore";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { isGoverningBody, isRDAdmin } from "@/lib/permissions";
+import { isSuperUser, isAlumniMember, canManageWaitingRoomCoordinators } from "@/lib/permissions";
 
 export const runtime = "nodejs";
 
@@ -23,7 +22,7 @@ export async function GET(request: Request) {
     const value: any = await getConfigValue(key, defaultValue || null);
     
     // Inject specific BUCC defaults for recruitment
-    if (key === "recruitment_config" && value && typeof value === 'object') {
+    if (key === "recruitment_config" && value && typeof value === "object") {
       if (!value.registrationMessage) {
         value.registrationMessage = "BUCC Recruitment Process is not ongoing. Please check our Facebook page for updates.";
       }
@@ -53,6 +52,10 @@ export async function POST(request: Request) {
     }
 
     const user = session.user as any;
+    if (isAlumniMember(user)) {
+      return NextResponse.json({ error: "Forbidden: Alumni cannot modify configuration" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { key, value } = body;
 
@@ -63,15 +66,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Role-Based Access Control (RBAC) for sensitive keys
-    const sensitiveKeys = ["hero_carousel_config", "recruitment_config"];
-    
-    if (sensitiveKeys.includes(key)) {
-      const isAuthorized = isGoverningBody(user) || isRDAdmin(user);
-      
-      if (!isAuthorized) {
+    // 2. Strict Role-Based Access Control (RBAC)
+    if (key === "waiting_room_config") {
+      if (!canManageWaitingRoomCoordinators(user)) {
         return NextResponse.json(
-          { error: "Forbidden: You do not have permission to update this configuration." },
+          { error: "Forbidden: Only Governing Body, R&D EB, and HR EB can update waiting room configuration." },
+          { status: 403 }
+        );
+      }
+    } else {
+      // All other configuration keys are strictly restricted to Superusers (GB + R&D Admin)
+      if (!isSuperUser(user)) {
+        return NextResponse.json(
+          { error: "Forbidden: You do not have permission to update system configuration." },
           { status: 403 }
         );
       }
