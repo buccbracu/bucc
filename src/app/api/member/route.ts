@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isSuperUser } from "@/lib/permissions";
 import { ObjectId } from "mongodb";
 import { db } from "@/lib/auth";
+import { logActivity } from "@/helpers/activityLogger";
 
 const permittedDepartments = ["Human Resources", "Governing Body"];
 const permittedDesignations = ["Director", "Assistant Director", "President", "Vice President", "General Secretary", "Treasurer"];
@@ -151,6 +152,26 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
+    logActivity({
+      actor: {
+        id: currentUser.id || currentUser._id?.toString(),
+        name: currentUser.name || "Unknown",
+        email: currentUser.email,
+        designation: currentUser.designation,
+        department: currentUser.buccDepartment,
+      },
+      action: "MEMBER_UPDATED",
+      category: "Members",
+      method: "PATCH",
+      targetId: result.studentId || memberID,
+      targetName: result.name,
+      summary: `${currentUser.name || "An admin"} Updated Member Details for ${result.name} (${result.studentId || memberID})`,
+      details: {
+        newValue: updateData,
+      },
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+    });
+
     return NextResponse.json({ user: result });
   } catch (error: any) {
     console.error("Update member error:", error);
@@ -185,11 +206,39 @@ export async function DELETE(request: NextRequest) {
     }
 
     const usersCollection = db.collection("user");
+    const targetUser = await usersCollection.findOne({ _id: new ObjectId(memberID) });
+
     const result = await usersCollection.deleteOne({ _id: new ObjectId(memberID) });
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
+
+    logActivity({
+      actor: {
+        id: currentUser.id || currentUser._id?.toString(),
+        name: currentUser.name || "Unknown",
+        email: currentUser.email,
+        designation: currentUser.designation,
+        department: currentUser.buccDepartment,
+      },
+      action: "MEMBER_DELETED",
+      category: "Members",
+      method: "DELETE",
+      targetId: targetUser?.studentId || memberID,
+      targetName: targetUser?.name,
+      summary: `${currentUser.name || "An admin"} Deleted Member Profile of ${targetUser?.name || "Member"} (${targetUser?.studentId || memberID})`,
+      details: {
+        oldValue: targetUser ? {
+          name: targetUser.name,
+          studentId: targetUser.studentId,
+          email: targetUser.email,
+          buccDepartment: targetUser.buccDepartment,
+          designation: targetUser.designation,
+        } : undefined,
+      },
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+    });
 
     return NextResponse.json({ message: "Member deleted successfully" }, { status: 200 });
   } catch (error: any) {

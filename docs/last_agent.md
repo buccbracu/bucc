@@ -327,14 +327,61 @@ This document outlines all features, security refactoring, database schemas, and
 ---
 
 ## 18. Recruitment Task Data Export & On-Screen Viewer (October 2026)
-*   **Maintenance Tab Integration ([manage-data/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/manage-data/page.tsx)):**
-    *   Added a dedicated, featured **Candidate Recruitment Tasks & Submissions** card to the Maintenance tab in Data Hub (`/dashboard/manage-data`).
-    *   Displays live counts of candidates with assigned tasks and submitted task totals fetched dynamically from MongoDB.
-    *   Features one-click **Download CSV (Excel)** and **Download JSON** export buttons.
-    *   Includes a **View & Inspect Data** dialog modal allowing leadership to search candidates (by ID, Name, Email, Department), toggle status filters (`All`, `Submitted`, `Pending`), and preview clickable Drive / Docs and GitHub solution links.
-*   **CSV & JSON Export API ([manage-data/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/manage-data/route.ts)):**
-    *   Engineered `GET /api/manage-data?model=recruitment_tasks&format=csv|json` generating standardized UTF-8 BOM CSVs with full candidate context (Student ID, Name, Email, Phone, Club Department, Task Title, Task Status, Google Drive/Docs Links, GitHub Links, Submitted Timestamp, Interviewers, and Comments).
-    *   Provides structured hierarchical JSON containing the complete candidate array with nested `assignedTasks`.
+*   **Dual Standard Maintenance Cards ([manage-data/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/manage-data/page.tsx)):**
+    *   Added two standard-sized cards at the top of the Maintenance tab (`activeTab === "maintenance"` in `/dashboard/manage-data`), styled identically to the existing collection cards in the 2-column grid:
+        1.  **`Tasks (Submitted)`** (`recruitment_tasks_submitted`): Displays live count badge of candidates who submitted solutions, with direct **JSON**, **CSV**, and **View** buttons.
+        2.  **`Tasks (Pending)`** (`recruitment_tasks_pending`): Displays live count badge of candidates who were given tasks but have not submitted solutions yet, with direct **JSON**, **CSV**, and **View** buttons.
+    *   Tapping **View** opens the candidate tasks inspection modal pre-filtered to the respective status (`submitted` vs `pending`), complete with live search and direct links to Drive/Docs and GitHub.
+*   **Filtered CSV & JSON Export API ([manage-data/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/manage-data/route.ts)):**
+    *   Engineered `GET /api/manage-data?model=recruitment_tasks_submitted|recruitment_tasks_pending&format=csv|json`.
+    *   Generates filtered, standardized UTF-8 BOM CSVs with full candidate identification (Student ID, Name, Email, Phone, Club Department, Task Title, Task Status, Google Drive/Docs Links, GitHub Links, Submitted Timestamp, Interviewers, and Comments).
+    *   Provides structured hierarchical JSON containing candidate records filtered by task status.
 *   **Strict Access Gating ([permissions.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/lib/permissions.ts)):**
     *   Defined `canAccessTaskSubmissions` strictly granting authorization to Governing Body (GB), Research & Development (R&D) Director & Assistant Director, and Human Resources (HR) Director & Assistant Director (`isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user)`).
     *   Alumni and unauthorized roles are blocked with 403 Forbidden on both the frontend UI and the backend API.
+
+---
+
+## 19. All-in-One Real-Time Activity & Audit Logging System (October 2026)
+*   **Standalone Audit Architecture ([ActivityLog.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/model/ActivityLog.ts)):**
+    *   Created a completely separate, dedicated collection in MongoDB (`activitylogs`) without modifying or bloating `EvaluationData` or other existing models.
+    *   Tracks:
+        *   `actor`: `{ id, name, email, designation, department }`
+        *   `action`: Specific action code (e.g. `RECRUITMENT_STATUS_CHANGE`, `RECRUITMENT_COMMENT_UPDATE`, `MEMBER_APPROVED`, `DATA_FLUSH`, `RECRUITMENT_WAITING_CHECKIN`)
+        *   `category`: `"Recruitment"` | `"Members"` | `"Events"` | `"Blogs"` | `"Projects"` | `"System"`
+        *   `method`: HTTP verb (`"POST"` | `"PATCH"` | `"PUT"` | `"DELETE"`)
+        *   `targetId` & `targetName`: Candidate Student ID or Member ID and associated name
+        *   `summary`: Human-readable activity sentence (e.g., *"Hasib Hossain Abir Approved Rifa Tasnia Hridi Account Creation at 6:00 p.m."*, *"Hasib Hossain Abir updated evaluation form of ID: 24101236 at 5:00 p.m."*)
+        *   `details`: Structured diff payload capturing exact `oldValue` and `newValue`
+        *   `ipAddress`: Request IP
+        *   `createdAt`: Timestamp with compound index for sub-second sorting.
+*   **Non-Blocking, Failsafe Activity Logger ([activityLogger.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/helpers/activityLogger.ts)):**
+    *   Engineered `logActivity` using non-blocking background promises and graceful error handling so core business operations are never disrupted if logging fails.
+    *   Implemented `logEvaluationDiff` smart diff engine that intercepts candidate evaluation mutations to record:
+        *   Status flips (`Rejected` ➔ `Accepted`, etc.)
+        *   Comment edits (preserving previous comment text into `details.oldValue` alongside the updated comment)
+        *   Department reassignments
+        *   Task assignments and removals
+        *   Interview board transfers
+*   **System-Wide Mutation Interception:**
+    *   **Recruitment Evaluations ([api/evaluation/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/evaluation/route.ts)):** In `PATCH /api/evaluation`, performs in-memory old-vs-new comparison against the candidate record before saving.
+    *   **Member Registration Approvals & Rejections ([api/member-registration/[id]/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/member-registration/[id]/route.ts)):** Logs account approval (`MEMBER_APPROVED`) and deletion/rejection (`MEMBER_REJECTED`).
+    *   **Member Profile Modifications & Deletions ([api/member/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/member/route.ts)):** Logs administrative updates (`MEMBER_UPDATED`) and permanent member deletions (`MEMBER_DELETED`).
+    *   **Waiting Room Operations ([api/recruitment/waiting-room/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/recruitment/waiting-room/route.ts)):** Logs desk check-ins (`RECRUITMENT_WAITING_CHECKIN`), queue removals (`RECRUITMENT_WAITING_REMOVE`), and board transfers (`RECRUITMENT_WAITING_STATUS_CHANGE`).
+    *   **Data Maintenance & Flush Operations ([api/manage-data/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/manage-data/route.ts)):** Logs bulk onboarding (`BULK_USER_ONBOARD`), collection flushes (`DATA_FLUSH`), and full recruitment wipes.
+*   **Audit API ([api/logs/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/logs/route.ts)):**
+    *   `GET /api/logs`: RBAC gated endpoint (`canAccessTaskSubmissions`).
+    *   Supports server-side pagination (`page`, `limit`), text search across summary, actor, and target, category filters, and live statistics summary (`?stats=true`).
+    *   One-click UTF-8 BOM CSV export (`?format=csv`) and structured JSON export (`?format=json`).
+    *   `DELETE /api/logs`: Secure log pruning by date range (`startDate`, `endDate`). Gated strictly to Governing Body and R&D Director & Assistant Director (`isSuperUser(user)`). Self-audits the deletion action by recording a `LOGS_PURGED` summary in the audit stream after pruning.
+*   **Dedicated Activity Logs Dashboard ([dashboard/logs/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/logs/page.tsx)):**
+    *   Added dedicated **"Activity Logs"** entry in the portal sidebar ([Sidebar.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/components/Sidebar.tsx)) linking to `/dashboard/logs`.
+    *   Access to view logs is gated to Governing Body (GB), R&D Director & Assistant Director, and HR Director & Assistant Director.
+    *   Access to delete logs is strictly restricted to **GB and R&D Director & Assistant Director only** (`isSuperUser`).
+    *   Features:
+        *   **Real-time Statistics Cards:** Total logs, status flips, comment updates, and member approvals.
+        *   **Real-time Search & Filter Pills:** Filter by category (All, Recruitment, Members, System, Events, Blogs, Projects).
+        *   **Chronological Feed:** HTTP method badges (`POST`, `PATCH`, `DELETE`), actor details (name, designation, department, email), human-readable summary sentence, candidate ID badges, and exact timestamps.
+        *   **Expandable Diff Views:** Clear status flip-flop transition visualizer (`[Old Status] ➔ [New Status]`), side-by-side comment revision visualizer (showing previous comment in strike/red and updated comment in green), and JSON diff viewers.
+        *   **Direct Export Controls:** One-click CSV and JSON downloads.
+        *   **Date Range Purge Dialog:** GB and R&D leadership can launch a modal with quick range presets (Past 7 Days, Past 30 Days, Past 90 Days) and custom start/end date selectors to safely prune historical logs.

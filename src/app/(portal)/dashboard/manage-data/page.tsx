@@ -354,7 +354,8 @@ export default function ManageDataPage() {
   const [previewSearch, setPreviewSearch] = useState("");
   const [previewFilter, setPreviewFilter] = useState<"all" | "submitted" | "pending">("all");
 
-  const openTasksPreview = async () => {
+  const openTasksPreview = async (initialFilter: "all" | "submitted" | "pending" = "all") => {
+    setPreviewFilter(initialFilter);
     setIsPreviewOpen(true);
     if (!previewData) {
       setPreviewLoading(true);
@@ -723,61 +724,93 @@ export default function ManageDataPage() {
 
       {activeTab === "maintenance" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Featured Recruitment Task Submissions Card */}
-          <Card className="border-border shadow-sm bg-card overflow-hidden md:col-span-2 bg-gradient-to-br from-card via-card to-muted/20">
-            <CardHeader className="pb-4 border-b border-border/40">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                      <FolderCheck className="w-5 h-5" />
-                    </span>
-                    <CardTitle className="text-xl font-serif">Candidate Recruitment Tasks & Submissions</CardTitle>
-                  </div>
-                  <CardDescription className="text-xs uppercase tracking-tight font-mono text-muted-foreground/60">
-                    recruitment_task_submissions • Access: GB, R&D, HR Leadership
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-                    {statsData?.counts?.tasksAssigned ?? 0} Candidates with Tasks
-                  </span>
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    {statsData?.counts?.tasksSubmitted ?? 0} Submitted
-                  </span>
-                </div>
+          {/* Card 1: Submitted Tasks */}
+          <Card className="border-border shadow-none bg-card overflow-hidden">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-serif">Tasks (Submitted)</CardTitle>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  {statsData?.counts?.tasksSubmitted ?? 0} Submitted
+                </span>
               </div>
+              <CardDescription className="text-xs uppercase tracking-tight font-mono text-muted-foreground/60">
+                recruitment_tasks_submitted
+              </CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 space-y-6">
-              <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
-                Inspect and download all candidate records who were assigned department tasks during interview sessions. Exports include candidate identification (Name, Student ID, Email, Phone), assigned club department, task titles, status (<span className="text-foreground font-medium">Pending</span> vs. <span className="text-emerald-600 dark:text-emerald-400 font-medium">Submitted</span>), Google Drive / Docs solution links, GitHub links, submission dates, and interviewer evaluation comments.
-              </p>
+            <CardContent className="space-y-6">
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 h-10 gap-2 border-border"
+                  onClick={() => handleDownload("recruitment_tasks_submitted", "json")}
+                  disabled={loading === "recruitment_tasks_submitted-json"}
+                >
+                  <FileJson className="w-3.5 h-3.5" /> JSON
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 h-10 gap-2 border-border"
+                  onClick={() => handleDownload("recruitment_tasks_submitted", "csv")}
+                  disabled={loading === "recruitment_tasks_submitted-csv"}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5" /> CSV
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-10 px-3 gap-1.5 border-border"
+                  onClick={() => openTasksPreview("submitted")}
+                  title="View and inspect submitted tasks"
+                >
+                  <Eye className="w-3.5 h-3.5" /> View
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+          {/* Card 2: Pending Tasks */}
+          <Card className="border-border shadow-none bg-card overflow-hidden">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-serif">Tasks (Pending)</CardTitle>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  {statsData?.counts?.tasksPending ?? 0} Pending
+                </span>
+              </div>
+              <CardDescription className="text-xs uppercase tracking-tight font-mono text-muted-foreground/60">
+                recruitment_tasks_pending
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-wrap gap-2">
                 <Button 
                   variant="outline" 
-                  className="h-10 gap-2 border-border font-semibold text-xs hover:bg-muted"
-                  onClick={() => handleDownload("recruitment_tasks", "csv")}
-                  disabled={loading === "recruitment_tasks-csv"}
+                  size="sm" 
+                  className="flex-1 h-10 gap-2 border-border"
+                  onClick={() => handleDownload("recruitment_tasks_pending", "json")}
+                  disabled={loading === "recruitment_tasks_pending-json"}
                 >
-                  <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  {loading === "recruitment_tasks-csv" ? "Exporting CSV..." : "Download CSV (Excel)"}
+                  <FileJson className="w-3.5 h-3.5" /> JSON
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="h-10 gap-2 border-border font-semibold text-xs hover:bg-muted"
-                  onClick={() => handleDownload("recruitment_tasks", "json")}
-                  disabled={loading === "recruitment_tasks-json"}
+                  size="sm" 
+                  className="flex-1 h-10 gap-2 border-border"
+                  onClick={() => handleDownload("recruitment_tasks_pending", "csv")}
+                  disabled={loading === "recruitment_tasks_pending-csv"}
                 >
-                  <FileJson className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                  {loading === "recruitment_tasks-json" ? "Exporting JSON..." : "Download JSON"}
+                  <FileSpreadsheet className="w-3.5 h-3.5" /> CSV
                 </Button>
                 <Button 
-                  variant="default"
-                  className="h-10 gap-2 bg-foreground text-background font-semibold text-xs hover:bg-foreground/90"
-                  onClick={openTasksPreview}
+                  variant="outline" 
+                  size="sm" 
+                  className="h-10 px-3 gap-1.5 border-border"
+                  onClick={() => openTasksPreview("pending")}
+                  title="View and inspect pending tasks"
                 >
-                  <Eye className="w-4 h-4" /> View & Inspect Data
+                  <Eye className="w-3.5 h-3.5" /> View
                 </Button>
               </div>
             </CardContent>

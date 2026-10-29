@@ -6,6 +6,7 @@ import { isSuperUser } from "@/lib/permissions";
 import { decrypt } from "@/lib/crypto";
 import { auth as betterAuth } from "@/lib/auth";
 import { singleWelcomeMail } from "@/helpers/mailer";
+import { logActivity } from "@/helpers/activityLogger";
 import { NextResponse } from "next/server";
  
 export async function PATCH(
@@ -157,6 +158,30 @@ export async function PATCH(
  
       // Delete from pending requests upon successful signup creation
       await PendingMember.findByIdAndDelete(id);
+
+      await logActivity({
+        actor: {
+          id: currentUser.id,
+          name: currentUser.name,
+          email: currentUser.email,
+          designation: currentUser.designation,
+          department: currentUser.buccDepartment,
+        },
+        method: "PATCH",
+        category: "Members",
+        action: "MEMBER_APPROVED",
+        summary: `${currentUser.name} Approved ${name.trim()} Account Creation`,
+        targetId: normStudentId,
+        targetName: name.trim(),
+        details: {
+          newValue: {
+            email: normEmail,
+            buccDepartment,
+            designation,
+            memberStatus,
+          },
+        },
+      });
  
       return NextResponse.json({ message: "Member registration approved and account created successfully!" });
     }
@@ -206,6 +231,29 @@ export async function DELETE(
       return NextResponse.json({ message: "You do not have permission to delete or reject this request." }, { status: 403 });
     }
  
+    await logActivity({
+      actor: {
+        id: currentUser.id,
+        name: currentUser.name,
+        email: currentUser.email,
+        designation: currentUser.designation,
+        department: currentUser.buccDepartment,
+      },
+      method: "DELETE",
+      category: "Members",
+      action: "MEMBER_REJECTED",
+      summary: `${currentUser.name} Rejected ${pending.name} Registration Request`,
+      targetId: pending.studentId,
+      targetName: pending.name,
+      details: {
+        oldValue: {
+          email: pending.email,
+          buccDepartment: pending.buccDepartment,
+          designation: pending.designation,
+        },
+      },
+    });
+
     await PendingMember.findByIdAndDelete(id);
     return NextResponse.json({ message: "Member registration request rejected and deleted." });
   } catch (error: any) {
