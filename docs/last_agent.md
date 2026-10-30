@@ -404,3 +404,18 @@ This document outlines all features, security refactoring, database schemas, and
     *   `waiting_room_config` updates require `canManageWaitingRoomCoordinators` (GB, R&D EB, and HR EB).
     *   All other system configurations (`hero_carousel_config`, `recruitment_config`, `recruitment_default_tasks`, etc.) are strictly locked to `isSuperUser(user)`.
     *   Prevents unauthorized members from elevating their privileges to desk coordinators or tampering with default task presets.
+
+---
+
+## 21. Activity Log Evaluation Comment Parsing & Formatter ([utils.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/lib/utils.ts), [logs/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/logs/page.tsx)) (October 2026)
+*   **Resolution of `[object Object]` Comment Diff Display:**
+    *   **Root Cause:** Candidate assessment feedback notes in `/dashboard/recruitment/[evaluationID]` are created and saved via `BlockNoteEditor` as structured JSON block arrays (`[ { id, type: "paragraph", content: [ { type: "text", text: "..." } ] } ]`). When candidate evaluations were edited, `logEvaluationDiff` stored the raw BlockNote blocks in `log.details.oldValue` and `newValue`. In `/dashboard/logs`, the diff renderer executed `String(log.details.oldValue)` and `String(log.details.newValue)`, which in JavaScript stringifies an array of objects to `"[object Object],[object Object]..."`.
+    *   **Fix (`formatCommentText`):** Engineered a universal parser in `src/lib/utils.ts` that gracefully converts:
+        *   BlockNote block arrays (handling paragraphs, headings, bullet list items, checklists, and nested inline text/link content).
+        *   Stringified JSON block arrays.
+        *   Standard objects with `text`, `comment`, or `content` keys.
+        *   Plain text strings and empty states (`"(empty)"`).
+    *   **UI Diff & CSV Export Upgrades:**
+        *   Integrated `formatCommentText` into `/dashboard/logs/page.tsx`, displaying clean, human-readable previous and updated evaluation notes with scrollable whitespace-preserving paragraphs (`max-h-60 overflow-y-auto`).
+        *   Integrated `formatCommentText` into `api/logs/route.ts` (`formatLogsCSV`), replacing raw JSON dumps in Excel CSV exports with readable text.
+        *   Updated `logEvaluationDiff` in `activityLogger.ts` to compare formatted comment text, preventing false-positive audit logs if assessments are saved without altering comment text.

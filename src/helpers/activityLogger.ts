@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import ActivityLog from "@/model/ActivityLog";
+import { formatCommentText } from "@/lib/utils";
 
 export interface LogActivityParams {
   actor: {
@@ -107,14 +108,10 @@ export async function logEvaluationDiff({
   }
 
   // 2. Comment Overwrites / Updates (Preserves previous comment in oldValue)
-  const oldCommentStr = typeof existing.comment === "string" 
-    ? existing.comment 
-    : JSON.stringify(existing.comment || "");
-  const newCommentStr = typeof incoming.comment === "string" 
-    ? incoming.comment 
-    : JSON.stringify(incoming.comment || "");
+  const oldCommentFormatted = formatCommentText(existing.comment);
+  const newCommentFormatted = formatCommentText(incoming.comment);
 
-  if (incoming.comment !== undefined && oldCommentStr.trim() !== newCommentStr.trim()) {
+  if (incoming.comment !== undefined && oldCommentFormatted !== newCommentFormatted) {
     await logActivity({
       actor,
       method: "PATCH",

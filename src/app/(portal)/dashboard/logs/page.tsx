@@ -20,7 +20,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, formatCommentText } from "@/lib/utils";
 import { 
   History, 
   Search, 
@@ -537,16 +537,16 @@ export default function ActivityLogsPage() {
                             <span className="font-semibold text-rose-700 dark:text-rose-400 block">
                               Previous Comment:
                             </span>
-                            <p className="text-muted-foreground italic whitespace-pre-wrap">
-                              {log.details?.oldValue ? String(log.details.oldValue) : "(empty)"}
+                            <p className="text-muted-foreground italic whitespace-pre-wrap max-h-60 overflow-y-auto leading-relaxed">
+                              {formatCommentText(log.details?.oldValue)}
                             </p>
                           </div>
                           <div className="bg-emerald-500/5 border border-emerald-500/20 p-2.5 rounded-md space-y-1">
                             <span className="font-semibold text-emerald-700 dark:text-emerald-400 block">
                               Updated Comment:
                             </span>
-                            <p className="text-foreground whitespace-pre-wrap">
-                              {log.details?.newValue ? String(log.details.newValue) : "(empty)"}
+                            <p className="text-foreground whitespace-pre-wrap max-h-60 overflow-y-auto leading-relaxed">
+                              {formatCommentText(log.details?.newValue)}
                             </p>
                           </div>
                         </div>
