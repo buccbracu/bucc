@@ -3,6 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import ActivityLog from "@/model/ActivityLog";
 import { canAccessTaskSubmissions, isSuperUser } from "@/lib/permissions";
 import { logActivity } from "@/helpers/activityLogger";
+import { formatCommentText } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 function formatLogsCSV(logs: any[]): string {
@@ -25,7 +26,11 @@ function formatLogsCSV(logs: any[]): string {
 
   for (const log of logs) {
     let detailsStr = "";
-    if (log.details && typeof log.details === "object") {
+    if (log.action === "RECRUITMENT_COMMENT_UPDATE" && log.details) {
+      const oldClean = formatCommentText(log.details.oldValue);
+      const newClean = formatCommentText(log.details.newValue);
+      detailsStr = `Previous Comment: ${oldClean} | Updated Comment: ${newClean}`;
+    } else if (log.details && typeof log.details === "object") {
       detailsStr = JSON.stringify(log.details);
     }
 
@@ -109,7 +114,8 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      const searchRegex = new RegExp(search, "i");
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const searchRegex = new RegExp(escapedSearch, "i");
       query.$or = [
         { summary: searchRegex },
         { "actor.name": searchRegex },
