@@ -56,6 +56,7 @@ export default function EvaluationsPage() {
     search: "",
     status: "",
     department: "",
+    firstChoice: "",
     secondChoice: "",
   });
 
@@ -114,18 +115,16 @@ export default function EvaluationsPage() {
         item.studentId?.toString().toLowerCase().includes(searchStr);
       
       const matchesStatus = !filters.status || item.status === filters.status;
+      
+      const matchesAssignedDept = !filters.department || item.buccDepartment === filters.department;
+
       const firstChoice = getFirstChoice(item);
-      const matchesDept = 
-        !filters.department || 
-        item.buccDepartment === filters.department || 
-        firstChoice === filters.department;
+      const matchesFirstChoice = !filters.firstChoice || firstChoice === filters.firstChoice;
 
       const secondChoice = getSecondChoice(item);
-      const matchesSecondChoice = 
-        !filters.secondChoice || 
-        secondChoice === filters.secondChoice;
+      const matchesSecondChoice = !filters.secondChoice || secondChoice === filters.secondChoice;
 
-      return matchesSearch && matchesStatus && matchesDept && matchesSecondChoice;
+      return matchesSearch && matchesStatus && matchesAssignedDept && matchesFirstChoice && matchesSecondChoice;
     });
   }, [evaluations, filters]);
 
@@ -165,28 +164,58 @@ export default function EvaluationsPage() {
       },
     },
     { 
-      header: "1st Choice / Dept", 
+      header: "Assigned Dept", 
       accessorKey: "buccDepartment",
       cell: ({ getValue, row }: { getValue: () => string; row: any }) => {
         const dept = getValue();
         const firstChoice = getFirstChoice(row);
-        const isReassigned = dept && firstChoice && dept !== firstChoice;
+        const secondChoice = getSecondChoice(row);
 
-        if (!dept && !firstChoice) {
+        if (!dept) {
           return <span className="text-muted-foreground italic text-xs">Not Assigned</span>;
         }
 
+        const isMatchFirst = dept === firstChoice;
+        const isMatchSecond = dept === secondChoice && !isMatchFirst;
+        const isReassigned = !isMatchFirst && !isMatchSecond;
+
         return (
           <div className="flex flex-col gap-0.5">
-            <span className="font-semibold text-xs bg-muted border border-border px-2 py-0.5 rounded text-foreground w-fit">
-              {dept || firstChoice}
+            <span className={`font-semibold text-xs px-2 py-0.5 rounded border w-fit ${
+              isMatchSecond
+                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
+                : isReassigned
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                : "bg-muted border-border text-foreground"
+            }`}>
+              {dept}
             </span>
+            {isMatchSecond && (
+              <span className="text-[10px] text-indigo-500 font-mono">
+                2nd Choice
+              </span>
+            )}
             {isReassigned && (
-              <span className="text-[10px] text-muted-foreground font-mono">
-                1st: {firstChoice}
+              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-mono">
+                Reassigned
               </span>
             )}
           </div>
+        );
+      }
+    },
+    { 
+      header: "1st Choice", 
+      accessorKey: "firstChoice",
+      cell: ({ row }: { row: any }) => {
+        const firstChoice = getFirstChoice(row);
+        if (!firstChoice) {
+          return <span className="text-muted-foreground italic text-xs">None</span>;
+        }
+        return (
+          <span className="font-medium text-xs bg-muted/60 border border-border/80 px-2 py-0.5 rounded text-foreground">
+            {firstChoice}
+          </span>
         );
       }
     },
@@ -199,7 +228,7 @@ export default function EvaluationsPage() {
           return <span className="text-muted-foreground italic text-xs">{choice || "None"}</span>;
         }
         return (
-          <span className="font-medium text-xs bg-muted/60 border border-border/80 px-2 py-0.5 rounded text-muted-foreground">
+          <span className="font-medium text-xs bg-muted/40 border border-border/60 px-2 py-0.5 rounded text-muted-foreground">
             {choice}
           </span>
         );
@@ -234,6 +263,12 @@ export default function EvaluationsPage() {
     {
       type: "select",
       name: "department",
+      placeholder: "All Assigned Depts",
+      options: departmentsInfo.map(d => d.name),
+    },
+    {
+      type: "select",
+      name: "firstChoice",
       placeholder: "All 1st Choice Depts",
       options: departmentsInfo.map(d => d.name),
     },
@@ -271,26 +306,22 @@ export default function EvaluationsPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Stats Sidebar */}
-        <aside className="lg:col-span-1">
-          <EvaluationStats evaluationsStats={stats} />
-        </aside>
+      {/* Stats Section on Top */}
+      <EvaluationStats evaluationsStats={stats} />
 
-        {/* Table & Filters */}
-        <main className="lg:col-span-3 space-y-6">
-          <FilterComponent
-            filters={filterOptions}
-            onFilterChange={(f) => setFilters(prev => ({ ...prev, ...f }))}
-            onResetFilters={() => setFilters({ search: "", status: "", department: "", secondChoice: "" })}
-          />
-          
-          <TableComponent
-            data={filteredEvaluations}
-            columns={columns}
-            onRowClick={(row) => router.push(`/dashboard/recruitment/${row._id}`)}
-          />
-        </main>
+      {/* Table & Filters */}
+      <div className="space-y-6">
+        <FilterComponent
+          filters={filterOptions}
+          onFilterChange={(f) => setFilters(prev => ({ ...prev, ...f }))}
+          onResetFilters={() => setFilters({ search: "", status: "", department: "", firstChoice: "", secondChoice: "" })}
+        />
+        
+        <TableComponent
+          data={filteredEvaluations}
+          columns={columns}
+          onRowClick={(row) => router.push(`/dashboard/recruitment/${row._id}`)}
+        />
       </div>
     </div>
   );

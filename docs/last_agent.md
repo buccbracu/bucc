@@ -433,3 +433,33 @@ This document outlines all features, security refactoring, database schemas, and
     *   Updated the `"Department"` column to `"1st Choice / Dept"`: displays the assigned department and, if the candidate was reassigned during interviews (`dept !== firstChoice`), clearly denotes `1st: <department>` in a monospace secondary tag.
 *   **Responsive Filter Layout:**
     *   Added `md:flex-wrap` to `FilterComponent.tsx` so that multiple filters (search input + 3 dropdowns + reset button) cleanly wrap on medium screens and narrow viewports without overflowing or clipping.
+
+---
+
+## 23. Top-of-Table Evaluation Statistics & Responsive Grid ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/evaluation/page.tsx), [recruitment/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/page.tsx), [EvaluationStats.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/EvaluationStats.tsx)) (October 2026)
+*   **Full-Width Layout Re-engineering:**
+    *   **Context:** `EvaluationStats` was originally positioned in a 1-column left sidebar (`lg:col-span-1`), squeezing the candidate table and filters into `lg:col-span-3` (only ~75% width).
+    *   **Placement:** Moved `EvaluationStats` to the top of the evaluation workspace, sitting directly beneath the page heading and above the filter bar and table.
+    *   **Horizontal Metrics Grid:** Reconfigured the 4 status cards (`Submitted`, `Accepted`, `Pending`, `Rejected`) from a vertical stack to a responsive 4-column horizontal grid (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`), displaying total counts, percentage shares, and icons.
+    *   **Interactive Department Breakdown Panel:** Displayed the department distribution for the active status in a balanced 4-column grid (`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3`), showing all 8 departments across 2 clean rows without vertical scrolling. Added an interactive collapse toggle (`Hide Breakdown` / `Show Breakdown` with chevron icons) to allow reviewers to collapse the breakdown and maximize screen real estate for the table.
+    *   **Table Width Maximization:** The candidate table now enjoys 100% viewport width, eliminating cramped columns and horizontal table clipping.
+
+---
+
+## 24. Three-Column Department Separation & Interviewer Quick-Reference Tags ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/evaluation/page.tsx), [recruitment/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/page.tsx), [evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)) (October 2026)
+*   **Three Dedicated Department Columns:**
+    *   **Context:** Applicants can have different 1st choices (`question8`), 2nd choices (`question32`), and assigned departments (`buccDepartment`). Combining them into a single column created confusion when a candidate was accepted into their 2nd choice or cross-assigned to a 3rd department.
+    *   **Table Columns:**
+        *   **`Assigned Dept`:** Shows the candidate's active assigned department with smart contextual tags:
+            *   *Standard:* Clean neutral badge when assigned matches 1st choice.
+            *   *2nd Choice:* Indigo badge with `2nd Choice` tag when assigned to secondary preference.
+            *   *Reassigned:* Amber badge with `Reassigned` tag when assigned to a 3rd department.
+        *   **`1st Choice`:** Shows the candidate's original 1st preference (`question8`).
+        *   **`2nd Choice`:** Shows the candidate's 2nd preference (`question32` or `None`/`Skip`).
+*   **Interviewer Preferences Quick-Reference Tags ([evaluation-assessment.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/[evaluationID]/evaluation-assessment.tsx)):**
+    *   Positioned a dedicated quick-reference tag bar directly above the *Assign Department* selector:
+        `Preferences: 1st: <Dept> • 2nd: <Dept>`
+    *   Includes an inline status chip indicating if the candidate currently matches their 2nd choice or was reassigned.
+    *   Interactive: Evaluators can click either the 1st or 2nd choice tag to auto-populate the assignment dropdown with a single click.
+*   **Targeted Department Filters:**
+    *   Separated department filters into `All Assigned Depts`, `All 1st Choice Depts`, and `All 2nd Choice Depts` for precise queries.
