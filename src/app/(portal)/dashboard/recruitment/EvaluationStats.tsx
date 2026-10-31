@@ -14,14 +14,16 @@ import {
   Clock, 
   AlertOctagon,
   Layers,
-  ArrowUpRight
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 export default function EvaluationStats({ evaluationsStats }: any) {
   const [selectedStatus, setSelectedStatus] = useState<string>("Submitted");
+  const [isBreakdownOpen, setIsBreakdownOpen] = useState<boolean>(true);
 
   const calculateTotal = (status: string) => {
-    if (!evaluationsStats[status]) return 0;
+    if (!evaluationsStats?.[status]) return 0;
     return Object.values(evaluationsStats[status]).reduce((acc: number, curr: any) => acc + (curr || 0), 0);
   };
 
@@ -78,7 +80,7 @@ export default function EvaluationStats({ evaluationsStats }: any) {
   const grandTotal = calculateGrandTotal();
 
   // Extract department details for the selected status
-  const deptData = evaluationsStats[selectedStatus] 
+  const deptData = evaluationsStats?.[selectedStatus] 
     ? Object.entries(evaluationsStats[selectedStatus]).map(([dept, count]: [string, any]) => ({
         name: dept,
         count: count ?? 0,
@@ -87,9 +89,9 @@ export default function EvaluationStats({ evaluationsStats }: any) {
     : [];
 
   return (
-    <div className="space-y-6">
-      {/* Metric Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
+    <div className="space-y-4">
+      {/* Metric Cards Grid - 4 Columns horizontally on desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statuses.map((status) => {
           const total = calculateTotal(status);
           const style = getStatusColor(status);
@@ -98,7 +100,11 @@ export default function EvaluationStats({ evaluationsStats }: any) {
           return (
             <button
               key={status}
-              onClick={() => setSelectedStatus(status)}
+              type="button"
+              onClick={() => {
+                setSelectedStatus(status);
+                setIsBreakdownOpen(true);
+              }}
               className={`w-full text-left rounded-xl border p-4 transition-all duration-300 ${style.bg} ${style.border} ${style.glow} ${
                 isSelected 
                   ? "ring-2 ring-primary border-transparent scale-[1.01]" 
@@ -139,59 +145,70 @@ export default function EvaluationStats({ evaluationsStats }: any) {
 
       {/* Dynamic Breakdown Panel */}
       <Card className="border-border shadow-none bg-card/50 backdrop-blur-sm overflow-hidden rounded-xl">
-        <CardHeader className="pb-3 border-b border-border/40 bg-muted/10">
+        <CardHeader className="py-3 px-4 border-b border-border/40 bg-muted/10">
           <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <CardTitle className="text-sm font-bold flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-primary" /> Breakdown
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-primary" />
+              <CardTitle className="text-sm font-bold">
+                Department Breakdown
               </CardTitle>
-              <CardDescription className="text-[10px] uppercase font-mono tracking-tight">
-                {selectedStatus} Applicants
-              </CardDescription>
+              <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
+                {selectedStatus}: {currentTotal}
+              </span>
             </div>
-            <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
-              Total: {currentTotal}
-            </span>
+            <button
+              type="button"
+              onClick={() => setIsBreakdownOpen(!isBreakdownOpen)}
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium transition-colors px-2 py-1 rounded hover:bg-muted"
+            >
+              <span>{isBreakdownOpen ? "Hide Breakdown" : "Show Breakdown"}</span>
+              {isBreakdownOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
           </div>
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
-          {currentTotal === 0 ? (
-            <p className="text-xs text-muted-foreground italic text-center py-6">
-              No candidates in this status group.
-            </p>
-          ) : (
-            <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
-              {deptData.map((dept) => (
-                <div key={dept.name} className="space-y-1.5 group">
-                  <div className="flex justify-between items-center text-xs font-sans">
-                    <span className="text-muted-foreground group-hover:text-foreground transition-colors font-medium">
-                      {dept.name}
-                    </span>
-                    <span className="font-mono text-foreground font-semibold flex items-center gap-1">
-                      {dept.count} 
-                      <span className="text-[9px] font-normal text-muted-foreground font-sans">
-                        ({dept.percentage}%)
+        {isBreakdownOpen && (
+          <CardContent className="p-4">
+            {currentTotal === 0 ? (
+              <p className="text-xs text-muted-foreground italic text-center py-4">
+                No candidates in {selectedStatus} status.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {deptData.map((dept) => (
+                  <div 
+                    key={dept.name} 
+                    className="p-3 rounded-lg border border-border/60 bg-background/50 hover:border-border transition-colors space-y-2 group"
+                  >
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-muted-foreground group-hover:text-foreground transition-colors font-medium truncate pr-2" title={dept.name}>
+                        {dept.name}
                       </span>
-                    </span>
+                      <span className="font-mono text-foreground font-semibold shrink-0">
+                        {dept.count} 
+                        <span className="text-[10px] font-normal text-muted-foreground ml-1">
+                          ({dept.percentage}%)
+                        </span>
+                      </span>
+                    </div>
+                    
+                    {/* Sleek Gradient progress bar */}
+                    <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${
+                          selectedStatus === "Accepted" ? "from-emerald-600 to-emerald-400" :
+                          selectedStatus === "Pending" ? "from-amber-600 to-amber-400" :
+                          selectedStatus === "Rejected" ? "from-rose-600 to-rose-400" :
+                          "from-indigo-600 to-indigo-400"
+                        }`}
+                        style={{ width: `${dept.percentage}%` }}
+                      />
+                    </div>
                   </div>
-                  
-                  {/* Sleek Gradient progress bar */}
-                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${
-                        selectedStatus === "Accepted" ? "from-emerald-600 to-emerald-400" :
-                        selectedStatus === "Pending" ? "from-amber-600 to-amber-400" :
-                        selectedStatus === "Rejected" ? "from-rose-600 to-rose-400" :
-                        "from-indigo-600 to-indigo-400"
-                      }`}
-                      style={{ width: `${dept.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        )}
       </Card>
     </div>
   );

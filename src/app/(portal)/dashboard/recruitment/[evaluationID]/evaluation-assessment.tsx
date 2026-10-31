@@ -49,10 +49,35 @@ const EB_OPTIONS: Option[] = EBs.map((eb: any) => ({
   value: eb.fullName,
 }));
 
+const getEvaluationResponseObject = (data: any) => {
+  if (!data?.responseObject) return {};
+  if (typeof data.responseObject === "string") {
+    try {
+      return JSON.parse(data.responseObject);
+    } catch {
+      return {};
+    }
+  }
+  return data.responseObject;
+};
+
+const getFirstChoice = (data: any): string => {
+  const resp = getEvaluationResponseObject(data);
+  return resp?.question8 || resp?.["Preferred Department (1st)"] || data?.buccDepartment || "";
+};
+
+const getSecondChoice = (data: any): string => {
+  const resp = getEvaluationResponseObject(data);
+  return resp?.question32 || resp?.["Preferred Department (2nd)"] || "";
+};
+
 export default function EvaluationAssessment({ evaluationData }: any) {
   const { data: session } = useSession();
   const params = useParams();
   const evaluationID = params.evaluationID;
+
+  const firstChoice = getFirstChoice(evaluationData);
+  const secondChoice = getSecondChoice(evaluationData);
 
   const [loading, setLoading] = useState(false);
   const [department, setDepartment] = useState(evaluationData.buccDepartment || "");
@@ -274,6 +299,50 @@ export default function EvaluationAssessment({ evaluationData }: any) {
                 <SelectItem value="Rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Candidate Department Preferences Quick Reference */}
+          <div className="rounded-lg bg-muted/40 border border-border/70 p-2.5 space-y-1.5">
+            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <span>Preferences</span>
+              {department && department !== firstChoice && (
+                <span className="text-amber-600 dark:text-amber-400 font-mono text-[9px] lowercase font-normal">
+                  {department === secondChoice ? "matches 2nd choice" : "reassigned"}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 text-xs font-sans">
+              <button
+                type="button"
+                onClick={() => firstChoice && setDepartment(firstChoice)}
+                title="Click to assign to 1st choice"
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border transition-colors ${
+                  department === firstChoice
+                    ? "bg-primary/10 border-primary/30 text-primary font-semibold"
+                    : "bg-background border-border text-foreground hover:bg-muted cursor-pointer"
+                }`}
+              >
+                <span className="text-muted-foreground font-mono text-[10px]">1st:</span>
+                <span>{firstChoice || "None"}</span>
+              </button>
+              
+              <span className="text-muted-foreground/40">•</span>
+
+              <button
+                type="button"
+                onClick={() => secondChoice && secondChoice !== "Skip" && setDepartment(secondChoice)}
+                disabled={!secondChoice || secondChoice === "Skip"}
+                title={secondChoice && secondChoice !== "Skip" ? "Click to assign to 2nd choice" : "No 2nd choice"}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border transition-colors ${
+                  department === secondChoice
+                    ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "bg-background border-border text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                }`}
+              >
+                <span className="text-muted-foreground font-mono text-[10px]">2nd:</span>
+                <span>{secondChoice || "None"}</span>
+              </button>
+            </div>
           </div>
 
           <div className="space-y-1.5">
