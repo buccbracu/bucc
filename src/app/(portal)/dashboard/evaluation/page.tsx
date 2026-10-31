@@ -27,6 +27,28 @@ const permittedDesignations = [
   "Assistant Director",
 ];
 
+const getEvaluationResponseObject = (item: any) => {
+  if (!item?.responseObject) return {};
+  if (typeof item.responseObject === "string") {
+    try {
+      return JSON.parse(item.responseObject);
+    } catch {
+      return {};
+    }
+  }
+  return item.responseObject;
+};
+
+const getFirstChoice = (item: any): string => {
+  const resp = getEvaluationResponseObject(item);
+  return resp?.question8 || resp?.["Preferred Department (1st)"] || item?.buccDepartment || "";
+};
+
+const getSecondChoice = (item: any): string => {
+  const resp = getEvaluationResponseObject(item);
+  return resp?.question32 || resp?.["Preferred Department (2nd)"] || "";
+};
+
 export default function EvaluationsPage() {
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
@@ -34,6 +56,7 @@ export default function EvaluationsPage() {
     search: "",
     status: "",
     department: "",
+    secondChoice: "",
   });
 
   const { data: evaluations, isLoading, isError } = useQuery({
@@ -87,13 +110,22 @@ export default function EvaluationsPage() {
       const searchStr = filters.search.toLowerCase();
       const matchesSearch = 
         !filters.search || 
-        item.name.toLowerCase().includes(searchStr) || 
-        item.studentId.toString().toLowerCase().includes(searchStr);
+        item.name?.toLowerCase().includes(searchStr) || 
+        item.studentId?.toString().toLowerCase().includes(searchStr);
       
       const matchesStatus = !filters.status || item.status === filters.status;
-      const matchesDept = !filters.department || item.buccDepartment === filters.department;
+      const firstChoice = getFirstChoice(item);
+      const matchesDept = 
+        !filters.department || 
+        item.buccDepartment === filters.department || 
+        firstChoice === filters.department;
 
-      return matchesSearch && matchesStatus && matchesDept;
+      const secondChoice = getSecondChoice(item);
+      const matchesSecondChoice = 
+        !filters.secondChoice || 
+        secondChoice === filters.secondChoice;
+
+      return matchesSearch && matchesStatus && matchesDept && matchesSecondChoice;
     });
   }, [evaluations, filters]);
 
@@ -133,14 +165,42 @@ export default function EvaluationsPage() {
       },
     },
     { 
-      header: "Department", 
+      header: "1st Choice / Dept", 
       accessorKey: "buccDepartment",
-      cell: ({ getValue }: { getValue: () => string }) => {
+      cell: ({ getValue, row }: { getValue: () => string; row: any }) => {
         const dept = getValue();
-        if (!dept) return <span className="text-muted-foreground italic text-xs">Not Assigned</span>;
+        const firstChoice = getFirstChoice(row);
+        const isReassigned = dept && firstChoice && dept !== firstChoice;
+
+        if (!dept && !firstChoice) {
+          return <span className="text-muted-foreground italic text-xs">Not Assigned</span>;
+        }
+
         return (
-          <span className="font-semibold text-xs bg-muted border border-border px-2.5 py-0.5 rounded text-foreground">
-            {dept}
+          <div className="flex flex-col gap-0.5">
+            <span className="font-semibold text-xs bg-muted border border-border px-2 py-0.5 rounded text-foreground w-fit">
+              {dept || firstChoice}
+            </span>
+            {isReassigned && (
+              <span className="text-[10px] text-muted-foreground font-mono">
+                1st: {firstChoice}
+              </span>
+            )}
+          </div>
+        );
+      }
+    },
+    { 
+      header: "2nd Choice", 
+      accessorKey: "secondChoice",
+      cell: ({ row }: { row: any }) => {
+        const choice = getSecondChoice(row);
+        if (!choice || choice === "Skip") {
+          return <span className="text-muted-foreground italic text-xs">{choice || "None"}</span>;
+        }
+        return (
+          <span className="font-medium text-xs bg-muted/60 border border-border/80 px-2 py-0.5 rounded text-muted-foreground">
+            {choice}
           </span>
         );
       }
@@ -151,7 +211,7 @@ export default function EvaluationsPage() {
       cell: ({ getValue }: { getValue: () => string }) => {
         const val = getValue();
         return (
-          <span className="text-xs text-muted-foreground font-medium">
+          <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
             {val ? new Date(val).toLocaleDateString("en-US", { dateStyle: "medium" }) : "N/A"}
           </span>
         );
@@ -174,8 +234,14 @@ export default function EvaluationsPage() {
     {
       type: "select",
       name: "department",
-      placeholder: "All Departments",
+      placeholder: "All 1st Choice Depts",
       options: departmentsInfo.map(d => d.name),
+    },
+    {
+      type: "select",
+      name: "secondChoice",
+      placeholder: "All 2nd Choice Depts",
+      options: [...departmentsInfo.map(d => d.name), "Skip"],
     },
   ];
 
@@ -216,7 +282,7 @@ export default function EvaluationsPage() {
           <FilterComponent
             filters={filterOptions}
             onFilterChange={(f) => setFilters(prev => ({ ...prev, ...f }))}
-            onResetFilters={() => setFilters({ search: "", status: "", department: "" })}
+            onResetFilters={() => setFilters({ search: "", status: "", department: "", secondChoice: "" })}
           />
           
           <TableComponent
