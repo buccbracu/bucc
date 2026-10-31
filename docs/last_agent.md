@@ -419,3 +419,17 @@ This document outlines all features, security refactoring, database schemas, and
         *   Integrated `formatCommentText` into `/dashboard/logs/page.tsx`, displaying clean, human-readable previous and updated evaluation notes with scrollable whitespace-preserving paragraphs (`max-h-60 overflow-y-auto`).
         *   Integrated `formatCommentText` into `api/logs/route.ts` (`formatLogsCSV`), replacing raw JSON dumps in Excel CSV exports with readable text.
         *   Updated `logEvaluationDiff` in `activityLogger.ts` to compare formatted comment text, preventing false-positive audit logs if assessments are saved without altering comment text.
+
+---
+
+## 22. Candidate Second Choice Department Filter & Table Integration ([evaluation/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/evaluation/page.tsx), [recruitment/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/page.tsx), [FilterComponent.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/components/table/FilterComponent.tsx)) (October 2026)
+*   **Second Choice Department Filtering:**
+    *   **Context:** Evaluators and department leadership could previously only filter applicants by their 1st choice / assigned department (`buccDepartment`). They had no way to find candidates who listed their department as their second choice (`question32` in `responseObject`).
+    *   **Safe Extraction Helpers:** Added `getEvaluationResponseObject`, `getFirstChoice`, and `getSecondChoice` in both `dashboard/evaluation/page.tsx` and `dashboard/recruitment/page.tsx`. These safely unpack `responseObject` whether persisted as a JSON string or an object, reading `question32` or `Preferred Department (2nd)`.
+    *   **Filter Options & Reset:** Added `"secondChoice"` to the `filters` state (with `"search"`, `"status"`, `"department"`). The filter dropdown offers all 7 BUCC departments plus `"Skip"`. Reset button clears both department filters cleanly.
+    *   **Multi-Choice Combining:** Reviewers can filter purely by 2nd choice department (e.g. Creative director viewing all candidates who picked Creative as 2nd choice) or combine it with 1st choice department, status, and search keywords.
+*   **Table Column Visual Integration:**
+    *   Added a dedicated `"2nd Choice"` column displaying the candidate's chosen second department in a subtle rounded badge (`bg-muted/60 border border-border/80 px-2 py-0.5 rounded text-muted-foreground text-xs`) or `"None"` / `"Skip"` when omitted.
+    *   Updated the `"Department"` column to `"1st Choice / Dept"`: displays the assigned department and, if the candidate was reassigned during interviews (`dept !== firstChoice`), clearly denotes `1st: <department>` in a monospace secondary tag.
+*   **Responsive Filter Layout:**
+    *   Added `md:flex-wrap` to `FilterComponent.tsx` so that multiple filters (search input + 3 dropdowns + reset button) cleanly wrap on medium screens and narrow viewports without overflowing or clipping.

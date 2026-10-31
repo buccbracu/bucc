@@ -20,7 +20,7 @@ export default function FilterComponent({
     <form
       onSubmit={(e) => e.preventDefault()}
       onReset={onResetFilters}
-      className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-card p-4 md:flex-row md:items-center"
+      className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-card p-4 md:flex-row md:flex-wrap md:items-center"
     >
       {filters.map((filter) =>
         filter.type === "select" ? (
