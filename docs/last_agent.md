@@ -463,3 +463,12 @@ This document outlines all features, security refactoring, database schemas, and
     *   Interactive: Evaluators can click either the 1st or 2nd choice tag to auto-populate the assignment dropdown with a single click.
 *   **Targeted Department Filters:**
     *   Separated department filters into `All Assigned Depts`, `All 1st Choice Depts`, and `All 2nd Choice Depts` for precise queries.
+
+---
+
+## 25. Collapsed-by-Default Evaluation Statistics Header ([EvaluationStats.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/recruitment/EvaluationStats.tsx)) (October 2026)
+*   **Collapsed-by-Default Presentation:**
+    *   **Context:** While positioning statistics above the evaluations table provided full-width viewing, the 4 metric cards and department breakdown initially occupied vertical screen height above the table.
+    *   **Implementation:** Configured `EvaluationStats.tsx` with `isExpanded = false` by default (`defaultExpanded={false}`).
+    *   **Compact Bar Experience:** When collapsed, it renders a sleek, single-row card (`~48px` height) with an analytics icon, `"Recruitment Statistics"`, grand total badge, and inline mini-counters for `Submitted`, `Accepted`, `Pending`, and `Rejected`, alongside an interactive `"Show Stats"` trigger.
+    *   **One-Click Expansion:** Clicking anywhere on the header bar smoothly expands the full analytics suite—revealing the 4 interactive status cards and the 4-column department distribution grid. Reviewers can collapse it back anytime with `"Hide Stats"`.
