@@ -404,7 +404,7 @@ export default function BroadcastPage() {
                   </div>
 
                   {/* Senior Executive Access Toggle */}
-                  {(isGB || isRDHead) && (
+                  {(isGB || isRDHead || isHRHead) && (
                     <div className="space-y-4 pt-4 border-t border-border/50">
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">

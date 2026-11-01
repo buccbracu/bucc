@@ -14,23 +14,28 @@ export const isAlumniMember = (user: UserRole) => {
 
 export const isGoverningBody = (user: UserRole) => {
   if (isAlumniMember(user)) return false;
-  const gbDesignations = ["President", "Vice President", "General Secretary", "Treasurer"];
-  return gbDesignations.includes(user.designation);
+  const gbDesignations = ["President", "Vice President", "Vice-President", "General Secretary", "Treasurer"];
+  const desig = (user.designation || "").toLowerCase();
+  return gbDesignations.some(d => d.toLowerCase() === desig);
 };
 
 export const isRDAdmin = (user: UserRole) => {
   if (isAlumniMember(user)) return false;
+  const dept = (user.buccDepartment || (user as any).department || "").toLowerCase();
+  const desig = (user.designation || "").toLowerCase();
   return (
-    user.buccDepartment === "Research and Development" &&
-    ["Director", "Assistant Director"].includes(user.designation)
+    dept === "research and development" &&
+    ["director", "assistant director"].includes(desig)
   );
 };
 
 export const isHRAdmin = (user: UserRole) => {
   if (isAlumniMember(user)) return false;
+  const dept = (user.buccDepartment || (user as any).department || "").toLowerCase();
+  const desig = (user.designation || "").toLowerCase();
   return (
-    user.buccDepartment === "Human Resources" &&
-    ["Director", "Assistant Director"].includes(user.designation)
+    dept === "human resources" &&
+    ["director", "assistant director"].includes(desig)
   );
 };
 
@@ -75,6 +80,11 @@ export const canManageWaitingRoomCoordinators = (user: UserRole) => {
 };
 
 export const canAccessTaskSubmissions = (user: UserRole) => {
+  if (isAlumniMember(user)) return false;
+  return isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user);
+};
+
+export const canManageRecruitmentConfig = (user: UserRole) => {
   if (isAlumniMember(user)) return false;
   return isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user);
 };
