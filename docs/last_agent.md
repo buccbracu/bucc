@@ -472,3 +472,15 @@ This document outlines all features, security refactoring, database schemas, and
     *   **Implementation:** Configured `EvaluationStats.tsx` with `isExpanded = false` by default (`defaultExpanded={false}`).
     *   **Compact Bar Experience:** When collapsed, it renders a sleek, single-row card (`~48px` height) with an analytics icon, `"Recruitment Statistics"`, grand total badge, and inline mini-counters for `Submitted`, `Accepted`, `Pending`, and `Rejected`, alongside an interactive `"Show Stats"` trigger.
     *   **One-Click Expansion:** Clicking anywhere on the header bar smoothly expands the full analytics suite—revealing the 4 interactive status cards and the 4-column department distribution grid. Reviewers can collapse it back anytime with `"Hide Stats"`.
+
+---
+
+## 26. HR Leadership Recruitment Config & Senior Executive Access Permission Fix ([broadcast/page.tsx](file:///C:/Users/hha/Desktop/repo/bucc/src/app/(portal)/dashboard/broadcast/page.tsx), [api/config/route.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/app/api/config/route.ts), [permissions.ts](file:///C:/Users/hha/Desktop/repo/bucc/src/lib/permissions.ts)) (November 2026)
+*   **Root Cause Diagnosis:**
+    *   **Frontend Guard Gap:** In `/dashboard/broadcast`, although the parent *Intake Gatekeeper* card was visible to `canManageLifecycle` (`isGB || isHRHead || isRDHead`), the inner *Senior Executive Access* toggle had an overly restrictive check `{(isGB || isRDHead) && (`. Because `isHRHead` was omitted, the toggle was hidden from HR Director and Assistant Director.
+    *   **Backend Guard Gap:** In `POST /api/config`, all configuration keys other than `waiting_room_config` were restricted to `isSuperUser(user)` (`isGoverningBody || isRDAdmin`). When HR leadership saved `recruitment_config`, the backend responded with a `403 Forbidden` error.
+*   **Fix Implementation:**
+    *   **Frontend:** Updated line 407 in `src/app/(portal)/dashboard/broadcast/page.tsx` to `{(isGB || isRDHead || isHRHead) && (` so that HR Directors and Assistant Directors can see and toggle Senior Executive Access.
+    *   **Backend Permissions:** Added `canManageRecruitmentConfig(user)` in `src/lib/permissions.ts` (`isGoverningBody(user) || isRDAdmin(user) || isHRAdmin(user)`). Made designation and department comparisons case-insensitive.
+    *   **API Route:** Updated `src/app/api/config/route.ts` to allow `canManageRecruitmentConfig` for `key === "recruitment_config"`.
+    *   **Audit Logging:** Connected `logActivity` in `POST /api/config` to log changes to `recruitment_config` and `waiting_room_config` in `ActivityLog`.

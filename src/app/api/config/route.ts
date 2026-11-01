@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { getConfigValue, setConfigValue } from "@/helpers/appConfigStore";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { isSuperUser, isAlumniMember, canManageWaitingRoomCoordinators } from "@/lib/permissions";
+import { isSuperUser, isAlumniMember, canManageWaitingRoomCoordinators, canManageRecruitmentConfig } from "@/lib/permissions";
+import { logActivity } from "@/helpers/activityLogger";
 
 export const runtime = "nodejs";
 
@@ -74,6 +75,13 @@ export async function POST(request: Request) {
           { status: 403 }
         );
       }
+    } else if (key === "recruitment_config") {
+      if (!canManageRecruitmentConfig(user)) {
+        return NextResponse.json(
+          { error: "Forbidden: Only Governing Body, R&D EB, and HR EB can update recruitment configuration." },
+          { status: 403 }
+        );
+      }
     } else {
       // All other configuration keys are strictly restricted to Superusers (GB + R&D Admin)
       if (!isSuperUser(user)) {
@@ -86,6 +94,26 @@ export async function POST(request: Request) {
 
     // 3. Update the configuration
     await setConfigValue(key, value);
+
+    // 4. Log the configuration change in Activity Logs
+    logActivity({
+      actor: {
+        id: user.id || user._id,
+        name: user.name || "Unknown",
+        email: user.email || "",
+        designation: user.designation,
+        department: user.buccDepartment || user.department,
+      },
+      method: "POST",
+      category: key === "recruitment_config" || key === "waiting_room_config" ? "Recruitment" : "System",
+      action: "UPDATE_CONFIG",
+      summary: `${user.name || "User"} updated ${key} configuration`,
+      targetId: key,
+      details: {
+        field: key,
+        newValue: value,
+      },
+    });
     
     return NextResponse.json({
       key,
