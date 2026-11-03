@@ -72,7 +72,7 @@ const ExecutiveBody2026 = [
     gitHubURL: "https://github.com/JubayerExpress",
   },
   {
-    fullName: "Adnan Rahman", // spreadsheet: Syed Adnan Rahman
+    fullName: "Syed Adnan Rahman", 
     nickName: "Adnan",
     department: "Governing Body",
     designation: "Treasurer",
@@ -104,7 +104,7 @@ const ExecutiveBody2026 = [
     gitHubURL: "https://github.com/ZeddhD",
   },
   {
-    fullName: "Kazi Zawad", // spreadsheet: Kazi Jawad
+    fullName: "Kazi Jawad", 
     nickName: "Zawad",
     department: "Communication and Marketing",
     designation: "Assistant Director",
@@ -156,7 +156,7 @@ const ExecutiveBody2026 = [
     gitHubURL: "https://github.com/Sanjanatahsin",
   },
   {
-    fullName: "Tahmeed Fedous", // spreadsheet: Tahmeed Ferdous
+    fullName: "Tahmeed Ferdous", 
     nickName: "Tahmeed",
     department: "Creative",
     designation: "Assistant Director",
@@ -230,7 +230,7 @@ const ExecutiveBody2026 = [
 
   // Finance Department
   {
-    fullName: "MD. Dodi Al Fayad", // spreadsheet: Md. Dodi Al Fayed
+    fullName: "Md. Dodi Al Fayed", 
     nickName: "Fayad",
     department: "Finance",
     designation: "Director",
@@ -250,7 +250,7 @@ const ExecutiveBody2026 = [
     gitHubURL: "https://github.com/Noor-E-Jannat20",
   },
   {
-    fullName: "MD. Rawnak Ahasan", // spreadsheet: Md. Rawnak Ahasan
+    fullName: "Md. Rawnak Ahasan",
     nickName: "Rawnak",
     department: "Finance",
     designation: "Assistant Director",
@@ -292,7 +292,7 @@ const ExecutiveBody2026 = [
     gitHubURL: "https://github.com/MAZubaer",
   },
   {
-    fullName: "MD Enayet Ali Labib", // spreadsheet: Md Enayet Ali Labib
+    fullName: "Md Enayet Ali Labib", 
     nickName: "Labib",
     department: "Human Resources",
     designation: "Assistant Director",
@@ -324,7 +324,7 @@ const ExecutiveBody2026 = [
     gitHubURL: "https://github.com/Salsabil-Anika",
   },
   {
-    fullName: "MD. Mushroor Mutakin Khan", // spreadsheet: Md. Mushroor Muttakin Khan
+    fullName: "Md. Mushroor Muttakin Khan", 
     nickName: "Mushroor",
     department: "Press Release and Publications",
     designation: "Assistant Director",
